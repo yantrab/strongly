@@ -1,0 +1,95 @@
+import { suite, test } from "@testdeck/jest";
+import "reflect-metadata";
+import { ServerFactory } from "./server";
+import { min, max } from "../decorators/ajv/ajv.decorators";
+import { body, Controller, get, params, post } from "..";
+
+class someNestedClass {
+  @min(4)
+  someNumber: number;
+}
+
+class shokoController {
+  @get("getUsers6/:value") getUsers6(@params("value") @max(10) value: number) {
+    return value * value;
+  }
+
+  @post getUsers5(@body user: { id: number; a: someNestedClass }) {
+    return user.id;
+  }
+  @post getUsers4(@body user: { id: number }) {
+    return user.id;
+  }
+}
+
+@suite
+class ServerTests {
+  async inject(controller, options) {
+    return (await ServerFactory.create({ controllers: [controller] })).inject(options);
+  }
+  @test("should return body")
+  async body() {
+    @Controller
+    class UserController {
+      @post
+      bodyWithoutPath(@body body) {
+        return body;
+      }
+    }
+
+    const res = await this.inject(UserController, { method: "POST", body: { id: 1 }, url: "/user/body-without-path" });
+    expect(res.json()).toStrictEqual({ id: 1 });
+  }
+
+  @test("should return body parameter - id")
+  async body2() {
+    @Controller
+    class UserController {
+      @post
+      bodyWithPath(@body("id") id) {
+        return id;
+      }
+    }
+    const res = await this.inject(UserController, { method: "POST", body: { id: 1 }, url: "/user/body-with-path" });
+    expect(res.json()).toBe(1);
+  }
+
+  @test("should return bad request  - id type")
+  async badRequest1() {
+    const res = await this.inject(shokoController, { method: "POST", body: { id: "saba" }, url: "/shoko/get-users4" });
+    expect(res.statusCode).toBe(400);
+  }
+
+  @test("should return bad request  - missing body")
+  async badRequest2() {
+    const res = await this.inject(shokoController, { method: "POST", url: "/shoko/get-users4" });
+    expect(res.statusCode).toBe(400);
+  }
+
+  @test("should return bad request  - missing id parameters")
+  async badRequest3() {
+    const res = await this.inject(shokoController, { method: "POST", body: {}, url: "/shoko/get-users4" } as any);
+    expect(res.statusCode).toBe(400);
+  }
+
+  @test("should return bad request  - min value")
+  async badRequest4() {
+    const res = await this.inject(shokoController, { method: "POST", body: { id: 1, a: { someNumber: 1 } }, url: "/shoko/get-users5" });
+    expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: "body.a.someNumber should be >= 4" });
+  }
+
+  @test("should return bad request  - min value")
+  async badRequest5() {
+    const res = await this.inject(shokoController, { method: "GET", url: "/shoko/getUsers6/11" });
+    expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: "params.value should be <= 10" });
+  }
+
+  @test("should reject error when controller are no provided")
+  async noControllers() {
+    try {
+      await ServerFactory.create({ controllers: [] });
+    } catch (e) {
+      expect(e.message).toBe("There is no controllers!");
+    }
+  }
+}
