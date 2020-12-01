@@ -1,17 +1,25 @@
 {
   "name": "strongly",
   "version": "1.0.4",
-  "description": "",
+  "description": "Make your server strongly type without adding any piece of code",
   "main": "index.js",
   "types": "index.d.ts",
+  "tags": [
+    "validator",
+    "validation",
+    "decorators",
+    "typescript",
+    "fastify",
+    "ajv"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/yantrab/strongly.git"
   },
   "scripts": {
     "clean": "rm -rf dist/",
-    "start": "typescript=true ts-node-transpile-only ./src/app.ts  ",
-    "start-debug": "typescript=true ts-node ./src/app.ts  ",
+    "start": "ts-node-transpile-only ./src/app.ts",
+    "start-debug": "ts-node ./src/app.ts",
     "build": "tsc",
     "prebuild": "npm run clean",
     "test": "jest --coverage",
