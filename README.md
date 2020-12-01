@@ -1,7 +1,10 @@
 # strongly
-Make your server strongly type without adding any Piece of code.
+Make your server strongly type without adding any piece of code.
+
+## the motivation
 
 All of us do type validation in the server, we don't want to make any expensive think for free, for example if your api return the user by id from the database, and client sent invalid id type, you don't want to do database query at all.
+
 So, probably you do something like:
 
 ```
@@ -13,7 +16,7 @@ const schema = Joi.object().keys({
 
 The question is, if I already declare the parameters type, why should I do it twice?
 
-This package will help you to avoid this annoying things and let you focus on the really important things.
+This package will help you to avoid this annoying things and let you focus on the really important work.
 
 ## Get started
 #### install
@@ -21,7 +24,7 @@ This package will help you to avoid this annoying things and let you focus on th
 npm i strongly
 ```
 
-declare your controller:
+#### create your controller:
 ```typescript
 class Contact {
   address?: string;
@@ -37,12 +40,7 @@ class ShowCaseController {
   @post getUsers(@body("id") id: number) {
     return id;
   }
-  @post getUsers2(@body("id") id?: number) {
-    return id;
-  }
-  @post getUsers3(@body id?: number) {
-    return id;
-  }
+
   @post getUsers4(@body user: { id?: number }) {
     return user;
   }
@@ -70,14 +68,14 @@ class ShowCaseController {
 }
 ```
 
-Run the server:
+#### create the server:
 
 ```typescript
 ServerFactory.create({
   controllers: [
     ShowCaseController
   ] /*you can pass your controllers,
-// or the path to the controller, or nothing if your controllers located on controllers folder **/
+// or the path to the controller, or nothing if your controllers located in controllers folder **/
 }).then(app =>
   app.listen(3000, (err, address) => {
     if (err) {
@@ -88,7 +86,7 @@ ServerFactory.create({
 );
 ```
 
-run you server
+#### run your app
 
 ```
 ts-node ./src/app.ts
