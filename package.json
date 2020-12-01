@@ -25,7 +25,8 @@
     "test": "jest --coverage",
     "pretest": "npm run lint",
     "lint": "eslint 'src/**/*.ts' --fix",
-    "publishh": "npm run build && npm run test && npm version patch && cp package.json ./dist/package.json && cd dist && npm publish"
+    "copy-files":"cp package.json ./dist/package.json & cp README.md ./dist/README.md",
+    "publishh": "npm run build && npm run test && npm version patch && npm run copy-files && cd dist && npm publish"
   },
   "author": "",
   "license": "ISC",
