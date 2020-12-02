@@ -22,13 +22,13 @@
     "clean": "rm -rf dist/",
     "start": "ts-node-transpile-only ./src/app.ts",
     "start-debug": "ts-node ./src/app.ts",
-    "build": "tsc",
+    "build": "tsc  --p  tsconfig.build.json\n",
     "prebuild": "npm run clean",
     "test": "jest --coverage",
     "pretest": "npm run lint",
     "lint": "eslint 'src/**/*.ts' --fix",
     "copy-files": "cp package.json ./dist/package.json & cp README.md ./dist/README.md",
-    "publishh": "npm run build && npm run test && npm version patch && npm run copy-files && cd dist && npm publish"
+    "publishh": "npm run test && npm run build && npm version patch && npm run copy-files && cd dist && npm publish"
   },
   "author": "",
   "license": "ISC",
