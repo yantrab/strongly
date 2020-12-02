@@ -10,7 +10,9 @@
     "decorators",
     "typescript",
     "fastify",
-    "ajv"
+    "fastify-decorators",
+    "ajv",
+    "Strongly-Typed"
   ],
   "repository": {
     "type": "git",
