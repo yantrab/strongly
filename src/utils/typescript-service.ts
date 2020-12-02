@@ -55,6 +55,9 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = []) => {
 
     type.getProperties().forEach(prop => {
       const key = prop.getName();
+      if (["request", "reply"].includes(key)) {
+        return;
+      }
       const valueDeclaration = prop.getValueDeclarationOrThrow();
       const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
       schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators);
@@ -77,5 +80,5 @@ export const getMethodSchema = (c, m) => {
   const responseType = method?.getReturnType();
   const responseSchema = responseType ? getParamSchema(responseType) : {};
   delete responseSchema?.optional;
-  return { description, response: { 201: responseSchema } };
+  return { description, response: responseSchema ? { 201: responseSchema } : undefined };
 };

@@ -7,6 +7,14 @@ function getControllerSchema(target, key: string, paramIndex: number) {
   const controller = getClass(target.constructor.name);
   if (controller) {
     const param = controller.getMethodOrThrow(key).getParameters()[paramIndex];
+    if (
+      param
+        .getDecorators()
+        .map(d => d.getName())
+        .find(n => ["reply", "request"].includes(n))
+    ) {
+      return;
+    }
     return getParamSchema(param.getType(), param.getDecorators());
   }
 }
@@ -15,12 +23,12 @@ function addRouteParam(target, key: string, paramIndex: number, routeParamType: 
   const allRoutes = Reflect.getMetadata(symbols.route, target) || {};
   const route = (allRoutes[key] = allRoutes[key] || { params: [], schema: {} });
   const fullPath = routeParamType + (path ? "." + path : "");
-  route.params.push({ path: fullPath });
+  route.params[paramIndex] = { path: fullPath };
   const schema = getControllerSchema(target, key, paramIndex);
   if (schema) {
     const schemaPath = routeParamType + (path ? ".properties." + path : "");
     set(route.schema, schemaPath, schema);
-    const routeSchema = route.schema[routeParamType];
+    const routeSchema = getByPath(route.schema, routeParamType);
     routeSchema.type = routeSchema.type || "object";
     if (routeSchema.properties && path) {
       routeSchema.required = routeSchema.required || [];
@@ -61,7 +69,7 @@ function getDecorator(route) {
     }
 
     if (isClass(args[0])) {
-      addRouteParam(args[0], args[1], args[2], route);
+      addRouteParam(args[0], args[1], args[2], "request." + route);
       return;
     }
 
@@ -74,7 +82,7 @@ function getDecorator(route) {
     }
 
     return (target: any, methodName: string, paramIndex: number) => {
-      addRouteParam(target, methodName, paramIndex, route, path, options);
+      addRouteParam(target, methodName, paramIndex, "request." + route, path, options);
     };
   };
 
@@ -86,10 +94,22 @@ class RouteParam {
   readonly query: IRouteParam;
   readonly params: IRouteParam;
   readonly headers: IRouteParam;
+  readonly request: ParameterDecorator;
+  readonly reply: ParameterDecorator;
+  readonly user: ParameterDecorator;
   constructor() {
-    ["body", "query", "params", "headers"].forEach(routeParam => {
+    ["body", "query", "params", "headers", "user"].forEach(routeParam => {
       this[routeParam] = getDecorator(routeParam);
     });
+    ["request", "reply"].forEach(p => {
+      this[p] = (target: any, methodName: string, paramIndex: number) => {
+        addRouteParam(target, methodName, paramIndex, p);
+      };
+    });
+
+    this.user = (target: any, methodName: string, paramIndex: number) => {
+      addRouteParam(target, methodName, paramIndex, "session.user");
+    };
   }
 }
 

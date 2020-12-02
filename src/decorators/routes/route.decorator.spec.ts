@@ -1,4 +1,4 @@
-import { get } from "./route.decorators";
+import { get, put, Delete, head, patch, options } from "../index";
 import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
 import { symbols } from "../../utils/consts";
@@ -11,14 +11,20 @@ class RouteDecoratorsTests {
       @get
       getUsers1() {}
 
-      @get()
+      @put()
       getUsers2() {}
 
-      @get("")
+      @Delete("")
       getUsers3() {}
 
-      @get("users")
+      @head("users")
       getUsers4() {}
+
+      @patch
+      getUsers5() {}
+
+      @options
+      getUsers6() {}
     }
     const routes = Reflect.getMetadata(symbols.route, User.prototype);
     expect(routes).toStrictEqual({
@@ -27,16 +33,24 @@ class RouteDecoratorsTests {
         path: undefined
       },
       getUsers2: {
-        routeType: "get",
+        routeType: "put",
         path: undefined
       },
       getUsers3: {
-        routeType: "get",
+        routeType: "delete",
         path: ""
       },
       getUsers4: {
-        routeType: "get",
+        routeType: "head",
         path: "users"
+      },
+      getUsers5: {
+        routeType: "patch",
+        path: undefined
+      },
+      getUsers6: {
+        routeType: "options",
+        path: undefined
       }
     });
   }

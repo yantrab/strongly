@@ -1,5 +1,5 @@
 import { post } from "../routes/route.decorators";
-import { body, params } from "./route-param.decorators";
+import { body, params, reply, request } from "..";
 import { suite, test } from "@testdeck/jest";
 import { symbols } from "../../utils/consts";
 import "reflect-metadata";
@@ -35,7 +35,7 @@ class RouteSchemaTests {
 
   @test
   primitiveTypeNumber() {
-    expect(this.routes["getUsers"].schema).toStrictEqual({
+    expect(this.routes["getUsers"].schema.request).toStrictEqual({
       body: {
         properties: {
           id: {
@@ -50,7 +50,7 @@ class RouteSchemaTests {
 
   @test
   primitiveOptionalTypeNumber() {
-    expect(this.routes["getUsers2"].schema).toStrictEqual({
+    expect(this.routes["getUsers2"].schema.request).toStrictEqual({
       body: {
         properties: {
           id: {
@@ -64,7 +64,7 @@ class RouteSchemaTests {
 
   @test
   primitiveBody() {
-    expect(this.routes["getUsers3"].schema).toStrictEqual({
+    expect(this.routes["getUsers3"].schema.request).toStrictEqual({
       body: {
         type: "number"
       }
@@ -73,7 +73,7 @@ class RouteSchemaTests {
 
   @test
   objectBody() {
-    expect(this.routes["getUsers4"].schema).toStrictEqual({
+    expect(this.routes["getUsers4"].schema.request).toStrictEqual({
       body: {
         properties: {
           id: {
@@ -87,7 +87,7 @@ class RouteSchemaTests {
 
   @test
   arrayOfNumber() {
-    expect(this.routes["getUsers5"].schema).toStrictEqual({
+    expect(this.routes["getUsers5"].schema.request).toStrictEqual({
       body: {
         items: {
           type: "number"
@@ -99,7 +99,7 @@ class RouteSchemaTests {
 
   @test
   object() {
-    expect(this.routes["getUsers6"].schema).toStrictEqual({
+    expect(this.routes["getUsers6"].schema.request).toStrictEqual({
       body: {
         properties: {
           id: {
@@ -117,7 +117,7 @@ class RouteSchemaTests {
 
   @test
   classInBody() {
-    expect(this.routes["getUsers7"].schema).toStrictEqual({
+    expect(this.routes["getUsers7"].schema.request).toStrictEqual({
       body: {
         properties: {
           contacts: {
@@ -153,7 +153,7 @@ class RouteSchemaTests {
 
   @test
   arrayOfObject() {
-    expect(this.routes["getUsers8"].schema).toStrictEqual({
+    expect(this.routes["getUsers8"].schema.request).toStrictEqual({
       body: {
         items: {
           properties: {
@@ -174,7 +174,7 @@ class RouteSchemaTests {
 
   @test
   schemaWithNumberValidation() {
-    expect(this.routes["getUsers9"].schema).toStrictEqual({
+    expect(this.routes["getUsers9"].schema.request).toStrictEqual({
       params: {
         properties: {
           id: {
@@ -189,7 +189,7 @@ class RouteSchemaTests {
 
   @test
   schemaWithNestedNumberValidation() {
-    expect(this.routes["getUsers10"].schema).toStrictEqual({
+    expect(this.routes["getUsers10"].schema.request).toStrictEqual({
       body: {
         properties: {
           address: {

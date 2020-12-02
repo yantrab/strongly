@@ -33,8 +33,8 @@ export class ServerFactory {
       routePrefix: "/api-doc",
       swagger: {
         info: {
-          title: "Test swagger",
-          description: "testing the fastify swagger api",
+          title: "Api documentation" + "",
+          description: "fastify swagger api",
           version: "0.1.0"
         }
       },
@@ -49,8 +49,9 @@ export class ServerFactory {
         const method = routes[key];
         const path = method.path || toSnack(key);
         const url = `/${basePath}/${path}`;
-        const handler = async (request, reply) => instance[key](...(method.params || []).map(p => get(request, p.path)));
-        const schema = { ...method.schema, tags: [basePath], ...getMethodSchema(controller, key) };
+
+        const handler = async (request, reply) => instance[key](...(method.params || []).map(p => get({ request, reply }, p.path)));
+        const schema = { ...method.schema?.request, tags: [basePath], ...getMethodSchema(controller, key) };
         app[method.routeType](url, { schema }, handler);
       });
     });

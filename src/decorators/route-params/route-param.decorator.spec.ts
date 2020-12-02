@@ -12,7 +12,7 @@ class RouteDecoratorsTests {
       @get getUsers(@body body) {}
     }
     const routes = Reflect.getMetadata(symbols.route, User.prototype);
-    expect(routes["getUsers"].params).toStrictEqual([{ path: "body" }]);
+    expect(routes["getUsers"].params).toStrictEqual([{ path: "request.body" }]);
   }
 
   @test
@@ -21,7 +21,7 @@ class RouteDecoratorsTests {
       @get getUsers(@body() body) {}
     }
     const routes = Reflect.getMetadata(symbols.route, User.prototype);
-    expect(routes["getUsers"].params).toStrictEqual([{ path: "body" }]);
+    expect(routes["getUsers"].params).toStrictEqual([{ path: "request.body" }]);
   }
 
   @test
@@ -30,6 +30,6 @@ class RouteDecoratorsTests {
       @get getUsers(@body("id") id) {}
     }
     const routes = Reflect.getMetadata(symbols.route, User.prototype);
-    expect(routes["getUsers"].params).toStrictEqual([{ path: "body.id" }]);
+    expect(routes["getUsers"].params).toStrictEqual([{ path: "request.body.id" }]);
   }
 }
