@@ -1,6 +1,7 @@
 import { merge } from "lodash";
 import { ClassDeclaration, Decorator, Project, Type } from "ts-morph";
 import { getMinMaxValidation } from "./ajv.service";
+import { toSnack } from "../utils/util";
 const project = new Project({ tsConfigFilePath: process.cwd() + "/tsconfig.json" });
 const sourceFiles = project.getSourceFiles();
 const allClasses: { [name: string]: ClassDeclaration } = {};
@@ -21,6 +22,24 @@ function handleExplicitValidation(type: string, schema: any, decorators: Decorat
       case "min":
       case "max": {
         schema = merge(schema, getMinMaxValidation(dName, type, +d.getArguments()[0].getText()));
+        break;
+      }
+      case "time":
+      case "date":
+      case "dateTime":
+      case "duration":
+      case "uri":
+      case "uriReference":
+      case "uriTemplate":
+      case "email":
+      case "hostname":
+      case "ipv4":
+      case "ipv6":
+      case "uuid":
+      case "jsonPointer":
+      case "relativeJsonPointer": {
+        schema = merge(schema, { format: toSnack(dName) });
+        break;
       }
     }
   });

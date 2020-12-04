@@ -2,7 +2,7 @@ import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
 import { ServerFactory } from "./server";
 import { min, max } from "../decorators/ajv/ajv.decorators";
-import { body, Controller, get, params, post, reply, request } from "..";
+import { body, Controller, get, params, post, reply, request, email } from "..";
 import { FastifyRequest, FastifyReply } from "fastify";
 
 class someNestedClass {
@@ -27,6 +27,8 @@ class shokoController {
   @post getUsers4(@body user: { id: number }) {
     return user.id;
   }
+
+  @post login(@body<string>("email") @email email: string, @body("password") @min(5) password: string) {}
 }
 
 @suite
@@ -104,5 +106,11 @@ class ServerTests {
   async requestAndReply() {
     const res = await this.inject(shokoController, { method: "POST", body: { id: 1, a: { someNumber: 1 } }, url: "/shoko/get-users11" });
     expect(res.json()).toStrictEqual({ a: { someNumber: 1 }, id: 1 });
+  }
+
+  @test
+  async invalidEmail() {
+    const res = await this.inject(shokoController, { method: "post", url: "/shoko/login", body: { email: "a", password: "123456" } });
+    expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: 'body.email should match format "email"' });
   }
 }

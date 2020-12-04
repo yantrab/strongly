@@ -1,10 +1,13 @@
 import { suite, test } from "@testdeck/jest";
-import { min, max } from "./ajv.decorators";
+import { min, max, date } from "./ajv.decorators";
 import { symbols } from "../../utils/consts";
 import "reflect-metadata";
 import { getClass, getParamSchema } from "../../utils/typescript-service";
 
 class c123 {
+  @date
+  date: string;
+
   @min(4)
   number1: number;
 
@@ -52,6 +55,10 @@ class ajvDecoratorsTests {
   minmax() {
     const schema = getParamSchema(getClass(c123.name).getType());
     expect(schema?.properties).toStrictEqual({
+      date: {
+        format: "date",
+        type: "string"
+      },
       array1: {
         items: {
           type: "string"

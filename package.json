@@ -20,8 +20,6 @@
   },
   "scripts": {
     "clean": "rm -rf dist/",
-    "start": "ts-node-transpile-only ./src/app.ts",
-    "start-debug": "ts-node ./src/app.ts",
     "build": "tsc  --p  tsconfig.build.json\n",
     "prebuild": "npm run clean",
     "test": "jest --coverage",

@@ -23,9 +23,9 @@ function addRouteParam(target, key: string, paramIndex: number, routeParamType: 
   const allRoutes = Reflect.getMetadata(symbols.route, target) || {};
   const route = (allRoutes[key] = allRoutes[key] || { params: [], schema: {} });
   const fullPath = routeParamType + (path ? "." + path : "");
+  const schema = Object.assign({}, route.params[paramIndex]?.schema || {}, getControllerSchema(target, key, paramIndex) || {});
   route.params[paramIndex] = { path: fullPath };
-  const schema = getControllerSchema(target, key, paramIndex);
-  if (schema) {
+  if (Object.keys(schema).length) {
     const schemaPath = routeParamType + (path ? ".properties." + path : "");
     set(route.schema, schemaPath, schema);
     const routeSchema = getByPath(route.schema, routeParamType);
@@ -33,12 +33,13 @@ function addRouteParam(target, key: string, paramIndex: number, routeParamType: 
     if (routeSchema.properties && path) {
       routeSchema.required = routeSchema.required || [];
       Object.keys(routeSchema.properties).forEach(key => {
-        if (routeSchema.properties[key].optional !== true) {
+        if (routeSchema.properties[key].optional !== true && !routeSchema.required.includes(key)) {
           routeSchema.required.push(key);
         }
         delete routeSchema.properties[key].optional;
       });
     }
+    ``;
     if (!routeSchema.required?.length) {
       delete routeSchema.required;
     }
