@@ -12,12 +12,13 @@ async function getControllers(controllers): Promise<any[]> {
   if (!controllers || typeof controllers === "string") {
     const folderPath = dirname(require.main?.filename as string);
     const paths = glob.sync([folderPath + (controllers ? "/" + controllers : "/controllers/**"), "!.**spec.ts"]);
-    return Promise.all(
+    const result = await Promise.all(
       paths.map(async p => {
         const m = await import(p);
-        return Object.values(m)[0];
+        return Object.values(m)[0] as () => any;
       })
     );
+    return result.filter(c => c.constructor);
   }
   return controllers;
 }
