@@ -2,7 +2,7 @@ import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
 import { ServerFactory } from "./server";
 import { min, max } from "../decorators/ajv/ajv.decorators";
-import { body, Controller, get, params, post, reply, request, email } from "..";
+import { body, Controller, get, params, post, reply, request, email, onRequest, preHandler, onSend } from "..";
 import { FastifyRequest, FastifyReply } from "fastify";
 
 class someNestedClass {
@@ -27,8 +27,18 @@ class shokoController {
   @post getUsers4(@body user: { id: number }) {
     return user.id;
   }
+  @post
+  login(@body<string>("email") @email email: string, @body("password") @min(5) password: string) {
+    return { a: 1 };
+  }
 
-  @post login(@body<string>("email") @email email: string, @body("password") @min(5) password: string) {}
+  @onSend((app, request, reply, payload, next) => {
+    next(null, payload.replace("a", "b"));
+  })
+  @get
+  changePayload() {
+    return { a: 1 };
+  }
 }
 
 @suite
@@ -112,5 +122,11 @@ class ServerTests {
   async invalidEmail() {
     const res = await this.inject(shokoController, { method: "post", url: "/shoko/login", body: { email: "a", password: "123456" } });
     expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: 'body.email should match format "email"' });
+  }
+
+  @test
+  async onSendTest() {
+    const res = await this.inject(shokoController, { method: "get", url: "/shoko/change-payload" });
+    expect(res.json()).toStrictEqual({ b: 1 });
   }
 }

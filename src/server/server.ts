@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import fastify, { FastifyServerOptions } from "fastify";
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest, FastifyServerOptions } from "fastify";
 import { symbols } from "../utils/consts";
 import { toSnack } from "../utils/util";
 import { method } from "../utils/interfaces";
@@ -18,7 +18,7 @@ async function getControllers(controllers): Promise<any[]> {
         return Object.values(m)[0] as () => any;
       })
     );
-    return result.filter(c => c.constructor);
+    return result.filter(c => c.prototype);
   }
   return controllers;
 }
@@ -50,14 +50,20 @@ export class ServerFactory {
         const method = routes[key];
         const path = method.path || toSnack(key);
         const url = `/${basePath}/${path}`;
-
+        const hooks = {};
+        Object.keys(method.hooks || {}).forEach(key => {
+          method.hooks[key].forEach(m => {
+            hooks[key] = (hooks[key] || []).concat([(...args) => m(app, ...args)]);
+          });
+        });
         const handler = async (request, reply) => instance[key](...(method.params || []).map(p => get({ request, reply }, p.path)));
         const schema = { ...method.schema?.request, tags: [basePath], ...getMethodSchema(controller, key) };
-        app[method.routeType](url, { schema }, handler);
+        const options = { schema, ...hooks };
+        app[method.routeType](url, options, handler);
       });
     });
 
-    app.get("/is-alive", async (request, reply) => {
+    app.get("/is-alive", {}, async (request, reply) => {
       return { hello: "world" };
     });
     app.ready(err => {
