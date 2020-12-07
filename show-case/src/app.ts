@@ -14,19 +14,19 @@ ServerFactory.create({
   });
   app.register(fastifyCookie);
 
-  app.post("/signin", (req, reply) => {
-    // some code
-    const token = app.jwt.sign({ name: "yaniv" });
-    reply
-      .setCookie("token", token, {
-        path: "/",
-        secure: false,
-        httpOnly: true,
-        sameSite: false
-      })
-      .code(200)
-      .send({ token });
-  });
+  // app.post("/signin", (req, reply) => {
+  //   // some code
+  //   const token = app.jwt.sign({ name: "yaniv" });
+  //   reply
+  //     .setCookie("token", token, {
+  //       path: "/",
+  //       secure: false,
+  //       httpOnly: true,
+  //       sameSite: false
+  //     })
+  //     .code(200)
+  //     .send({ token });
+  // });
 
   app.post(
     "/test",

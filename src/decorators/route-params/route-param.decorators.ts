@@ -2,6 +2,7 @@ import { symbols } from "../../utils/consts";
 import { set, get as getByPath, merge } from "lodash";
 import { getClass, getParamSchema } from "../../utils/typescript-service";
 import { JSONSchemaType } from "../../utils/util";
+import { FastifyInstance } from "fastify";
 
 function getControllerSchema(target, key: string, paramIndex: number) {
   const controller = getClass(target.constructor.name);
@@ -97,12 +98,13 @@ class RouteParam {
   readonly headers: IRouteParam;
   readonly request: ParameterDecorator;
   readonly reply: ParameterDecorator;
+  readonly app: ParameterDecorator;
   readonly user: ParameterDecorator;
   constructor() {
     ["body", "query", "params", "headers", "user"].forEach(routeParam => {
       this[routeParam] = getDecorator(routeParam);
     });
-    ["request", "reply"].forEach(p => {
+    ["request", "reply", "app"].forEach(p => {
       this[p] = (target: any, methodName: string, paramIndex: number) => {
         addRouteParam(target, methodName, paramIndex, p);
       };

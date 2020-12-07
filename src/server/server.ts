@@ -56,7 +56,7 @@ export class ServerFactory {
             hooks[key] = (hooks[key] || []).concat([(...args) => m(app, ...args)]);
           });
         });
-        const handler = async (request, reply) => instance[key](...(method.params || []).map(p => get({ request, reply }, p.path)));
+        const handler = async (request, reply) => instance[key](...(method.params || []).map(p => get({ request, reply, app }, p.path)));
         const schema = { ...method.schema?.request, tags: [basePath], ...getMethodSchema(controller, key) };
         const options = { schema, ...hooks };
         app[method.routeType](url, options, handler);
