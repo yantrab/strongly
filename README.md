@@ -1,9 +1,9 @@
 # strongly
-Make your server strongly type without adding any piece of code.
+Make your server strongly typed without adding any piece of code.
 
 ## the motivation
 
-All of us do type validation in the server, we don't want to make any expensive think for free, for example if your api return the user by id from the database, and client sent invalid id type, you don't want to do database query at all.
+All of us doing type validation in the server, we don't want to make any expensive think for free, for example if your api return the user by id from the database, and client sent invalid id type, you don't want to do database query at all.
 
 So, probably you do something like:
 
