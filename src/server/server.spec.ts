@@ -151,6 +151,12 @@ class ServerTests {
   }
 
   @test
+  async diTest3() {
+    const c = await inject<diController>(diController);
+    expect(c.getFromService()).toStrictEqual({ x: 1 });
+  }
+
+  @test
   async diTest2() {
     class someService {
       v() {
@@ -159,11 +165,5 @@ class ServerTests {
     }
     const res = await this.inject(diController, { method: "get", url: "/di/v" }, [someService]);
     expect(res.json()).toStrictEqual({ x: 3 });
-  }
-
-  @test
-  async diTest3() {
-    const c = await inject<diController>(diController);
-    expect(c.getFromService()).toStrictEqual({ x: 1 });
   }
 }
