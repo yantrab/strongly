@@ -1,6 +1,6 @@
 import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
-import { ServerFactory } from "./server";
+import { inject, ServerFactory } from "./server";
 import { min, max } from "../decorators/ajv/ajv.decorators";
 import { body, Controller, get, params, post, reply, request, email, onRequest, preHandler, onSend } from "..";
 import { FastifyRequest, FastifyReply } from "fastify";
@@ -40,11 +40,25 @@ class shokoController {
     return { a: 1 };
   }
 }
+export class someService {
+  v() {
+    return { x: 1 };
+  }
+}
+
+class diController {
+  constructor(private s: someService) {}
+
+  @get("v")
+  getFromService() {
+    return this.s.v();
+  }
+}
 
 @suite
 class ServerTests {
-  async inject(controller, options) {
-    return (await ServerFactory.create({ controllers: [controller] })).inject(options);
+  async inject(controller, options, providers?) {
+    return (await ServerFactory.create({ controllers: [controller], providers })).inject(options);
   }
   @test("should return body")
   async body() {
@@ -128,5 +142,28 @@ class ServerTests {
   async onSendTest() {
     const res = await this.inject(shokoController, { method: "get", url: "/shoko/change-payload" });
     expect(res.json()).toStrictEqual({ b: 1 });
+  }
+
+  @test
+  async diTest() {
+    const res = await this.inject(diController, { method: "get", url: "/di/v" });
+    expect(res.json()).toStrictEqual({ x: 1 });
+  }
+
+  @test
+  async diTest2() {
+    class someService {
+      v() {
+        return { x: 3 };
+      }
+    }
+    const res = await this.inject(diController, { method: "get", url: "/di/v" }, [someService]);
+    expect(res.json()).toStrictEqual({ x: 3 });
+  }
+
+  @test
+  async diTest3() {
+    const c = await inject<diController>(diController);
+    expect(c.getFromService()).toStrictEqual({ x: 1 });
   }
 }

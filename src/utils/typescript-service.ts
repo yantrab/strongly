@@ -5,7 +5,6 @@ import { toSnack } from "../utils/util";
 const project = new Project({ tsConfigFilePath: process.cwd() + "/tsconfig.json" });
 const sourceFiles = project.getSourceFiles();
 const allClasses: { [name: string]: ClassDeclaration } = {};
-
 sourceFiles.forEach(s => {
   s.getClasses().forEach(c => {
     allClasses[c.getName() as string] = c;

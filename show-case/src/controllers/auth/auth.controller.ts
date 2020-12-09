@@ -1,18 +1,22 @@
-import { body, post, email, min, onSend } from "strongly";
+import { body, post, email, min, onSend, app, reply } from "strongly";
+import { UserService } from "../../services/user.service";
 
 export class AuthController {
-  @onSend((app, request, reply, payload, next) => {
-    const token = app.jwt.sign(JSON.parse(payload));
+  constructor(private userService: UserService) {}
+
+  @post login(@body("email") @email email: string, @body("password") @min(6) password: string, @app app, @reply reply) {
+    const user = this.userService.validateAndGetUser(email, password);
+    const token = app.jwt.sign(user);
     reply.setCookie("token", token, {
       path: "/",
       secure: false,
       httpOnly: true,
       sameSite: false
     });
-    next(null, payload);
-  })
-  @post
-  login(@body("email") @email email: string, @body("password") @min(6) password: string) {
-    return { name: "yaniv" };
+    return user;
+  }
+
+  user(id: number) {
+    return { name: "asd" };
   }
 }

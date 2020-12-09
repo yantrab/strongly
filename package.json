@@ -70,7 +70,8 @@
       "**/*.spec.(ts|js)"
     ],
     "testPathIgnorePatterns": [
-      "<rootDir>/dist/"
+      "<rootDir>/dist/",
+      "<rootDir>/show-case/"
     ],
     "moduleDirectories": [
       "node_modules",

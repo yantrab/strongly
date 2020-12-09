@@ -8,6 +8,8 @@ import { fastifySwagger } from "fastify-swagger";
 import { getMethodSchema } from "../utils/typescript-service";
 import glob from "globby";
 import { dirname } from "path";
+import { DIService } from "./di/di.service";
+const diService = new DIService();
 async function getControllers(controllers): Promise<any[]> {
   if (!controllers || typeof controllers === "string") {
     const folderPath = dirname(require.main?.filename as string);
@@ -24,7 +26,8 @@ async function getControllers(controllers): Promise<any[]> {
 }
 
 export class ServerFactory {
-  static async create(opts?: FastifyServerOptions & { controllers?: { new () }[] | string }) {
+  static async create(opts?: FastifyServerOptions & { controllers?: { new (args) }[] | string; providers?: { new (...args) }[] }) {
+    await diService.setDependencies(opts?.providers);
     const controllers = await getControllers(opts?.controllers);
     if (!controllers.length) {
       throw new Error("There is no controllers!");
@@ -41,9 +44,9 @@ export class ServerFactory {
       },
       exposeRoute: true
     });
-
-    controllers?.forEach(controller => {
-      const instance = new controller();
+    for (const controller of controllers) {
+      const args = await diService.getDependencies(controller);
+      const instance = new controller(...args);
       const basePath = Reflect.getMetadata(symbols.basePath, controller) || toSnack(controller.name.replace("Controller", ""));
       const routes: method = Reflect.getMetadata(symbols.route, controller.prototype);
       Object.keys(routes).forEach(key => {
@@ -61,7 +64,7 @@ export class ServerFactory {
         const options = { schema, ...hooks };
         app[method.routeType](url, options, handler);
       });
-    });
+    }
 
     app.get("/is-alive", {}, async (request, reply) => {
       return { hello: "world" };
@@ -73,3 +76,5 @@ export class ServerFactory {
     return app;
   }
 }
+
+export const inject = async <T>(target): Promise<T> => diService.inject(target);
