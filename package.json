@@ -28,8 +28,8 @@
     "copy-files": "cp package.json ./dist/package.json & cp README.md ./dist/README.md",
     "publishh": "npm run test && npm run build && npm version patch && npm run copy-files && cd dist && npm publish"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "yantrab@gmail.com",
+  "license": "MIT",
   "dependencies": {
     "ajv": "^7.0.0-beta.7",
     "fastify": "^3.8.0",
@@ -75,7 +75,6 @@
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/dist/",
-      "<rootDir>/show-case/",
       "<rootDir>/show-case/"
     ],
     "moduleDirectories": [
