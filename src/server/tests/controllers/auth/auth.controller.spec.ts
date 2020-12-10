@@ -1,6 +1,6 @@
 import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
-import { ServerFactory, inject, mock } from "../../../server";
+import { ServerFactory, inject, mock } from "../../../../index";
 import { AuthController } from "./auth.controller";
 import { UserService } from "../../services/user.service";
 import { FastifyInstance } from "fastify";
