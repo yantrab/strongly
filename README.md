@@ -26,56 +26,63 @@ npm i strongly
 
 #### create your controller:
 ```typescript
+import { body, post, get, params, min, email } from "strongly";
+
 class Contact {
-  address?: string;
-  id: number;
+    address?: string;
+    id: number;
 }
 class UserDetails {
-  name: string;
-  somePrimitiveArray?: string[];
-  contacts: Contact[];
+    @min(10)
+    name: string;
+    somePrimitiveArray?: string[];
+    contacts: Contact[];
 }
 
-class ShowCaseController {
-  @post getUsers(@body("id") id: number) {
-    return id;
-  }
+export class ShowCaseController {
+    /**
+     * id is required in the param and should by number
+     */
+    @get("getUser/:id") getUser(@params params: { id: number }) {
+        return { name: "saba" };
+    }
 
-  @post getUsers4(@body user: { id?: number }) {
-    return user;
-  }
-  @post getUsers5(@body user: number[]) {
-    return user;
-  }
-  @post getUsers6(@body user: { id?: number; name: string }) {
-    return user;
-  }
-  /**
-   * some description for the method
-   */
-  @post getUsers7(@body user: UserDetails) {
-    return user;
-  }
-  @post getUsers8(@body user: { id?: number; name: string }[]) {
-    return user[0].name;
-  }
-  @post getUsers9(@body<number>("id", { minimum: 1 }) id?: number) {
-    return 5;
-  }
-  @post getUsers10(@body<Contact>({ properties: { address: { maxLength: 10 } } }) contact: Contact) {
-    return 5;
-  }
+    /**
+     * this is the same as previous one, with convenient way
+     */
+    @get("getUsers2/:id") getUsers2(@params("id") id: number) {
+        return { name: "saba" };
+    }
+
+    /**
+     * you can add validation as you want
+     */
+    @post login(@body("email") @email email: string, @body("password") @min(6) password: string) {
+        return { name: "saba" };
+    }
+
+    /**
+     * you can add validation on the class,  name should be ta least 10 letters
+     */
+    @post saveUser(@body user: UserDetails) {
+        return user;
+    }
+
+    /**
+     *  or send your schema validation
+     */
+    @post saveContact(@body<Contact>({ properties: { address: { maxLength: 10 } } }) contact: Contact) {
+        return contact;
+    }
 }
+
 ```
 
 #### create the server:
 
 ```typescript
 ServerFactory.create({
-  controllers: [
-    ShowCaseController
-  ] /*you can pass your controllers,
-// or the path to the controller, or nothing if your controllers located in controllers folder **/
+  controllers: [ ShowCaseController ] /* controllers / path to the controller, or nothing if your controllers located in controllers folder **/
 }).then(app =>
   app.listen(3000, (err, address) => {
     if (err) {
@@ -89,8 +96,31 @@ ServerFactory.create({
 #### run your app
 
 ```
-ts-node ./src/app.ts
+ts-node ./src/app.ts // or - tsc & node ./dist/app.js
 ```
 
 open http://localhost:3000/api-doc to see the result.
+
+### Dependency injection
+
+just add your dependencies to the constructor params:
+
+```typescript
+export class AuthController {
+    constructor(private userService: UserService) {}
+    @post login(@body("email") @email email: string, @body("password") @min(6) password: string) {
+        return this.userService.validateAndGetUser(email, password);
+    }
+}
+```
+
+use @mock decorator:
+```typescript
+@test("should return mocked user")
+@mock<UserService>(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba" })
+async login() {
+    const res = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } );
+    expect(res.json()).toStrictEqual({ fName: "lo", lName: "asbaba" });
+}
+```
 

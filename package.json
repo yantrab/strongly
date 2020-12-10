@@ -57,6 +57,10 @@
   },
   "jest": {
     "coverageDirectory": "<rootDir>/coverage",
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/server/tests/**/*.ts"
+    ],
     "testEnvironment": "node",
     "moduleFileExtensions": [
       "ts",
@@ -71,6 +75,7 @@
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/dist/",
+      "<rootDir>/show-case/",
       "<rootDir>/show-case/"
     ],
     "moduleDirectories": [

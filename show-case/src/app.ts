@@ -14,35 +14,21 @@ ServerFactory.create({
   });
   app.register(fastifyCookie);
 
-  // app.post("/signin", (req, reply) => {
-  //   // some code
-  //   const token = app.jwt.sign({ name: "yaniv" });
-  //   reply
-  //     .setCookie("token", token, {
-  //       path: "/",
-  //       secure: false,
-  //       httpOnly: true,
-  //       sameSite: false
-  //     })
-  //     .code(200)
-  //     .send({ token });
-  // });
-
-  app.post(
-    "/test",
-    {
-      preHandler: async (request, reply, done) => {
-        try {
-          await request.jwtVerify();
-        } catch (err) {
-          reply.send(err);
-        }
-      }
-    },
-    (req, replay) => {
-      console.log("a");
-    }
-  );
+  // app.post(
+  //   "/test",
+  //   {
+  //     preHandler: async (request, reply, done) => {
+  //       try {
+  //         await request.jwtVerify();
+  //       } catch (err) {
+  //         reply.send(err);
+  //       }
+  //     }
+  //   },
+  //   (req, replay) => {
+  //     console.log("a");
+  //   }
+  // );
 
   app.listen(3000, (err, address) => {
     if (err) {

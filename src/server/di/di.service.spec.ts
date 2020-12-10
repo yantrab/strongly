@@ -1,7 +1,9 @@
 import { suite, test } from "@testdeck/jest";
 import { DIService } from "./di.service";
 import "reflect-metadata";
-export class someService {}
+export class someService {
+  someFunction() {}
+}
 
 export class someService2 {
   constructor(private c: someService3) {}

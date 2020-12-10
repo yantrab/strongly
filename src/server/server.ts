@@ -13,7 +13,7 @@ const diService = new DIService();
 async function getControllers(controllers): Promise<any[]> {
   if (!controllers || typeof controllers === "string") {
     const folderPath = dirname(require.main?.filename as string);
-    const paths = glob.sync([folderPath + (controllers ? "/" + controllers : "/controllers/**"), "!.**spec.ts"]);
+    const paths = glob.sync([folderPath + (controllers ? "/" + controllers : "/controllers/**"), "!**.spec.ts"]);
     const result = await Promise.all(
       paths.map(async p => {
         const m = await import(p);
@@ -27,11 +27,12 @@ async function getControllers(controllers): Promise<any[]> {
 
 export class ServerFactory {
   static async create(opts?: FastifyServerOptions & { controllers?: { new (args) }[] | string; providers?: { new (...args) }[] }) {
-    await diService.setDependencies(opts?.providers);
     const controllers = await getControllers(opts?.controllers);
     if (!controllers.length) {
       throw new Error("There is no controllers!");
     }
+    await diService.setDependencies(opts?.providers);
+
     const app = fastify(opts);
     app.register(fastifySwagger, {
       routePrefix: "/api-doc",
@@ -49,7 +50,7 @@ export class ServerFactory {
       const instance = new controller(...args);
       const basePath = Reflect.getMetadata(symbols.basePath, controller) || toSnack(controller.name.replace("Controller", ""));
       const routes: method = Reflect.getMetadata(symbols.route, controller.prototype);
-      Object.keys(routes).forEach(key => {
+      Object.keys(routes || {}).forEach(key => {
         const method = routes[key];
         const path = method.path || toSnack(key);
         const url = `/${basePath}/${path}`;
@@ -78,3 +79,13 @@ export class ServerFactory {
 }
 
 export const inject = async <T>(target): Promise<T> => diService.inject(target);
+export const mock = <T>(provide: any, key: keyof T, value: any) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  const originalMethod = descriptor.value;
+  target[propertyKey] = async function() {
+    const temp = await diService.inject(provide);
+    await diService.mock(provide, key, value);
+    await originalMethod.apply(this);
+    diService.override(provide.name, temp);
+  };
+  return target;
+};

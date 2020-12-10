@@ -19,9 +19,17 @@ export class DIService {
     for (const c of classDeclaration.getConstructors()) {
       for (const p of c.getParameters()) {
         const type = p.getType();
-        const d: any = await import(p.getSourceFile().getFilePath());
-        const cName = type.getText().split(".")[type.getText().split(".").length - 1];
-        types.push(d[cName]);
+        const firstProp = type.getProperties()[0];
+        if (firstProp) {
+          const d: any = await import(
+            firstProp
+              .getValueDeclarationOrThrow()
+              .getSourceFile()
+              .getFilePath()
+          );
+          const cName = type.getText().split(".")[type.getText().split(".").length - 1];
+          types.push(d[cName]);
+        }
       }
     }
     const results = await Promise.all(types.map(type => this.getDependency(type)));
@@ -41,5 +49,12 @@ export class DIService {
       await this.getDependencies(target);
     }
     return this.dependencies[target.name];
+  }
+
+  override(name, instance) {
+    this.dependencies[name] = instance;
+  }
+  async mock(target, key, o) {
+    this.dependencies[target.name][key] = typeof o === "function" ? o : () => o;
   }
 }
