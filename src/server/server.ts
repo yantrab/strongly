@@ -79,13 +79,37 @@ export class ServerFactory {
 }
 
 export const inject = async <T>(target): Promise<T> => diService.inject(target);
-export const mock = <T>(provide: any, key: keyof T, value: any) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+/**
+ * If T is a Class, return union string type of class methods
+ */
+type ClassType<T> = T extends { new (): infer R } ? keyof R : never;
+
+/**
+ * Check if property is a function/method
+ */
+type AnyFunc = (...args: any[]) => any;
+type PromiseReturnType<T> = T extends Promise<infer R> ? R : T;
+/**
+ *
+ * @param provider the service that you want to mock
+ * @param key function name
+ * @param value object or function
+ */
+export const mock = <T, P = new () => T>(
+  provider: P,
+  key: ClassType<P>,
+  value: P extends { new (): infer R }
+    ? R[keyof R] extends AnyFunc
+      ? PromiseReturnType<ReturnType<R[keyof R]>> | ((...args: any[]) => PromiseReturnType<ReturnType<R[keyof R]>>)
+      : never
+    : never
+) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
   const originalMethod = descriptor.value;
   target[propertyKey] = async function() {
-    const temp = await diService.inject(provide);
-    await diService.mock(provide, key, value);
+    const temp = await diService.inject(provider);
+    await diService.mock(provider, key, value);
     await originalMethod.apply(this);
-    diService.override(provide.name, temp);
+    diService.override((provider as any).name, temp);
   };
   return target;
 };

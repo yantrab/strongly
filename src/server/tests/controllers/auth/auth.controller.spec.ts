@@ -29,11 +29,11 @@ class LoginTests {
 
   @test("should return from mock3")
   @mock<UserService>(UserService, "validateAndGetUser", (email, password) => {
-    return { email, password };
+    return { fName: "a", lName: "c" };
   })
   async login3() {
     const c = await inject<AuthController>(AuthController);
     const result = c.login("asdf", "asdfs");
-    expect(result).toStrictEqual({ email: "asdf", password: "asdfs" });
+    expect(result).toStrictEqual({ fName: "a", lName: "c" });
   }
 }

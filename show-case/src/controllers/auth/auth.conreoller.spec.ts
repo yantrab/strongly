@@ -21,18 +21,18 @@ class LoginTests {
     this.app.register(fastifyCookie);
   }
 
-  @test("should return mocked user")
+  @test("should add token to cookies")
   @mock<UserService>(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba" })
   async login() {
     const res = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
+    expect((res.cookies[0] as any).name).toBe("token");
     expect(res.json()).toStrictEqual({ fName: "lo", lName: "asbaba" });
   }
 
-  @test("should return from mock2")
-  @mock<UserService>(UserService, "getUser", { fName: "lo", lName: "asbaba" })
-  async login2() {
-    const c = await inject<AuthController>(AuthController);
-    const result = c.getUser(1);
-    expect(result).toStrictEqual({ fName: "lo", lName: "asbaba" });
+  @test("wrong user or password")
+  @mock<UserService>(UserService, "validateAndGetUser", undefined)
+  async invalidLogin() {
+    const res = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
+    expect(res.statusCode).toBe(401);
   }
 }
