@@ -1,7 +1,7 @@
 import { symbols } from "../../utils/consts";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-function addMethodHook(target, key: string, hookKey: string, hookAction: () => any) {
+function addMethodHook(target, key: string, hookKey: string, hookAction: (...args) => any) {
   const allRoutes = Reflect.getMetadata(symbols.route, target) || {};
   const route = allRoutes[key] || {};
   route.hooks = route.hooks || {};
@@ -10,7 +10,7 @@ function addMethodHook(target, key: string, hookKey: string, hookAction: () => a
   Reflect.defineMetadata(symbols.route, allRoutes, target);
 }
 
-function addClassHook(target, hookKey: string, hookAction: () => any) {
+function addClassHook(target, hookKey: string, hookAction: (...args) => any) {
   const allRoutes = Reflect.getMetadata(symbols.route, target.prototype) || {};
   Object.keys(allRoutes).forEach(key => {
     const route = allRoutes[key];
@@ -28,6 +28,10 @@ interface IActionWithPayload {
   (action: (app: FastifyInstance, request: FastifyRequest, reply: FastifyReply, payload: any, next: (err, payload) => any) => void);
 }
 
+interface IGourd {
+  (isUserPermitted: (user) => boolean);
+}
+
 class Hook {
   readonly onRequest: IAction;
   readonly preParsing: IAction;
@@ -36,6 +40,12 @@ class Hook {
   readonly preSerialization: IActionWithPayload;
   readonly onSend: IActionWithPayload;
   readonly onResponse: IAction;
+  readonly gourd: IGourd = isUserPermitted => (target: any, propertyKey?: string) => {
+    const action = (app: FastifyInstance, request: FastifyRequest, reply: FastifyReply, next: () => any) => {};
+    if (propertyKey) addMethodHook(target, propertyKey, "preHandler", action);
+    else addClassHook(target, "preHandler", action);
+  };
+
   constructor() {
     ["onRequest", "preParsing", "preValidation", "preHandler", "preSerialization", "onSend", "onResponse"].forEach(hook => {
       this[hook] = action => (target: any, propertyKey?: string) => {

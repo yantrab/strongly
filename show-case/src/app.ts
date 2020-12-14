@@ -13,22 +13,13 @@ ServerFactory.create({
     }
   });
   app.register(fastifyCookie);
-
-  // app.post(
-  //   "/test",
-  //   {
-  //     preHandler: async (request, reply, done) => {
-  //       try {
-  //         await request.jwtVerify();
-  //       } catch (err) {
-  //         reply.send(err);
-  //       }
-  //     }
-  //   },
-  //   (req, replay) => {
-  //     console.log("a");
-  //   }
-  // );
+  app.addHook("onRequest", async (request, reply) => {
+    try {
+      await request.jwtVerify();
+    } catch (err) {
+      // reply.send(err);
+    }
+  });
 
   app.listen(3000, (err, address) => {
     if (err) {
