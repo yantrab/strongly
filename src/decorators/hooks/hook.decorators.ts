@@ -1,24 +1,5 @@
-import { symbols } from "../../utils/consts";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-
-function addMethodHook(target, key: string, hookKey: string, hookAction: (...args) => any) {
-  const allRoutes = Reflect.getMetadata(symbols.route, target) || {};
-  const route = allRoutes[key] || {};
-  route.hooks = route.hooks || {};
-  route.hooks[hookKey] = (route.hooks[hookKey] || []).concat([hookAction]);
-  allRoutes[key] = route;
-  Reflect.defineMetadata(symbols.route, allRoutes, target);
-}
-
-function addClassHook(target, hookKey: string, hookAction: (...args) => any) {
-  const allRoutes = Reflect.getMetadata(symbols.route, target.prototype) || {};
-  Object.keys(allRoutes).forEach(key => {
-    const route = allRoutes[key];
-    route.hooks = route.hooks || {};
-    route.hooks[hookKey] = (route.hooks[hookKey] || []).concat([hookAction]);
-  });
-  Reflect.defineMetadata(symbols.route, allRoutes, target);
-}
+import { addClassHook, addMethodHook } from "../../utils/schema";
 
 interface IAction {
   (action: (app: FastifyInstance, request: FastifyRequest, reply: FastifyReply, next: () => any) => void);
@@ -26,10 +7,6 @@ interface IAction {
 
 interface IActionWithPayload {
   (action: (app: FastifyInstance, request: FastifyRequest, reply: FastifyReply, payload: any, next: (err, payload) => any) => void);
-}
-
-interface IGourd {
-  (isUserPermitted: (user) => boolean);
 }
 
 class Hook {
@@ -40,11 +17,6 @@ class Hook {
   readonly preSerialization: IActionWithPayload;
   readonly onSend: IActionWithPayload;
   readonly onResponse: IAction;
-  readonly gourd: IGourd = isUserPermitted => (target: any, propertyKey?: string) => {
-    const action = (app: FastifyInstance, request: FastifyRequest, reply: FastifyReply, next: () => any) => {};
-    if (propertyKey) addMethodHook(target, propertyKey, "preHandler", action);
-    else addClassHook(target, "preHandler", action);
-  };
 
   constructor() {
     ["onRequest", "preParsing", "preValidation", "preHandler", "preSerialization", "onSend", "onResponse"].forEach(hook => {

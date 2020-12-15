@@ -20,3 +20,4 @@ export * from "./controllers/controller.decorator";
 export { params, body, headers, query, reply, request, app, user } from "./route-params/route-param.decorators";
 export { onRequest, onResponse, onSend, preHandler, preParsing, preSerialization, preValidation } from "./hooks/hook.decorators";
 export { delete as Delete, get, head, options, patch, post, put } from "./routes/route.decorators";
+export { guard } from "./guard";

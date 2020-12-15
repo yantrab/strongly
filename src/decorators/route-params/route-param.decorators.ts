@@ -2,7 +2,6 @@ import { symbols } from "../../utils/consts";
 import { set, get as getByPath, merge } from "lodash";
 import { getClass, getParamSchema } from "../../utils/typescript-service";
 import { JSONSchemaType } from "../../utils/util";
-import { FastifyInstance } from "fastify";
 
 function getControllerSchema(target, key: string, paramIndex: number) {
   const controller = getClass(target.constructor.name);
@@ -111,7 +110,7 @@ class RouteParam {
     });
 
     this.user = (target: any, methodName: string, paramIndex: number) => {
-      addRouteParam(target, methodName, paramIndex, "session.user");
+      addRouteParam(target, methodName, paramIndex, "request.user");
     };
   }
 }

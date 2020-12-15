@@ -1,3 +1,7 @@
 import { user } from "strongly";
 
-export class AdminController {}
+export class AdminController {
+  getUsers(@user user) {
+    return user;
+  }
+}
