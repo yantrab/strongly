@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import fastify, { FastifyInstance, FastifyReply, FastifyRequest, FastifyServerOptions } from "fastify";
+import fastify, { FastifyServerOptions } from "fastify";
 import { symbols } from "../utils/consts";
 import { toSnack } from "../utils/util";
 import { method } from "../utils/interfaces";
@@ -67,7 +67,7 @@ export class ServerFactory {
       });
     }
 
-    app.get("/is-alive", {}, async (request, reply) => {
+    app.get("/is-alive", {}, async () => {
       return { hello: "world" };
     });
     app.ready(err => {
@@ -108,8 +108,9 @@ export const mock = <T, P = new () => T>(
   target[propertyKey] = async function() {
     const temp = await diService.inject(provider);
     await diService.mock(provider, key, value);
-    await originalMethod.apply(this);
+    const result = await originalMethod.apply(this);
     diService.override((provider as any).name, temp);
+    return result;
   };
   return target;
 };

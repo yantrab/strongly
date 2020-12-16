@@ -1,4 +1,4 @@
-import { guard, get } from "strongly";
+import { guard, get } from "../../../../index";
 
 export class AdminController {
   @guard(user => user.role === "admin")

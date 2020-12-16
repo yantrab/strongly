@@ -1,6 +1,6 @@
 import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
-import { ServerFactory, inject, mock } from "strongly";
+import { ServerFactory, mock } from "strongly";
 import { AuthController } from "./auth.controller";
 import { UserService } from "../../services/user.service";
 import { FastifyInstance } from "fastify";
@@ -27,12 +27,19 @@ class LoginTests {
     const res = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
     expect((res.cookies[0] as any).name).toBe("token");
     expect(res.json()).toStrictEqual({ fName: "lo", lName: "asbaba" });
+    return res.cookies;
   }
 
   @test("wrong user or password")
-  @mock<UserService>(UserService, "validateAndGetUser", undefined)
+  @mock<UserService>(UserService, "validateAndGetUser", undefined as any)
   async invalidLogin() {
     const res = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
     expect(res.statusCode).toBe(401);
+  }
+
+  @test
+  async getUserAuthenticated() {
+    const res = await this.app.inject({ method: "GET", url: "/auth/get-user-authenticated", cookies: (await this.login()) as any });
+    expect(res.json()).toStrictEqual({ fName: "saba", lName: "baba" });
   }
 }

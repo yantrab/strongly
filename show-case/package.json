@@ -12,7 +12,7 @@
   "dependencies": {
     "fastify-cookie": "^4.1.1",
     "fastify-jwt": "^2.1.3",
-    "strongly": "^1.0.16"
+    "strongly": "^1.0.17"
   },
   "devDependencies": {
     "@testdeck/jest": "^0.1.2",

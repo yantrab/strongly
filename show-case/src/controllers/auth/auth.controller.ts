@@ -1,4 +1,4 @@
-import { body, post, email, min, get, app, reply } from "strongly";
+import { body, post, email, min, get, app, reply, request } from "strongly";
 import { UserService } from "../../services/user.service";
 
 export class AuthController {
@@ -20,7 +20,7 @@ export class AuthController {
     return user;
   }
 
-  @get("user/:id") getUser(id: number) {
-    return this.userService.getUser(id);
+  @get getUserAuthenticated(@request req) {
+    return this.userService.getUser(req.user);
   }
 }

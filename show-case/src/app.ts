@@ -1,5 +1,5 @@
 import { ServerFactory } from "strongly";
-import fastifyJwt, { FastifyJWTOptions } from "fastify-jwt";
+import fastifyJwt from "fastify-jwt";
 import fastifyCookie from "fastify-cookie";
 ServerFactory.create({
   logger: {
@@ -13,15 +13,14 @@ ServerFactory.create({
     }
   });
   app.register(fastifyCookie);
-  app.addHook("onRequest", async (request, reply) => {
+  app.addHook("onRequest", async request => {
     try {
+      // just add user to the request
       await request.jwtVerify();
-    } catch (err) {
-      // reply.send(err);
-    }
+    } catch (err) {}
   });
 
-  app.listen(3000, (err, address) => {
+  app.listen(3000, err => {
     if (err) {
       console.log(err);
       process.exit(1);
