@@ -1,5 +1,5 @@
 export class UserService {
-  async validateAndGetUser(email: string, password: string) {
+  async validateAndGetUser(email: string, password: string): Promise<{ fName: string; lName: string; role?: string }> {
     return { fName: "saba", lName: "baba" };
   }
 

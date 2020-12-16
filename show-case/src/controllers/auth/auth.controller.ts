@@ -20,7 +20,8 @@ export class AuthController {
     return user;
   }
 
-  @get getUserAuthenticated(@user user, @reply reply) {
+  @get
+  getUserAuthenticated(@user user, @reply reply) {
     if (!user) {
       reply.code(401).send();
       return;
