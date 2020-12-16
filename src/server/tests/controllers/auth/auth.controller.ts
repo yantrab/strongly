@@ -1,4 +1,4 @@
-import { body, post, email, min, onSend, app, reply } from "../../../../index";
+import { body, post, email, min, get, user, reply } from "../../../../index";
 import { UserService } from "../../services/user.service";
 
 export class AuthController {
@@ -6,5 +6,13 @@ export class AuthController {
 
   @post login(@body("email") @email email: string, @body("password") @min(6) password: string) {
     return this.userService.validateAndGetUser(email, password);
+  }
+
+  @get getUserAuthenticated(@user user, @reply reply) {
+    if (!user) {
+      reply.code(401).send();
+      return;
+    }
+    return user;
   }
 }

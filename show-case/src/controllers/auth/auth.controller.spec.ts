@@ -19,6 +19,12 @@ class LoginTests {
       }
     });
     this.app.register(fastifyCookie);
+    this.app.addHook("onRequest", async request => {
+      try {
+        // just add user to the request
+        await request.jwtVerify();
+      } catch (err) {}
+    });
   }
 
   @test("should add token to cookies")
@@ -37,9 +43,20 @@ class LoginTests {
     expect(res.statusCode).toBe(401);
   }
 
-  @test
-  async getUserAuthenticated() {
-    const res = await this.app.inject({ method: "GET", url: "/auth/get-user-authenticated", cookies: (await this.login()) as any });
+  @test("should return 401 ")
+  async getUserAuthenticated1() {
+    const res = await this.app.inject({ method: "GET", url: "/auth/get-user-authenticated" });
+    expect(res.json()).toStrictEqual({ fName: "saba", lName: "baba" });
+  }
+
+  @test("should return the user")
+  async getUserAuthenticated12() {
+    const cookies: any = await this.login();
+    const res = await this.app.inject({
+      method: "GET",
+      url: "/auth/get-user-authenticated",
+      cookies: { token: cookies[0].value } as any
+    });
     expect(res.json()).toStrictEqual({ fName: "saba", lName: "baba" });
   }
 }
