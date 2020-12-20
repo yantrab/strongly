@@ -1,6 +1,6 @@
 # strongly
 Node.js Framework on top of fastify js. It helps you build your server-side application easily with decorators. 
-With strongly js you don't nees to add type validation, we do it for you on the fly. 
+With strongly js you don't need to add type validation, we do it for you on the fly. 
 
 ## the motivation
 
