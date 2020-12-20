@@ -1,6 +1,5 @@
 import { suite, test } from "@testdeck/jest";
 import { min, max, date } from "./ajv.decorators";
-import { symbols } from "../../utils/consts";
 import "reflect-metadata";
 import { getClass, getParamSchema } from "../../utils/typescript-service";
 
@@ -57,10 +56,12 @@ class ajvDecoratorsTests {
     expect(schema?.properties).toStrictEqual({
       date: {
         format: "date",
+        notEmptyString: true,
         type: "string"
       },
       array1: {
         items: {
+          notEmptyString: true,
           type: "string"
         },
         minItems: 4,
@@ -68,6 +69,7 @@ class ajvDecoratorsTests {
       },
       array2: {
         items: {
+          notEmptyString: true,
           type: "string"
         },
         maxItems: 8,
@@ -76,6 +78,7 @@ class ajvDecoratorsTests {
       },
       array3: {
         items: {
+          notEmptyString: true,
           type: "string"
         },
         maxItems: 8,
@@ -127,15 +130,18 @@ class ajvDecoratorsTests {
       },
       string1: {
         minLength: 4,
+        notEmptyString: true,
         type: "string"
       },
       string2: {
         maxLength: 8,
         minLength: 4,
+        notEmptyString: true,
         type: "string"
       },
       string3: {
         maxLength: 8,
+        notEmptyString: true,
         type: "string"
       }
     });

@@ -48,7 +48,14 @@ function handleExplicitValidation(type: string, schema: any, decorators: Decorat
 export const getParamSchema = (type: Type, decorators: Decorator[] = []) => {
   const typeText = type.getText();
   const nonNullableType = type.getNonNullableType();
-  let schema: { optional?: boolean; type?: string; items?: any; properties?: any; required?: string[] } = {};
+  let schema: {
+    optional?: boolean;
+    type?: string;
+    items?: any;
+    properties?: any;
+    required?: string[];
+    allOf?: any[];
+  } = {};
   schema.optional = typeText.includes("| undefined");
 
   if (nonNullableType.isArray()) {
@@ -61,6 +68,9 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = []) => {
   }
   if (isPrimitive(nonNullableType)) {
     schema.type = typeText.replace(" | undefined", "");
+    if (schema.type === "string") {
+      schema["notEmptyString"] = true;
+    }
     schema = handleExplicitValidation(nonNullableType.getText(), schema, decorators);
     return schema;
   }

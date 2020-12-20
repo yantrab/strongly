@@ -15,4 +15,8 @@ export class AuthController {
     }
     return user;
   }
+
+  @post notEmptyString(@body("str") str?: string) {
+    return { str };
+  }
 }

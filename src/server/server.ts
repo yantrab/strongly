@@ -33,7 +33,21 @@ export class ServerFactory {
     }
     await diService.setDependencies(opts?.providers);
 
-    const app = fastify(opts);
+    const app = fastify({
+      ajv: {
+        customOptions: {
+          keywords: {
+            notEmptyString: {
+              validate: (_, data, parentData, path, o, u) => {
+                o[u] = data.trim();
+                return o[u].length > 0;
+              }
+            }
+          }
+        }
+      }
+    });
+
     app.register(fastifySwagger, {
       routePrefix: "/api-doc",
       swagger: {

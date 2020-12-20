@@ -31,8 +31,8 @@
   "author": "yantrab@gmail.com",
   "license": "MIT",
   "dependencies": {
-    "ajv": "^7.0.0-beta.7",
-    "fastify": "^3.8.0",
+    "ajv": "^7.0.2",
+    "fastify": "^3.9.2",
     "fastify-swagger": "^3.5.0",
     "globby": "^11.0.1",
     "http-errors": "^1.8.0",

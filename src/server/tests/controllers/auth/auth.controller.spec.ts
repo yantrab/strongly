@@ -28,12 +28,36 @@ class LoginTests {
   }
 
   @test("should return from mock3")
-  @mock<UserService>(UserService, "validateAndGetUser", (email, password) => {
+  @mock<UserService>(UserService, "validateAndGetUser", () => {
     return { fName: "a", lName: "c" };
   })
   async login3() {
     const c = await inject<AuthController>(AuthController);
     const result = c.login("asdf", "asdfs");
     expect(result).toStrictEqual({ fName: "a", lName: "c" });
+  }
+
+  @test
+  async notEmptyString() {
+    const res = await this.app.inject({ method: "POST", url: "/auth/not-empty-string", body: { str: "    " } } as any);
+    expect(res.statusCode).toBe(400);
+  }
+
+  @test
+  async validNotEmptyString() {
+    const res = await this.app.inject({ method: "POST", url: "/auth/not-empty-string", body: { str: "   2 " } } as any);
+    expect(res.json()).toStrictEqual({ str: "2" });
+  }
+
+  @test
+  async validNotEmptyString2() {
+    const res = await this.app.inject({ method: "POST", url: "/auth/not-empty-string", body: { str: 2 } } as any);
+    expect(res.json()).toStrictEqual({ str: "2" });
+  }
+
+  @test
+  async validNotEmptyString3() {
+    const res = await this.app.inject({ method: "POST", url: "/auth/not-empty-string", body: {} } as any);
+    expect(res.json()).toStrictEqual({});
   }
 }

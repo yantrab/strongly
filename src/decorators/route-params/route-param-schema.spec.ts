@@ -1,5 +1,5 @@
 import { post } from "../routes/route.decorators";
-import { body, params, reply, request } from "..";
+import { body, params } from "..";
 import { suite, test } from "@testdeck/jest";
 import { symbols } from "../../utils/consts";
 import "reflect-metadata";
@@ -106,6 +106,7 @@ class RouteSchemaTests {
             type: "number"
           },
           name: {
+            notEmptyString: true,
             type: "string"
           }
         },
@@ -124,6 +125,7 @@ class RouteSchemaTests {
             items: {
               properties: {
                 address: {
+                  notEmptyString: true,
                   type: "string"
                 },
                 id: {
@@ -136,10 +138,12 @@ class RouteSchemaTests {
             type: "array"
           },
           name: {
+            notEmptyString: true,
             type: "string"
           },
           somePrimitiveArray: {
             items: {
+              notEmptyString: true,
               type: "string"
             },
             type: "array"
@@ -161,6 +165,7 @@ class RouteSchemaTests {
               type: "number"
             },
             name: {
+              notEmptyString: true,
               type: "string"
             }
           },
@@ -194,6 +199,7 @@ class RouteSchemaTests {
         properties: {
           address: {
             maxLength: 10,
+            notEmptyString: true,
             type: "string"
           },
           id: {
