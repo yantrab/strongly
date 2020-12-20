@@ -125,3 +125,19 @@ async login() {
 }
 ```
 
+## Documentation
+* [server](https://github.com/yantrab/strongly#server)
+
+## Server
+#### create Fastify server instance
+```typescript
+ServerFactory.create(options)
+```
+
+```options: ```[FastifyServerOptions](https://github.com/fastify/fastify/blob/master/docs/Server.md) ```& { controllers, providers}```
+* controller - your controllers or path to your controllers or nothing when your controllers is under controllers' folder.
+* providers - services that you want to inject.
+
+return [Fastify server instance](https://github.com/fastify/fastify/blob/master/docs/Server.md#instance).
+
+
