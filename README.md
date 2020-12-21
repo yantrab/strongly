@@ -126,7 +126,9 @@ async login() {
 ```
 
 ## Documentation
-* [server](https://github.com/yantrab/strongly#server)
+* [Server](https://github.com/yantrab/strongly#server)
+* [Controllers](https://github.com/yantrab/strongly#controllers)
+* [Route decorators](https://github.com/yantrab/strongly#Route-decorators)
 
 ## Server
 #### create Fastify server instance
@@ -139,5 +141,37 @@ ServerFactory.create(options)
 * providers - services that you want to inject.
 
 return [Fastify server instance](https://github.com/fastify/fastify/blob/master/docs/Server.md#instance).
+
+## controllers
+controller is group of routes that handle the http request/response. 
+actually you don't need to decorate your controllers  with ```@controller``` decorator. 
+we are taking the base path from the class name, with [punctuation](https://developers.google.com/search/docs/advanced/guidelines/url-structure?hl=en&visit_id=637441135196055730-2755038&rd=1), the base path for [ShowCaseController](https://github.com/yantrab/strongly/blob/master/show-case/src/controllers/show-case/show-case.controller.ts)  for example  will be "show-case".
+
+if you want to set another url postfix you can pass it to the controller decorator -
+```typescript
+@Controller("base-path")
+class SomeController {}
+```
+
+## Route decorators
+```typescript
+@get
+@head
+@post
+@put
+@delete
+@options
+@patch
+```
+we are taking the route path from the method name, with [punctuation](https://developers.google.com/search/docs/advanced/guidelines/url-structure?hl=en&visit_id=637441135196055730-2755038&rd=1)
+```typescript
+// the path for this route is /save-user
+@post saveUser(@body user: UserDetails) {}
+```
+or specify your prefer path
+```typescript
+@get("getUser/:id") getUser(@params params: { id: number }) {}
+```
+
 
 
