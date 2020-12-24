@@ -129,6 +129,9 @@ async login() {
 * [Server](https://github.com/yantrab/strongly#server)
 * [Controllers](https://github.com/yantrab/strongly#controllers)
 * [Route decorators](https://github.com/yantrab/strongly#Route-decorators)
+* [Route parameter decorators](https://github.com/yantrab/strongly#Route-parameter-decorators)
+* [validation decorators](https://github.com/yantrab/strongly#validation-decorators)
+* [Guard decorator](https://github.com/yantrab/strongly#Guard-decorator)
 
 ## Server
 #### create Fastify server instance
@@ -142,7 +145,7 @@ ServerFactory.create(options)
 
 return [Fastify server instance](https://github.com/fastify/fastify/blob/master/docs/Server.md#instance).
 
-## controllers
+## Controllers
 controller is group of routes that handle the http request/response. 
 actually you don't need to decorate your controllers  with ```@controller``` decorator. 
 we are taking the base path from the class name, with [punctuation](https://developers.google.com/search/docs/advanced/guidelines/url-structure?hl=en&visit_id=637441135196055730-2755038&rd=1), the base path for [ShowCaseController](https://github.com/yantrab/strongly/blob/master/show-case/src/controllers/show-case/show-case.controller.ts)  for example  will be "show-case".
@@ -173,5 +176,71 @@ or specify your prefer path
 @get("getUser/:id") getUser(@params params: { id: number }) {}
 ```
 
+## Route parameter decorators
+- @body - request.body - parameters - (path: thePath)
+- @query - request.query
+- @params - request.params
+- @headers - request.headers
+- @user - request.user
+- @request - [request](https://www.fastify.io/docs/latest/Request/)
+- @reply - [reply](https://www.fastify.io/docs/latest/Reply/)
+- @app - [Fastify server instance](https://github.com/fastify/fastify/blob/master/docs/Server.md#instance)
 
+examples
+```typescript
+// request.query
+@get getUser(@query query: { id: number }) {}
 
+// request.query.id
+@get getUser(@query("id") id: number) {}
+```
+- string - ```{notEmptyString: true, type: "string"}```
+- number - ```{type: "number"}```
+
+## validation decorators
+Fastify uses a schema-based approach, and using [ajv](https://www.npmjs.com/package/ajv) by default. 
+we are build the schema from your types - 
+- string - ```{notEmptyString: true, type: "string"}```
+
+  notEmptyString trim the value and validate that the string.length > 0
+- number - ```{type: "number"}```
+- boolean - ```{type: "boolean"}```
+
+you can add extra validation -
+- send the schema to the route param decorators:
+    ```typescript
+     saveContact(@body<Contact>({ properties: { address: { maxLength: 10 } } }) contact: Contact)
+    ```
+- or add validation decorator to your model:
+    ```typescript
+    class UserDetails {
+      @min(10) name: string;
+    }
+    ```
+available extra validation decorators:
+
+    - min/max can be on string, number, or array.
+    - all [format](https://ajv.js.org/docs/validation.html#formats) string validation
+
+example - 
+```typescript
+// email prameter should be email formatm, and password length should be more then 5 letters
+login(@body("email") @email email: string, @body("password") @min(6) password: string) {}
+```
+
+## Guard decorator
+gourd decorator add pre handler hook to validate that the user have permission.
+param - (user) => boolean
+you can decorate class to method that you want to protect:
+```typescript
+@guard(user => user.role === "editor")
+class a {
+  @guard(user => user.isAdmin)
+  @get b () {
+    return 1;
+  }
+}
+```
+
+be aware that you need to add the user to the request by you own, you can use [fastify-jwt](https://github.com/fastify/fastify-jwt) to do it. 
+see [here](https://github.com/yantrab/strongly/blob/master/show-case/src/app.ts) full example. 
