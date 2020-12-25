@@ -1,5 +1,5 @@
 import { body, post, email, min, get, app, reply, user } from "strongly";
-import { UserService } from "../../services/user.service";
+import { UserService } from "../../services/user/user.service";
 
 export class AuthController {
   constructor(private userService: UserService) {}

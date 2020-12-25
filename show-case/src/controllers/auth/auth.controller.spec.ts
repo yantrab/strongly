@@ -2,10 +2,10 @@ import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
 import { ServerFactory, mock } from "strongly";
 import { AuthController } from "./auth.controller";
-import { UserService } from "../../services/user.service";
 import { FastifyInstance } from "fastify";
 import fastifyJwt from "fastify-jwt";
 import fastifyCookie from "fastify-cookie";
+import { UserService } from "../../services/user/user.service";
 
 @suite
 class LoginTests {

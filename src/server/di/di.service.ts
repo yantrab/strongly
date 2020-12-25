@@ -44,7 +44,9 @@ export class DIService {
     }
   }
 
-  async inject(target) {
+  async inject(target, providers?: { new (...args) }[]) {
+    await this.setDependencies(providers);
+
     if (!this.dependencies[target.name]) {
       await this.getDependencies(target);
     }

@@ -92,7 +92,7 @@ export class ServerFactory {
   }
 }
 
-export const inject = async <T>(target): Promise<T> => diService.inject(target);
+export const inject = async <T>(target, providers?: { new (...args) }[]): Promise<T> => diService.inject(target, providers);
 /**
  * If T is a Class, return union string type of class methods
  */
@@ -109,7 +109,7 @@ type PromiseReturnType<T> = T extends Promise<infer R> ? R : T;
  * @param key function name
  * @param value object or function
  */
-export const mock = <T, P = new () => T>(
+export const mock = <T, P = new (...args: any[]) => T>(
   provider: P,
   key: ClassType<P>,
   value: P extends { new (): infer R }

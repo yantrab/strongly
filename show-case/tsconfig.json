@@ -11,6 +11,7 @@
     "alwaysStrict": true,
     "declaration": true,
     "module": "commonjs",
+    "importHelpers": true,
     "types": [
       "jest",
       "node"
