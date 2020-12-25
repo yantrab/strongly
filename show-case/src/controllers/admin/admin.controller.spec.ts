@@ -41,7 +41,7 @@ class AdminTests {
   }
 
   @test
-  @mock<UserService>(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba" })
+  @mock(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba" })
   async forbidden() {
     const loginReq = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
     const res = await this.app.inject({ method: "GET", url: "/admin/users", cookies: { token: (loginReq.cookies[0] as any).value } });
@@ -49,7 +49,7 @@ class AdminTests {
   }
 
   @test
-  @mock<UserService>(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba", role: "admin" })
+  @mock(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba", role: "admin" })
   async getUsers() {
     const loginReq = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
     const res = await this.app.inject({ method: "GET", url: "/admin/users", cookies: { token: (loginReq.cookies[0] as any).value } });

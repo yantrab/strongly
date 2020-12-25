@@ -96,7 +96,7 @@ export const inject = async <T>(target, providers?: { new (...args) }[]): Promis
 /**
  * If T is a Class, return union string type of class methods
  */
-type ClassType<T> = T extends { new (): infer R } ? keyof R : never;
+type ClassType<T> = T extends { new (...args: any[]): infer R } ? keyof R : never;
 
 /**
  * Check if property is a function/method
@@ -109,7 +109,7 @@ type PromiseReturnType<T> = T extends Promise<infer R> ? R : T;
  * @param key function name
  * @param value object or function
  */
-export const mock = <T, P = new (...args: any[]) => T>(
+export const mock = <T, P = new (...args: any[]) => T, K = ClassType<P>>(
   provider: P,
   key: ClassType<P>,
   value: P extends { new (): infer R }

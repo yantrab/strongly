@@ -13,14 +13,14 @@ class LoginTests {
   }
 
   @test("should return mocked user")
-  @mock<UserService>(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba" })
+  @mock(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba" })
   async login() {
     const res = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
     expect(res.json()).toStrictEqual({ fName: "lo", lName: "asbaba" });
   }
 
   @test("should return from mock2")
-  @mock<UserService>(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba" })
+  @mock(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba" })
   async login2() {
     const c = await inject<AuthController>(AuthController);
     const result = c.login("asdf", "asdf");
@@ -28,7 +28,7 @@ class LoginTests {
   }
 
   @test("should return from mock3")
-  @mock<UserService>(UserService, "validateAndGetUser", () => {
+  @mock(UserService, "validateAndGetUser", () => {
     return { fName: "a", lName: "c" };
   })
   async login3() {
