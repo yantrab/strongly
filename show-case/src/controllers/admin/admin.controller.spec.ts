@@ -6,7 +6,7 @@ import { AuthController } from "../auth/auth.controller";
 import { FastifyInstance } from "fastify";
 import fastifyJwt from "fastify-jwt";
 import fastifyCookie from "fastify-cookie";
-import { UserService } from "../../services/user.service";
+import { UserService } from "../../services/user/user.service";
 
 @suite
 class AdminTests {
