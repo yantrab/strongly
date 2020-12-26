@@ -115,7 +115,7 @@ export const mock = <T, P = new (...args: any[]) => T, K = ClassType<P>>(
   value: P extends { new (): infer R }
     ? R[keyof R] extends AnyFunc
       ? PromiseReturnType<ReturnType<R[keyof R]>> | ((...args: any[]) => PromiseReturnType<ReturnType<R[keyof R]>>)
-      : never
+      : any
     : never
 ) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
   const originalMethod = descriptor.value;
