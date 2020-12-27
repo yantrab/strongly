@@ -3,14 +3,12 @@ import { User } from "../../domain/user";
 import { genSalt, hash, compare } from "bcryptjs";
 import NodeCache from "node-cache";
 
+type t0 = ReturnType<UserService["getUsers"]>;
 export class UserService {
-  constructor(private dbService: DbService) {
-    this.userRepo = this.dbService.getRepository<User>(User, "users");
-  }
   userRepo: Repository<User>;
   private cache = new NodeCache({ stdTTL: 60 * 60 * 12 });
 
-  async validateAndGetUser(email: string, password: string) {
+  async validateAndGetUser(email: string, password: string): Promise<User | undefined> {
     const userDb = await this.userRepo.collection.findOne({ email });
     if (!userDb?.password) return;
     const user = new User(userDb as User);
@@ -23,7 +21,7 @@ export class UserService {
   saveUser(user: User) {
     return this.userRepo.saveOrUpdateOne(user);
   }
-  async getUsers(query?: Partial<User>) {
+  getUsers(query?: Partial<User>) {
     return this.userRepo.collection
       .find<User>(query || {})
       .project({ password: 0 })

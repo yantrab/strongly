@@ -28,7 +28,7 @@ class LoginTests {
   }
 
   @test("should add token to cookies")
-  @mock(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba", phone: "123", email: "Asdasd" })
+  @mock(UserService, "validateAndGetUser", {})
   async login() {
     const res = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
     expect((res.cookies[0] as any).name).toBe("token");

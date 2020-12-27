@@ -109,14 +109,14 @@ type PromiseReturnType<T> = T extends Promise<infer R> ? R : T;
  * @param key function name
  * @param value object or function
  */
-export const mock = <T, P = new (...args: any[]) => T, K = ClassType<P>>(
+export const mock = <T, P = new (...args: any[]) => T>(
   provider: P,
   key: ClassType<P>,
   value: P extends { new (): infer R }
     ? R[keyof R] extends AnyFunc
       ? PromiseReturnType<ReturnType<R[keyof R]>> | ((...args: any[]) => PromiseReturnType<ReturnType<R[keyof R]>>)
       : any
-    : never
+    : any
 ) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
   const originalMethod = descriptor.value;
   target[propertyKey] = async function() {
