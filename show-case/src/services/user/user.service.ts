@@ -9,13 +9,11 @@ export class UserService {
   private cache = new NodeCache({ stdTTL: 60 * 60 * 12 });
 
   async validateAndGetUser(email: string, password: string): Promise<User | undefined> {
-    const userDb = await this.userRepo.collection.findOne({ email });
+    const userDb: User & { password: string } = (await this.userRepo.collection.findOne({ email })) as any;
     if (!userDb?.password) return;
-    const user = new User(userDb as User);
-    const isValidPassword = await compare(password, user.password);
+    const isValidPassword = await compare(password, userDb.password);
     if (!isValidPassword) return;
-    delete user.password;
-    return user;
+    return new User(userDb as User);
   }
 
   saveUser(user: User) {

@@ -51,7 +51,7 @@ class LoginTests {
 
   @mock(UserService, "validateAndGetUser", { fName: "saba", lName: "baba" })
   @test("should return the user")
-  async getUserAuthenticated12() {
+  async getUserAuthenticated2() {
     const cookies: any = await this.login();
     const res = await this.app.inject({
       method: "GET",

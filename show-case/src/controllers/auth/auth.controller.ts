@@ -33,11 +33,8 @@ export class AuthController {
   }
 
   @get
-  getUserAuthenticated(@user user, @reply reply) {
-    if (!user) {
-      reply.code(401).send();
-      return;
-    }
+  getUserAuthenticated(@user user, @reply reply): User {
+    if (!user) throw new Unauthorized();
     return user;
   }
 }

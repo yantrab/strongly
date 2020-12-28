@@ -1,4 +1,3 @@
-import { ObjectID } from "bson";
 import { EntityWithoutGetters } from "../utils/typescript.util";
 
 export abstract class Entity<T> {
@@ -7,7 +6,7 @@ export abstract class Entity<T> {
       Object.assign(this, data);
     }
   }
-  _id?: ObjectID;
+  _id?: string;
   get isNew() {
     return !this._id;
   }

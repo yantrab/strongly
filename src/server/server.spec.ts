@@ -8,11 +8,14 @@ import { FastifyRequest, FastifyReply } from "fastify";
 class someNestedClass {
   @min(4)
   someNumber: number;
+  get someGetter() {
+    return 1;
+  }
 }
 
 class shokoController {
   @get somePromise(): Promise<someNestedClass> {
-    return Promise.resolve({ someNumber: 1 });
+    return Promise.resolve({ someNumber: 1 } as any);
   }
   @post getUsers11(@request request: FastifyRequest, @reply reply: FastifyReply) {
     reply

@@ -82,6 +82,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = []) => {
     schema.required = schema.required || [];
 
     type.getProperties().forEach(prop => {
+      // if (prop.isGetter) return;
       const key = prop.getName();
       if (["request", "reply"].includes(key)) {
         return;

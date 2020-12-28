@@ -6,12 +6,13 @@ export enum Role {
 }
 
 export class User extends Entity<User> {
-  password?: string;
+  constructor(props) {
+    super(props);
+    delete this["password"];
+  }
+
   phone: string;
   email: string;
   fName: string;
   lName: string;
-  get fullName() {
-    return this.fName + " " + this.lName;
-  }
 }
