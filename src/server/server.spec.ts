@@ -11,13 +11,15 @@ class someNestedClass {
 }
 
 class shokoController {
+  @get somePromise(): Promise<someNestedClass> {
+    return Promise.resolve({ someNumber: 1 });
+  }
   @post getUsers11(@request request: FastifyRequest, @reply reply: FastifyReply) {
     reply
       .code(200)
       .header("Content-Type", "application/json; charset=utf-8")
       .send(request.body);
   }
-
   @post getUsers5(@body user: { id: number; a: someNestedClass }) {
     return user.id;
   }

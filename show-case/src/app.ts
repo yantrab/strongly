@@ -13,10 +13,16 @@ ServerFactory.create({
     }
   });
   app.register(fastifyCookie);
-  app.addHook("onRequest", async request => {
+  app.addHook("onRequest", async (request, reply) => {
     try {
-      // just add user to the request
       await request.jwtVerify();
+      reply.setCookie("token", request.cookies.token, {
+        path: "/",
+        secure: false,
+        httpOnly: true,
+        sameSite: false,
+        maxAge: 3600
+      });
     } catch (err) {}
   });
 

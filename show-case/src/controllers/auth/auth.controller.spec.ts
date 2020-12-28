@@ -28,7 +28,7 @@ class LoginTests {
   }
 
   @test("should add token to cookies")
-  @mock(UserService, "validateAndGetUser", {})
+  @mock(UserService, "validateAndGetUser", { fName: "lo", lName: "asbaba" })
   async login() {
     const res = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
     expect((res.cookies[0] as any).name).toBe("token");
@@ -37,7 +37,7 @@ class LoginTests {
   }
 
   @test("wrong user or password")
-  @mock(UserService, "validateAndGetUser", undefined as never)
+  @mock(UserService, "validateAndGetUser", undefined)
   async invalidLogin() {
     const res = await this.app.inject({ method: "POST", url: "/auth/login", body: { email: "a@b.c", password: "password" } } as any);
     expect(res.statusCode).toBe(401);
@@ -46,9 +46,10 @@ class LoginTests {
   @test("should return 401 ")
   async getUserAuthenticated1() {
     const res = await this.app.inject({ method: "GET", url: "/auth/get-user-authenticated" });
-    expect(res.json()).toStrictEqual({ fName: "saba", lName: "baba" });
+    expect(res.statusCode).toBe(401);
   }
 
+  @mock(UserService, "validateAndGetUser", { fName: "saba", lName: "baba" })
   @test("should return the user")
   async getUserAuthenticated12() {
     const cookies: any = await this.login();
