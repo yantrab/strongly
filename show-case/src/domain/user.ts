@@ -15,4 +15,5 @@ export class User extends Entity<User> {
   email: string;
   fName: string;
   lName: string;
+  role: Role;
 }

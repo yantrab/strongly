@@ -1,18 +1,37 @@
 import { DbService, Repository } from "../db/db.service";
-import { User } from "../../domain/user";
-import { genSalt, hash, compare } from "bcryptjs";
+import { Role, User } from "../../domain/user";
+import { compare, genSalt, hash } from "bcryptjs";
 import NodeCache from "node-cache";
+const cryptPassword = async password => {
+  const salt = await genSalt(10);
+  return hash(password, salt);
+};
 
-type t0 = ReturnType<UserService["getUsers"]>;
 export class UserService {
   userRepo: Repository<User>;
   private cache = new NodeCache({ stdTTL: 60 * 60 * 12 });
+  constructor(private dbService: DbService) {
+    this.userRepo = this.dbService.getRepository(User, "users");
+
+    this.userRepo.collection.countDocuments().then(async usersCount => {
+      if (usersCount) {
+        return;
+      }
+      const user = new User({
+        email: "admin@admin.com",
+        phone: "0555555",
+        fName: "Admin",
+        lName: "",
+        role: Role.admin
+      });
+      user["password"] = await cryptPassword("123456");
+      await this.saveUser(user);
+    });
+  }
 
   async validateAndGetUser(email: string, password: string): Promise<User | undefined> {
     const userDb: User & { password: string } = (await this.userRepo.collection.findOne({ email })) as any;
-    if (!userDb?.password) return;
-    const isValidPassword = await compare(password, userDb.password);
-    if (!isValidPassword) return;
+    if (!userDb?.password || !(await compare(password, userDb.password))) return;
     return new User(userDb as User);
   }
 
@@ -35,7 +54,7 @@ export class UserService {
     if (!cacheToken || cacheToken !== token) return false;
     const salt = await genSalt(10);
     const hashPassword = hash(password, salt);
-    await this.userRepo.collection.updateOne({ email: email }, { $set: { password } });
+    await this.userRepo.collection.updateOne({ email: email }, { $set: { password: hashPassword } });
     return true;
   }
 }

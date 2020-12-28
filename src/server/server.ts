@@ -26,7 +26,9 @@ async function getControllers(controllers): Promise<any[]> {
 }
 
 export class ServerFactory {
-  static async create(opts?: FastifyServerOptions & { controllers?: { new (args) }[] | string; providers?: { new (...args) }[] }) {
+  static async create(
+    opts?: FastifyServerOptions & { controllers?: { new (...args: any[]) }[] | string; providers?: { new (...args) }[] }
+  ) {
     const controllers = await getControllers(opts?.controllers);
     if (!controllers.length) {
       throw new Error("There is no controllers!");
