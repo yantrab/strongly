@@ -1,8 +1,8 @@
 import { Entity } from "./entity";
 
 export enum Role {
-  admin,
-  user
+  admin = "admin",
+  user = "user"
 }
 
 export class User extends Entity<User> {

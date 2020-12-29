@@ -1,4 +1,5 @@
-import { guard, get } from "../../../../index";
+import { guard, get, body, post } from "../../../../index";
+import { User } from "./user";
 
 export class AdminController {
   @guard(user => user.role === "admin")
@@ -6,4 +7,7 @@ export class AdminController {
   users() {
     return [{ fName: "saba" }, { fName: "baba" }];
   }
+
+  @post
+  async addUser(@body user: User) {}
 }

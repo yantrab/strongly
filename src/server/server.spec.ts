@@ -5,12 +5,17 @@ import { min, max } from "../decorators/ajv/ajv.decorators";
 import { body, Controller, get, params, post, reply, request, email, onRequest, preHandler, onSend } from "..";
 import { FastifyRequest, FastifyReply } from "fastify";
 
+enum SomeEnum {
+  a = "a"
+}
 class someNestedClass {
   @min(4)
   someNumber: number;
   get someGetter() {
     return 1;
   }
+
+  someEnum: SomeEnum;
 }
 
 class shokoController {

@@ -16,13 +16,13 @@ ServerFactory.create({
   app.addHook("onRequest", async (request, reply) => {
     try {
       await request.jwtVerify();
-      reply.setCookie("token", request.cookies.token, {
-        path: "/",
-        secure: false,
-        httpOnly: true,
-        sameSite: false,
-        maxAge: 3600
-      });
+      // reply.setCookie("token", request.cookies.token, {
+      //   path: "/",
+      //   secure: false,
+      //   httpOnly: true,
+      //   sameSite: false,
+      //   maxAge: 3600
+      // });
     } catch (err) {}
   });
 

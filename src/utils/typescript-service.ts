@@ -1,5 +1,5 @@
 import { merge } from "lodash";
-import { ClassDeclaration, Decorator, Project, Type } from "ts-morph";
+import { ClassDeclaration, Decorator, Project, Type, Symbol as tsSymbol } from "ts-morph";
 import { getMinMaxValidation } from "./ajv.service";
 import { toSnack } from "../utils/util";
 const project = new Project({ tsConfigFilePath: process.cwd() + "/tsconfig.json" });
@@ -45,7 +45,7 @@ function handleExplicitValidation(type: string, schema: any, decorators: Decorat
   return schema;
 }
 
-export const getParamSchema = (type: Type, decorators: Decorator[] = []) => {
+export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: tsSymbol | undefined = undefined) => {
   const typeText = type.getText();
   const nonNullableType = type.getNonNullableType();
   let schema: {
@@ -55,6 +55,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = []) => {
     properties?: any;
     required?: string[];
     allOf?: any[];
+    enum?: string[];
   } = {};
   schema.optional = typeText.includes("| undefined");
 
@@ -66,6 +67,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = []) => {
     delete schema.items.optional;
     return schema;
   }
+
   if (isPrimitive(nonNullableType)) {
     schema.type = typeText.replace(" | undefined", "");
     if (schema.type === "string") {
@@ -89,7 +91,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = []) => {
       }
       const valueDeclaration = prop.getValueDeclarationOrThrow();
       const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
-      schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators);
+      schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
       if (schema.properties[key].optional !== true) {
         schema.required?.push(key);
       }
@@ -99,6 +101,32 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = []) => {
       delete schema.required;
     }
 
+    return schema;
+  }
+
+  if (nonNullableType.isEnumLiteral() && prop) {
+    schema.type = "string";
+    schema.enum = (prop as any)
+      .getValueDeclarationOrThrow()
+      .getSourceFile()
+      .getEnum(e => e.getName() === nonNullableType.getText())
+      .getMembers()
+      .map(m => m.getName());
+    return schema;
+  }
+
+  if (nonNullableType.isEnum()) {
+    schema.type = "string";
+    const filePath = nonNullableType
+      .getSymbolOrThrow()
+      .getValueDeclarationOrThrow()
+      .getSourceFile()
+      .getFilePath();
+    schema.enum = project
+      .getSourceFileOrThrow(filePath)
+      .getEnumOrThrow(e => e.getName() === typeText.split(".")[1])
+      .getMembers()
+      .map(m => m.getName());
     return schema;
   }
 };
