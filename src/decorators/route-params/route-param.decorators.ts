@@ -6,8 +6,9 @@ import { JSONSchemaType } from "../../utils/util";
 function getControllerSchema(target, key: string, paramIndex: number) {
   const controller = getClass(target.constructor.name);
   if (controller) {
-    const param = controller.getMethodOrThrow(key).getParameters()[paramIndex];
+    const param = controller.getMethod(key)?.getParameters()[paramIndex];
     if (
+      !param ||
       param
         .getDecorators()
         .map(d => d.getName())
