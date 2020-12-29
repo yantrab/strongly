@@ -1,4 +1,5 @@
 import { getClass } from "../../utils/typescript-service";
+import { Provider, ValueProvider } from "../../utils/util";
 
 export class DIService {
   private dependencies = {};
@@ -37,14 +38,26 @@ export class DIService {
     return results;
   }
 
-  async setDependencies(providers?: { new (...args) }[]) {
+  async setDependencies(providers?: Provider[]) {
+    let name;
+    let provider;
     if (!providers) return;
-    for (const p of providers) {
-      this.dependencies[p.name] = new p(...(await this.getDependencies(p)));
+    for (let p of providers) {
+      if ("useValue" in p) {
+        p = p as ValueProvider;
+        name = p.provide.name || p.provide;
+        provider = p.useValue;
+      } else {
+        p = p as { new (...args) };
+        name = p.name;
+        provider = new p(...(await this.getDependencies(p)));
+      }
+
+      this.dependencies[name] = provider;
     }
   }
 
-  async inject(target, providers?: { new (...args) }[]) {
+  async inject(target, providers?: Provider[]) {
     await this.setDependencies(providers);
 
     if (!this.dependencies[target.name]) {

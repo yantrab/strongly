@@ -1,10 +1,14 @@
 import { ServerFactory } from "strongly";
 import fastifyJwt from "fastify-jwt";
 import fastifyCookie from "fastify-cookie";
+import { MongoClient } from "mongodb";
+import { mongoUrl } from "./services/config/config.service";
+
 ServerFactory.create({
   logger: {
     level: "debug"
-  }
+  },
+  providers: [new MongoClient(mongoUrl)]
 }).then(app => {
   app.register(fastifyJwt, {
     secret: "supersecret",

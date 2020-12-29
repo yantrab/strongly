@@ -7,3 +7,6 @@ type NestedPartial<T> = {
 };
 
 export declare type JSONSchemaType<T> = NestedPartial<_JSONSchemaType<T>>;
+
+export declare type ValueProvider = { provide: any; useValue: any };
+export declare type Provider = { new (...args) } | ValueProvider;

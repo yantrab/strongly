@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import fastify, { FastifyServerOptions } from "fastify";
 import { symbols } from "../utils/consts";
-import { toSnack } from "../utils/util";
+import { Provider, toSnack } from "../utils/util";
 import { method } from "../utils/interfaces";
 import { get } from "lodash";
 import { fastifySwagger } from "fastify-swagger";
@@ -26,9 +26,7 @@ async function getControllers(controllers): Promise<any[]> {
 }
 
 export class ServerFactory {
-  static async create(
-    opts?: FastifyServerOptions & { controllers?: { new (...args: any[]) }[] | string; providers?: { new (...args) }[] }
-  ) {
+  static async create(opts?: FastifyServerOptions & { controllers?: { new (...args: any[]) }[] | string; providers?: Provider[] }) {
     const controllers = await getControllers(opts?.controllers);
     if (!controllers.length) {
       throw new Error("There is no controllers!");
