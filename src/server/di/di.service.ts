@@ -13,13 +13,20 @@ export class DIService {
 
   async getDependencies(target) {
     const classDeclaration = getClass(target.name);
+    const classDependencies: any[] = [];
     if (!classDeclaration) {
       return [];
     }
-    const types: any = [];
     for (const c of classDeclaration.getConstructors()) {
       for (const p of c.getParameters()) {
         const type = p.getType();
+        const cName = type.getText().split(".")[type.getText().split(".").length - 1];
+
+        if (this.dependencies[cName]) {
+          classDependencies.push(this.dependencies[cName]);
+          continue;
+        }
+
         const firstProp = type.getProperties()[0];
         if (firstProp) {
           const d: any = await import(
@@ -28,14 +35,12 @@ export class DIService {
               .getSourceFile()
               .getFilePath()
           );
-          const cName = type.getText().split(".")[type.getText().split(".").length - 1];
-          types.push(d[cName]);
+          classDependencies.push(await this.getDependency(d[cName]));
         }
       }
     }
-    const results = await Promise.all(types.map(type => this.getDependency(type)));
-    this.dependencies[target.name] = new target(...results);
-    return results;
+    this.dependencies[target.name] = new target(...classDependencies);
+    return classDependencies;
   }
 
   async setDependencies(providers?: Provider[]) {
