@@ -5,7 +5,7 @@ import { Provider, toSnack } from "../utils/util";
 import { method } from "../utils/interfaces";
 import { get } from "lodash";
 import { fastifySwagger } from "fastify-swagger";
-import { getMethodSchema } from "../utils/typescript-service";
+import { getDefinitions, getMethodSchema } from "../utils/typescript-service";
 import glob from "globby";
 import { dirname } from "path";
 import { DIService } from "./di/di.service";
@@ -80,7 +80,10 @@ export class ServerFactory {
         app[method.routeType](url, options, handler);
       });
     }
-
+    const definitions = getDefinitions() || {};
+    Object.keys(definitions).forEach(key => {
+      app.addSchema({ $id: key, ...definitions[key] });
+    });
     app.get("/is-alive", {}, async () => {
       return { hello: "world" };
     });

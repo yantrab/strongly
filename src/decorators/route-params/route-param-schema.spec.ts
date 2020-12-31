@@ -3,6 +3,7 @@ import { body, params } from "..";
 import { suite, test } from "@testdeck/jest";
 import { symbols } from "../../utils/consts";
 import "reflect-metadata";
+import { getDefinitions } from "../../utils/typescript-service";
 
 class Contact {
   address?: string;
@@ -27,7 +28,7 @@ class SomeController {
   @post getUsers7(@body user: UserDetails) {}
   @post getUsers8(@body user: { id?: number; name: string }[]) {}
   @post getUsers9(@params<number>("id", { minimum: 5 }) id?: number) {}
-  @post getUsers10(@body<Contact>({ properties: { address: { maxLength: 10 } } }) contact: Contact) {
+  @post getUsers10(@body<Contact>({ properties: { address: { maxLength: 10 } } }) contact: { address?: string; id: number }) {
     return 5;
   }
 }
@@ -123,38 +124,48 @@ class RouteSchemaTests {
   classInBody() {
     expect(this.routes["getUsers7"].schema.request).toStrictEqual({
       body: {
-        properties: {
-          contacts: {
-            items: {
-              properties: {
-                address: {
-                  notEmptyString: true,
-                  type: "string"
-                },
-                id: {
-                  type: "number"
-                }
-              },
-              required: ["id"],
-              type: "object"
-            },
-            type: "array"
+        $ref: "UserDetails#",
+        type: "object"
+      }
+    });
+
+    const definitions: any = getDefinitions();
+    expect(definitions.Contact).toStrictEqual({
+      properties: {
+        address: {
+          notEmptyString: true,
+          type: "string"
+        },
+        id: {
+          type: "number"
+        }
+      },
+      required: ["id"],
+      type: "object"
+    });
+
+    expect(definitions.UserDetails).toStrictEqual({
+      properties: {
+        contacts: {
+          items: {
+            $ref: "Contact#"
           },
-          name: {
+          type: "array"
+        },
+        name: {
+          notEmptyString: true,
+          type: "string"
+        },
+        somePrimitiveArray: {
+          items: {
             notEmptyString: true,
             type: "string"
           },
-          somePrimitiveArray: {
-            items: {
-              notEmptyString: true,
-              type: "string"
-            },
-            type: "array"
-          }
-        },
-        required: ["name", "contacts"],
-        type: "object"
-      }
+          type: "array"
+        }
+      },
+      required: ["name", "contacts"],
+      type: "object"
     });
   }
 

@@ -16,4 +16,7 @@ export class User extends Entity<User> {
   fName: string;
   lName: string;
   role: Role;
+  get fullName() {
+    return this.fName + " " + this.lName;
+  }
 }

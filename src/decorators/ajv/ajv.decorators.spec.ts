@@ -1,9 +1,9 @@
 import { suite, test } from "@testdeck/jest";
 import { min, max, date } from "./ajv.decorators";
 import "reflect-metadata";
-import { getClass, getParamSchema } from "../../utils/typescript-service";
+import { getClass, getDefinitions, getParamSchema } from "../../utils/typescript-service";
 
-class c123 {
+export class c123 {
   @date
   date: string;
 
@@ -53,7 +53,9 @@ class ajvDecoratorsTests {
   @test
   minmax() {
     const schema = getParamSchema(getClass(c123.name).getType());
-    expect(schema?.properties).toStrictEqual({
+    expect(schema).toStrictEqual({ optional: false, $ref: "c123#" });
+    const definitions: any = getDefinitions();
+    expect(definitions.c123.properties).toStrictEqual({
       date: {
         format: "date",
         notEmptyString: true,

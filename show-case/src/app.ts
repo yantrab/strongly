@@ -6,7 +6,7 @@ import { mongoUrl } from "./services/config/config.service";
 import { MongoMemoryServer } from "mongodb-memory-server";
 
 const start = async () => {
-  // econst mongoUrl = await new MongoMemoryServer().getUri();
+  const mongoUrl = await new MongoMemoryServer().getUri();
 
   const mongo = await new MongoClient(mongoUrl);
   await mongo.connect();

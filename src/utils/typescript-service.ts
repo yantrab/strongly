@@ -1,7 +1,7 @@
 import { last, merge } from "lodash";
 import { ClassDeclaration, Decorator, Project, Type, Symbol as tsSymbol, ts, SymbolFlags } from "ts-morph";
 import { getMinMaxValidation } from "./ajv.service";
-import { toSnack } from "../utils/util";
+import { Schema, toSnack } from "../utils/util";
 const project = new Project({ tsConfigFilePath: process.cwd() + "/tsconfig.json" });
 const sourceFiles = project.getSourceFiles();
 const allClasses: { [name: string]: ClassDeclaration } = {};
@@ -10,7 +10,8 @@ sourceFiles.forEach(s => {
     allClasses[c.getName() as string] = c;
   });
 });
-
+const definitions = {};
+export const getDefinitions = () => definitions;
 export const isPrimitive = (type: Type) => type.isBoolean() || type.isNumber() || type.isString();
 
 export const getClass = name => allClasses[name];
@@ -45,18 +46,34 @@ function handleExplicitValidation(type: string, schema: any, decorators: Decorat
   return schema;
 }
 
+const getObjectSchema = (type: Type, decorators) => {
+  let schema: Schema = {};
+  schema = handleExplicitValidation("object", schema, decorators);
+  schema.type = "object";
+  schema.properties = {};
+  schema.required = schema.required || [];
+  type.getProperties().forEach(prop => {
+    const key = prop.getName();
+    const isGetter = prop.hasFlags(SymbolFlags.GetAccessor);
+    if (["request", "reply"].includes(key) || isGetter) return;
+    const valueDeclaration = prop.getValueDeclarationOrThrow();
+    const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
+    schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
+    if (schema.properties[key].optional !== true) {
+      schema.required?.push(key);
+    }
+    delete schema.properties[key].optional;
+  });
+
+  if (!schema.required.length) {
+    delete schema.required;
+  }
+  return schema;
+};
 export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: tsSymbol | undefined = undefined) => {
   const typeText = type.getText();
   const nonNullableType = type.getNonNullableType();
-  let schema: {
-    optional?: boolean;
-    type?: string;
-    items?: any;
-    properties?: any;
-    required?: string[];
-    allOf?: any[];
-    enum?: string[];
-  } = {};
+  let schema: Schema = {};
   schema.optional = typeText.includes("| undefined");
 
   if (nonNullableType.isArray()) {
@@ -77,33 +94,15 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     return schema;
   }
 
+  if (type.isClass()) {
+    const name = type.getText().split(").")[1] || type.getText();
+    schema["$ref"] = name + "#";
+    if (!definitions[name]) definitions[name] = getObjectSchema(nonNullableType, decorators);
+    return schema;
+  }
+
   if (nonNullableType.isObject()) {
-    schema = handleExplicitValidation("object", schema, decorators);
-    schema.type = "object";
-    schema.properties = {};
-    schema.required = schema.required || [];
-
-    type.getProperties().forEach(prop => {
-      // if (prop.isGetter) return;
-      const key = prop.getName();
-      const isGetter = prop.hasFlags(SymbolFlags.GetAccessor);
-
-      if (["request", "reply"].includes(key) || isGetter) {
-        return;
-      }
-      const valueDeclaration = prop.getValueDeclarationOrThrow();
-      ///const isGetter = valueDeclaration.getSymbolOrThrow().getFlags() === ts.SymbolFlags.Accessor;
-      const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
-      schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
-      if (schema.properties[key].optional !== true) {
-        schema.required?.push(key);
-      }
-      delete schema.properties[key].optional;
-    });
-    if (!schema.required.length) {
-      delete schema.required;
-    }
-
+    schema = getObjectSchema(nonNullableType, decorators);
     return schema;
   }
 

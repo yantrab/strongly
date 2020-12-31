@@ -23,6 +23,7 @@
     "build": "tsc  --p  tsconfig.build.json\n",
     "prebuild": "npm run clean",
     "test": "jest --coverage",
+    "start": "ts-node ./src/server/tests/app.ts",
     "pretest": "npm run lint",
     "lint": "eslint 'src/**/*.ts' --fix",
     "copy-files": "cp package.json ./dist/package.json & cp README.md ./dist/README.md",
@@ -33,6 +34,7 @@
   "dependencies": {
     "ajv": "^7.0.2",
     "fastify": "^3.9.2",
+    "fastify-oas": "^3.0.8",
     "fastify-swagger": "^3.5.0",
     "globby": "^11.0.1",
     "http-errors": "^1.8.0",
