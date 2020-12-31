@@ -34,7 +34,6 @@
   "dependencies": {
     "ajv": "^7.0.2",
     "fastify": "^3.9.2",
-    "fastify-oas": "^3.0.8",
     "fastify-swagger": "^3.5.0",
     "globby": "^11.0.1",
     "http-errors": "^1.8.0",
