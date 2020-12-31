@@ -1,5 +1,5 @@
 import { last, merge } from "lodash";
-import { ClassDeclaration, Decorator, Project, Type, Symbol as tsSymbol, ts, SymbolFlags } from "ts-morph";
+import { ClassDeclaration, Decorator, Project, Type, Symbol as tsSymbol, SymbolFlags } from "ts-morph";
 import { getMinMaxValidation } from "./ajv.service";
 import { Schema, toSnack } from "../utils/util";
 const project = new Project({ tsConfigFilePath: process.cwd() + "/tsconfig.json" });
