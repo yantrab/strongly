@@ -1,5 +1,5 @@
-import { merge } from "lodash";
-import { ClassDeclaration, Decorator, Project, Type, Symbol as tsSymbol } from "ts-morph";
+import { last, merge } from "lodash";
+import { ClassDeclaration, Decorator, Project, Type, Symbol as tsSymbol, ts, SymbolFlags } from "ts-morph";
 import { getMinMaxValidation } from "./ajv.service";
 import { toSnack } from "../utils/util";
 const project = new Project({ tsConfigFilePath: process.cwd() + "/tsconfig.json" });
@@ -86,10 +86,13 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     type.getProperties().forEach(prop => {
       // if (prop.isGetter) return;
       const key = prop.getName();
-      if (["request", "reply"].includes(key)) {
+      const isGetter = prop.hasFlags(SymbolFlags.GetAccessor);
+
+      if (["request", "reply"].includes(key) || isGetter) {
         return;
       }
       const valueDeclaration = prop.getValueDeclarationOrThrow();
+      ///const isGetter = valueDeclaration.getSymbolOrThrow().getFlags() === ts.SymbolFlags.Accessor;
       const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
       schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
       if (schema.properties[key].optional !== true) {
@@ -117,16 +120,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
 
   if (nonNullableType.isEnum()) {
     schema.type = "string";
-    const filePath = nonNullableType
-      .getSymbolOrThrow()
-      .getValueDeclarationOrThrow()
-      .getSourceFile()
-      .getFilePath();
-    schema.enum = project
-      .getSourceFileOrThrow(filePath)
-      .getEnumOrThrow(e => e.getName() === typeText.split(".")[1])
-      .getMembers()
-      .map(m => m.getName());
+    schema.enum = nonNullableType.getUnionTypes().map(t => last(t.getText().split(".")) as string);
     return schema;
   }
 };

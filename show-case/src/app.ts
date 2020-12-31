@@ -3,8 +3,11 @@ import fastifyJwt from "fastify-jwt";
 import fastifyCookie from "fastify-cookie";
 import { MongoClient } from "mongodb";
 import { mongoUrl } from "./services/config/config.service";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 const start = async () => {
+  // econst mongoUrl = await new MongoMemoryServer().getUri();
+
   const mongo = await new MongoClient(mongoUrl);
   await mongo.connect();
   ServerFactory.create({

@@ -12,6 +12,9 @@ class UserDetails {
   name: string;
   somePrimitiveArray?: string[];
   contacts: Contact[];
+  get getSomething() {
+    return 2;
+  }
 }
 
 class SomeController {
