@@ -252,7 +252,7 @@ just open http://localhost:3000/api-doc to see it,
 for example - for this controller
 ```typescript
 export class AuthController {
-  @post async login(@body("email") @email email: string, @body("password") @min(6) password: string, @app app, @reply reply) { }
+  @post async login(@body("email") @email email: string, @body("password") @min(6) password: string) { }
 
   @post logout(@reply reply, @request req) {  }
 
