@@ -14,7 +14,7 @@ const diService = new DIService();
 async function getControllers(controllers): Promise<any[]> {
   if (!controllers || typeof controllers === "string") {
     const folderPath = dirname(require.main?.filename as string);
-    const paths = glob.sync([folderPath + (controllers ? "/" + controllers : "/controllers/**"), "!**.spec.ts"]);
+    const paths = glob.sync([folderPath + (controllers ? "/" + controllers : "/controllers/**/*.ts"), "!**.spec.ts"]);
     const result = await Promise.all(
       paths.map(async p => {
         const m = await import(p);

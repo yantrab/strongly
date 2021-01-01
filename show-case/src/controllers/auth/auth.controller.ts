@@ -38,3 +38,49 @@ export class AuthController {
     return user;
   }
 }
+
+const a = {
+  swagger: "2.0",
+  info: { title: "show-case", version: "1.0.0", description: "some examples of using Strongly framework." },
+  paths: {
+    "/auth/login": {
+      post: {
+        parameters: [
+          {
+            name: "body",
+            in: "body",
+            required: true,
+            schema: {
+              properties: {
+                password: { type: "string", notEmptyString: true, minLength: 6 },
+                email: { format: "email", type: "string", notEmptyString: true }
+              },
+              type: "object",
+              required: ["password", "email"]
+            }
+          }
+        ],
+        tags: ["auth"],
+        responses: { "201": { schema: { $ref: "#/definitions/User" } } }
+      }
+    },
+    "/auth/logout": { post: { parameters: [], tags: ["auth"] } },
+    "/auth/get-user-authenticated": {
+      get: { parameters: [], tags: ["auth"], responses: { "201": { schema: { $ref: "#/definitions/User" } } } }
+    }
+  },
+  definitions: {
+    User: {
+      type: "object",
+      properties: {
+        phone: { type: "string", notEmptyString: true },
+        email: { type: "string", notEmptyString: true },
+        fName: { type: "string", notEmptyString: true },
+        lName: { type: "string", notEmptyString: true },
+        role: { type: "string", enum: ["admin", "user"] },
+        _id: { type: "string", notEmptyString: true }
+      },
+      required: ["phone", "email", "fName", "lName", "role"]
+    }
+  }
+};
