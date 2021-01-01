@@ -96,7 +96,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
 
   if (type.isClass()) {
     const name = type.getText().split(").")[1] || type.getText();
-    schema["$ref"] = name + "#";
+    schema["$ref"] = "#/definitions/" + name;
     if (!definitions[name]) definitions[name] = getObjectSchema(nonNullableType, decorators);
     return schema;
   }
@@ -131,5 +131,5 @@ export const getMethodSchema = (c, m) => {
   if (responseType?.getTypeArguments()[0]) responseType = responseType?.getTypeArguments()[0];
   const responseSchema = responseType ? getParamSchema(responseType) : {};
   delete responseSchema?.optional;
-  return { description, response: responseSchema ? { 201: responseSchema } : undefined };
+  return { description, responses: responseSchema ? { 201: { schema: responseSchema } } : undefined };
 };

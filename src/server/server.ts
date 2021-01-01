@@ -4,12 +4,13 @@ import { symbols } from "../utils/consts";
 import { Provider, toSnack } from "../utils/util";
 import { method } from "../utils/interfaces";
 import { get } from "lodash";
-import { fastifySwagger } from "fastify-swagger";
-import { getDefinitions, getMethodSchema } from "../utils/typescript-service";
+import { getDefinitions } from "../utils/typescript-service";
 import glob from "globby";
 import { dirname } from "path";
 import { DIService } from "./di/di.service";
+import { addSwagger } from "./swagger/swagger";
 const diService = new DIService();
+
 async function getControllers(controllers): Promise<any[]> {
   if (!controllers || typeof controllers === "string") {
     const folderPath = dirname(require.main?.filename as string);
@@ -48,17 +49,6 @@ export class ServerFactory {
       }
     });
 
-    app.register(fastifySwagger, {
-      routePrefix: "/api-doc",
-      swagger: {
-        info: {
-          title: "Api documentation" + "",
-          description: "fastify swagger api",
-          version: "0.1.0"
-        }
-      },
-      exposeRoute: true
-    });
     for (const controller of controllers) {
       const args = await diService.getDependencies(controller);
       const instance = new controller(...args);
@@ -75,21 +65,24 @@ export class ServerFactory {
           });
         });
         const handler = async (request, reply) => instance[key](...(method.params || []).map(p => get({ request, reply, app }, p.path)));
-        const schema = { ...method.schema?.request, tags: [basePath], ...getMethodSchema(controller, key) };
+        const schema = { ...method.schema?.request, tags: [basePath] };
         const options = { schema, ...hooks };
         app[method.routeType](url, options, handler);
       });
     }
+
     const definitions = getDefinitions() || {};
     Object.keys(definitions).forEach(key => {
-      app.addSchema({ $id: key, ...definitions[key] });
+      app.addSchema({ $id: "#/definitions/" + key, ...definitions[key] });
     });
+
     app.get("/is-alive", {}, async () => {
       return { hello: "world" };
     });
+
+    addSwagger(controllers, app);
     app.ready(err => {
       if (err) throw err;
-      app.swagger();
     });
     return app;
   }
