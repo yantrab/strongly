@@ -1,4 +1,4 @@
-import { body, post, get, params, min, email } from "strongly";
+import { body, post, get, params, min, email } from "../../../index";
 
 class Contact {
   address?: string;

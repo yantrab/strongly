@@ -10,3 +10,13 @@ export declare type JSONSchemaType<T> = NestedPartial<_JSONSchemaType<T>>;
 
 export declare type ValueProvider = { provide: any; useValue: any };
 export declare type Provider = { new (...args) } | ValueProvider;
+
+export declare type Schema = {
+  optional?: boolean;
+  type?: string;
+  items?: any;
+  properties?: any;
+  required?: string[];
+  allOf?: any[];
+  enum?: string[];
+};

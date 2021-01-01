@@ -1,6 +1,6 @@
 {
   "name": "strongly",
-  "version": "1.0.27",
+  "version": "1.0.30",
   "description": "Make your server strongly type without adding any piece of code",
   "main": "index.js",
   "types": "index.d.ts",
@@ -23,6 +23,7 @@
     "build": "tsc  --p  tsconfig.build.json\n",
     "prebuild": "npm run clean",
     "test": "jest --coverage",
+    "start": "ts-node ./src/server/tests/app.ts",
     "pretest": "npm run lint",
     "lint": "eslint 'src/**/*.ts' --fix",
     "copy-files": "cp package.json ./dist/package.json & cp README.md ./dist/README.md",
@@ -33,11 +34,12 @@
   "dependencies": {
     "ajv": "^7.0.2",
     "fastify": "^3.9.2",
-    "fastify-swagger": "^3.5.0",
+    "fastify-static": "^3.3.0",
     "globby": "^11.0.1",
     "http-errors": "^1.8.0",
     "lodash": "^4.17.20",
     "reflect-metadata": "^0.1.13",
+    "swagger-ui-dist": "^3.38.0",
     "ts-morph": "^9.0.0"
   },
   "devDependencies": {
