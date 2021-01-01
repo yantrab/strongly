@@ -124,7 +124,7 @@ class RouteSchemaTests {
   classInBody() {
     expect(this.routes["getUsers7"].schema.request).toStrictEqual({
       body: {
-        $ref: "UserDetails#",
+        $ref: "#/definitions/UserDetails",
         type: "object"
       }
     });
@@ -148,7 +148,7 @@ class RouteSchemaTests {
       properties: {
         contacts: {
           items: {
-            $ref: "Contact#"
+            $ref: "#/definitions/Contact"
           },
           type: "array"
         },

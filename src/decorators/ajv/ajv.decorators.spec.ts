@@ -53,7 +53,7 @@ class ajvDecoratorsTests {
   @test
   minmax() {
     const schema = getParamSchema(getClass(c123.name).getType());
-    expect(schema).toStrictEqual({ optional: false, $ref: "c123#" });
+    expect(schema).toStrictEqual({ optional: false, $ref: "#/definitions/c123" });
     const definitions: any = getDefinitions();
     expect(definitions.c123.properties).toStrictEqual({
       date: {
