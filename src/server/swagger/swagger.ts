@@ -6,6 +6,7 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 import serveStatic from "fastify-static";
 import { getAbsoluteFSPath } from "swagger-ui-dist";
+import { ControllerOptions } from "../../decorators";
 
 const pk = JSON.parse(readFileSync(resolve("./package.json"), { encoding: "utf-8" }));
 
@@ -14,10 +15,13 @@ export const addSwagger = (controllers, app) => {
     swagger: "2.0",
     info: { title: pk.name, version: pk.version, description: pk.description },
     paths: {},
-    definitions: {}
+    definitions: {},
+    tags: []
   };
   for (const controller of controllers) {
     const basePath = Reflect.getMetadata(symbols.basePath, controller) || toSnack(controller.name.replace("Controller", ""));
+    const options: ControllerOptions = Reflect.getMetadata(symbols.controller, controller);
+    swaggerSchema.tags.push({ name: basePath, description: options?.description });
     const routes: method = Reflect.getMetadata(symbols.route, controller.prototype);
     Object.keys(routes || {}).forEach(key => {
       const method = routes[key];

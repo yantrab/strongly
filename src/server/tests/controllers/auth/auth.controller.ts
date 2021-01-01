@@ -1,6 +1,7 @@
-import { body, post, email, min, get, user, reply } from "../../../../index";
+import { body, post, email, min, get, user, reply, Controller } from "../../../../index";
 import { UserService } from "../../services/user.service";
 
+@Controller("auth", { description: "User authentication stuff" })
 export class AuthController {
   constructor(private userService: UserService) {}
 

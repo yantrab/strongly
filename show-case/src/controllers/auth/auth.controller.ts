@@ -2,6 +2,9 @@ import { body, post, email, min, get, app, reply, user, request } from "strongly
 import { UserService } from "../../services/user/user.service";
 import { User } from "../../domain/user";
 import { Unauthorized } from "http-errors";
+import { Controller } from "strongly";
+
+@Controller("auth", { description: "User authentication stuff" })
 export class AuthController {
   constructor(private userService: UserService) {}
 

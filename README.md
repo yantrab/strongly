@@ -130,8 +130,9 @@ async login() {
 * [Controllers](https://github.com/yantrab/strongly#controllers)
 * [Route decorators](https://github.com/yantrab/strongly#Route-decorators)
 * [Route parameter decorators](https://github.com/yantrab/strongly#Route-parameter-decorators)
-* [validation decorators](https://github.com/yantrab/strongly#validation-decorators)
+* [Validation](https://github.com/yantrab/strongly#validation-decorators)
 * [Guard decorator](https://github.com/yantrab/strongly#Guard-decorator)
+* [OpenAPI (Swagger)](https://github.com/yantrab/strongly#OpenAPI-(Swagger))
 
 ## Server
 #### create Fastify server instance
@@ -197,7 +198,7 @@ examples
 - string - ```{notEmptyString: true, type: "string"}```
 - number - ```{type: "number"}```
 
-## validation decorators
+## Validation
 Fastify uses a schema-based approach, and using [ajv](https://www.npmjs.com/package/ajv) by default. 
 we are build the schema from your types - 
 - string - ```{notEmptyString: true, type: "string"}```
@@ -244,3 +245,90 @@ class a {
 
 be aware that you need to add the user to the request by you own, you can use [fastify-jwt](https://github.com/fastify/fastify-jwt) to do it. 
 see [here](https://github.com/yantrab/strongly/blob/master/show-case/src/app.ts) full example. 
+
+## OpenAPI (Swagger)
+Like ajv schema we are build the open api schema from you types.
+just open http://localhost:3000/api-doc to see it,
+for example - for this controller
+```typescript
+export class AuthController {
+  @post async login(@body("email") @email email: string, @body("password") @min(6) password: string, @app app, @reply reply) { }
+
+  @post logout(@reply reply, @request req) {  }
+
+  @get getUserAuthenticated(@user user, @reply reply): User {}
+}
+
+```
+the swagger specification is - 
+```json
+{
+  swagger: "2.0",
+          info: { title: "show-case", version: "1.0.0", description: "some examples of using Strongly framework." },
+  paths: {
+    "/auth/login": {
+      post: {
+        parameters: [
+          {
+            name: "body",
+            in: "body",
+            required: true,
+            schema: {
+              properties: {
+                password: { type: "string", notEmptyString: true, minLength: 6 },
+                email: { format: "email", type: "string", notEmptyString: true }
+              },
+              type: "object",
+              required: ["password", "email"]
+            }
+          }
+        ],
+                tags: ["auth"],
+                responses: { "201": { schema: { $ref: "#/definitions/User" } } }
+      }
+    },
+    "/auth/logout": { post: { parameters: [], tags: ["auth"] } },
+    "/auth/get-user-authenticated": {
+      get: { parameters: [], tags: ["auth"], responses: { "201": { schema: { $ref: "#/definitions/User" } } } }
+    }
+  },
+  definitions: {
+    User: {
+      type: "object",
+              properties: {
+        phone: { type: "string", notEmptyString: true },
+        email: { type: "string", notEmptyString: true },
+        fName: { type: "string", notEmptyString: true },
+        lName: { type: "string", notEmptyString: true },
+        role: { type: "string", enum: ["admin", "user"] },
+        _id: { type: "string", notEmptyString: true }
+      },
+      required: ["phone", "email", "fName", "lName", "role"]
+    }
+  }
+}
+```
+
+### we take some parameters from yoru package.json file
+- version - your package version
+- title - your package name
+- description - your package description
+
+### you can add description to your controller -
+```typescript
+@Controller("auth", { description: "User authentication stuff" })
+```
+
+### you can add description to your route -
+```typescript
+  /**
+ *  just add comment upon your route method
+ */
+@post someRoute() {}
+```
+
+## Dependencies
+- [fastify](https://www.npmjs.com/package/fastify) - a web framework to serve your routes
+- [ts-morph](https://www.npmjs.com/package/ts-morph) - TypeScript Compiler API wrapper to parse your types to ajv & swagger schemas.
+- [fastify-static](https://www.npmjs.com/package/fastify-static) & [swagger-ui-dist](https://www.npmjs.com/package/swagger-ui-dist) - to exposes Swagger-UI page
+

@@ -1,7 +1,7 @@
 {
   "name": "show-case",
   "version": "1.0.0",
-  "description": "",
+  "description": "some examples of using Strongly framework.",
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/app.ts",
@@ -16,7 +16,7 @@
     "mongodb": "^3.6.3",
     "node-cache": "^5.1.2",
     "nodemailer": "^6.4.17",
-    "strongly": "^1.0.30"
+    "strongly": "^1.0.31"
   },
   "devDependencies": {
     "@testdeck/jest": "^0.1.2",

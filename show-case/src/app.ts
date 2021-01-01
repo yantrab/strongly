@@ -6,9 +6,8 @@ import { mongoUrl } from "./services/config/config.service";
 import { MongoMemoryServer } from "mongodb-memory-server";
 
 const start = async () => {
-  const mongoUrl = await new MongoMemoryServer().getUri();
-
-  const mongo = await new MongoClient(mongoUrl);
+  const url = mongoUrl || (await new MongoMemoryServer().getUri());
+  const mongo = await new MongoClient(url);
   await mongo.connect();
   ServerFactory.create({
     logger: {

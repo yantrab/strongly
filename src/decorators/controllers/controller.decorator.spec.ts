@@ -1,8 +1,9 @@
-import { Controller } from "./controller.decorator";
+import { Controller, ControllerOptions } from "./controller.decorator";
 import { get } from "../routes/route.decorators";
 import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
 import { ServerFactory } from "../../server/server";
+import { symbols } from "../../utils/consts";
 
 @suite
 class ControllerDecoratorTests {
@@ -33,5 +34,13 @@ class ControllerDecoratorTests {
       path: "/base-path/user"
     });
     expect(res.json().hello).toBe("world");
+  }
+
+  @test("should add description")
+  async withDescription() {
+    @Controller("base-path", { description: "some description" })
+    class UserController {}
+    const meta = Reflect.getMetadata(symbols.controller, UserController);
+    expect(meta).toStrictEqual({ description: "some description" } as ControllerOptions);
   }
 }
