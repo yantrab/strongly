@@ -132,7 +132,7 @@ async login() {
 * [Route parameter decorators](https://github.com/yantrab/strongly#Route-parameter-decorators)
 * [Validation](https://github.com/yantrab/strongly#validation-decorators)
 * [Guard decorator](https://github.com/yantrab/strongly#Guard-decorator)
-* [OpenAPI (Swagger)](https://github.com/yantrab/strongly#OpenAPI-(Swagger))
+* [OpenAPI (Swagger)](https://github.com/yantrab/strongly#openapi-swagger)
 
 ## Server
 #### create Fastify server instance
@@ -246,7 +246,7 @@ class a {
 be aware that you need to add the user to the request by you own, you can use [fastify-jwt](https://github.com/fastify/fastify-jwt) to do it. 
 see [here](https://github.com/yantrab/strongly/blob/master/show-case/src/app.ts) full example. 
 
-## OpenAPI (Swagger)
+## OpenAPI - Swagger
 Like ajv schema we are build the open api schema from you types.
 just open http://localhost:3000/api-doc to see it,
 for example - for this controller
@@ -261,7 +261,7 @@ export class AuthController {
 
 ```
 the swagger specification is - 
-```json
+```js
 {
   swagger: "2.0",
           info: { title: "show-case", version: "1.0.0", description: "some examples of using Strongly framework." },
