@@ -32,7 +32,8 @@ export const addSwagger = (controllers, app) => {
       swaggerSchema.paths[url][method.routeType] = {
         parameters: [],
         tags: schema.tags,
-        ...getMethodSchema(controller, key)
+        ...getMethodSchema(controller, key),
+        operationId: key
       };
       Object.keys(schema.params?.properties || []).forEach(prop => {
         const param = schema.params.properties[prop];
