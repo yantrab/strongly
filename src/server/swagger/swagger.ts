@@ -7,11 +7,12 @@ import { resolve } from "path";
 import serveStatic from "fastify-static";
 import { getAbsoluteFSPath } from "swagger-ui-dist";
 import { ControllerOptions } from "../../decorators";
-
+import { OpenAPIV2 } from "openapi-types";
+import converter from "swagger2openapi";
 const pk = JSON.parse(readFileSync(resolve("./package.json"), { encoding: "utf-8" }));
 
 export const addSwagger = (controllers, app) => {
-  const swaggerSchema: any = {
+  const swaggerSchema: OpenAPIV2.Document = {
     swagger: "2.0",
     info: { title: pk.name, version: pk.version, description: pk.description },
     paths: {},
@@ -21,7 +22,7 @@ export const addSwagger = (controllers, app) => {
   for (const controller of controllers) {
     const basePath = Reflect.getMetadata(symbols.basePath, controller) || toSnack(controller.name.replace("Controller", ""));
     const options: ControllerOptions = Reflect.getMetadata(symbols.controller, controller);
-    swaggerSchema.tags.push({ name: basePath, description: options?.description });
+    swaggerSchema.tags?.push({ name: basePath, description: options?.description });
     const routes: method = Reflect.getMetadata(symbols.route, controller.prototype);
     Object.keys(routes || {}).forEach(key => {
       const method = routes[key];
@@ -58,7 +59,7 @@ export const addSwagger = (controllers, app) => {
   const definitions = getDefinitions() || {};
 
   Object.keys(definitions).forEach(key => {
-    swaggerSchema.definitions[key] = definitions[key];
+    if (swaggerSchema.definitions) swaggerSchema.definitions[key] = definitions[key];
   });
   const swaggerUIPath = getAbsoluteFSPath();
 
@@ -67,8 +68,9 @@ export const addSwagger = (controllers, app) => {
   });
 
   app.get("/api-doc/json", {}, _ => {
-    return swaggerSchema;
+    return new Promise(res => converter.convertObj(swaggerSchema, { patch: true }, (err, options) => res(options.openapi)));
   });
+
   app.get("/api-doc", {}, async (request, reply) => {
     const file = readFileSync(swaggerUIPath + "/index.html", { encoding: "utf-8" }).replace(
       "https://petstore.swagger.io/v2/swagger.json",

@@ -1,0 +1,34 @@
+/* tslint:disable */
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpRequest, HttpResponse, HttpHeaders } from '@angular/common/http';
+import { BaseService as __BaseService } from '../base-service';
+import { {{ configurationClass }} as __Configuration } from '../{{configurationFile}}';
+import { StrictHttpResponse as __StrictHttpResponse } from '../strict-http-response';
+import { Observable as __Observable } from 'rxjs';
+import { map as __map, filter as __filter } from 'rxjs/operators';
+import Ajv from 'ajv';
+import { FormBuilderTypeSafe, FormGroupTypeSafe } from 'angular-typesafe-reactive-forms-helper';
+import { FormBuilderService } from "../../services/form-builder.service";
+import { FormControl } from "@angular/forms";
+
+{{#serviceOperations}}{{>operationParamTypes}}{{/serviceOperations}}
+
+{{#serviceDependencies}}import { {{modelClass}} } from '../models/{{modelFile}}';{{/serviceDependencies}}
+{{#serviceDependencies}}import * as {{modelClass}}Schema from '../models/{{modelSchemaFile}}';{{/serviceDependencies}}
+
+{{{serviceComments}}}@Injectable({
+  providedIn: 'root',
+})
+export class {{serviceClass}} extends __BaseService {
+{{#serviceOperations}}{{>operationEndpoints}}{{/serviceOperations}}
+      constructor(
+        config: __Configuration,
+        http: HttpClient,
+        private ajv: Ajv,
+        private fb: FormBuilderTypeSafe,
+        private formBuilderService: FormBuilderService
+    ) {
+        super(config, http);
+      }
+{{#serviceOperations}}{{>operationResponse}}{{>operationBody}}{{>operationForm}}{{/serviceOperations}}
+}

@@ -1,0 +1,5 @@
+{
+  "input": "http://localhost:3000/api-doc/json",
+  "templates": "./swagger/templates",
+  "removeStaleFiles": false
+}

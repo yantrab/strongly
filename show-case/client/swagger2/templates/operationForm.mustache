@@ -1,0 +1,27 @@
+
+{{#operationSchema}}
+  {{operationName}}FormGroup() {
+    const schema = {{{operationSchema}}};
+    const validate = this.ajv.compile(schema);
+    const formControls: any = {};
+    for (const key in Object.keys(schema.properties)) {
+      formControls[key] = new FormControl();
+    }
+    return this.fb.group<{{operationName}}ParamType>( formControls as any,
+      {
+        validators: [
+          (formGroup: FormGroupTypeSafe< {{operationName}}ParamType>) => {
+            const isValid = validate(formGroup.value);
+            if (isValid) return null;
+            const result: any = {};
+            const errors = validate.errors;
+            errors?.forEach(error => {
+              result[error.dataPath.replace('/', '')] = error.message;
+            });
+            return result;
+          }
+        ]
+      }
+    );
+  }
+{{/operationSchema}}
