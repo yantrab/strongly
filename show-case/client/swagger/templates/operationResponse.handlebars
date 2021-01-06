@@ -1,15 +1,18 @@
 {{{responseMethodTsComments}}}{{responseMethodName}}({{>operationParameters}}): Observable<{{@root.responseClass}}<{{{resultType}}}>> {
 
     const rb = new {{@root.requestBuilderClass}}(this.rootUrl, {{@root.typeName}}.{{operation.pathVar}}, '{{operation.method}}');
-    if (params) {
+{{# if operation.parameters}}
 {{#operation.parameters}}
       rb.{{in}}('{{{name}}}', params{{{varAccess}}}, {{{parameterOptions}}});
+      {{#requestBody}}
+        rb.body(params.body, '{{{mediaType}}}');
+      {{/requestBody}}
 {{/operation.parameters}}
+{{else}}
 {{#requestBody}}
-      rb.body(params.body, '{{{mediaType}}}');
+      rb.body(params, '{{{mediaType}}}');
 {{/requestBody}}
-    }
-
+{{/if}}
     return this.http.request(rb.build({
       responseType: '{{responseType}}',
       accept: '{{accept}}'

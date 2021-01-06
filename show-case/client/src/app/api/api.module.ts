@@ -2,11 +2,11 @@
 /* eslint-disable */
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { {{configurationClass}}, {{configurationParams}} } from './{{configurationFile}}';
+import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 import { FormBuilderTypeSafe } from 'angular-typesafe-reactive-forms-helper';
 
-{{#services}}import { {{typeName}} } from './services/{{fileName}}';
-{{/services}}
+import { AdminService } from './services/admin.service';
+import { AuthService } from './services/auth.service';
 import Ajv from "ajv";
 import addFormats from 'ajv-formats';
 const ajv = new Ajv({ allErrors: true });
@@ -25,18 +25,18 @@ ajv.addKeyword('notEmptyString', {
   declarations: [],
   providers: [FormBuilderTypeSafe,
 {provide:Ajv, useValue: ajv},
-{{#services}}    {{typeName}},
-{{/services}}
-    {{configurationClass}}
+    AdminService,
+    AuthService,
+    ApiConfiguration
   ],
 })
-export class {{moduleClass}} {
-  static forRoot(params: {{configurationParams}}): ModuleWithProviders<{{moduleClass}}> {
+export class ApiModule {
+  static forRoot(params: ApiConfigurationParams): ModuleWithProviders<ApiModule> {
     return {
-      ngModule: {{moduleClass}},
+      ngModule: ApiModule,
       providers: [
         {
-          provide: {{configurationClass}},
+          provide: ApiConfiguration,
           useValue: params
         }
       ]
@@ -44,11 +44,11 @@ export class {{moduleClass}} {
   }
 
   constructor(
-    @Optional() @SkipSelf() parentModule: {{moduleClass}},
+    @Optional() @SkipSelf() parentModule: ApiModule,
     @Optional() http: HttpClient
   ) {
     if (parentModule) {
-      throw new Error('{{moduleClass}} is already loaded. Import in your base AppModule only.');
+      throw new Error('ApiModule is already loaded. Import in your base AppModule only.');
     }
     if (!http) {
       throw new Error('You need to import the HttpClientModule in your AppModule! \n' +

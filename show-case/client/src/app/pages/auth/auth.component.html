@@ -1,0 +1,15 @@
+<mat-toolbar>
+  <span>LOGIN</span>
+</mat-toolbar>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="loginFormGroup">
+      <app-input [control]="loginFormGroup.controls.email"></app-input>
+      <app-input [control]="loginFormGroup.controls.password"></app-input>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button (click)="login()" color="primary">LOGIN</button>
+  </mat-card-actions>
+</mat-card>
+

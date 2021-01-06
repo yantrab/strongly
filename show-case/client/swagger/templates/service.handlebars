@@ -15,6 +15,10 @@ import { FormControl } from "@angular/forms";
 
 {{#imports}}import { {{{typeName}}}{{#useAlias}} as {{{qualifiedName}}}{{/useAlias}}, {{{typeName}}}{{#useAlias}} as {{{qualifiedName}}}{{/useAlias}}Schema } from '{{{file}}}';{{/imports}}
 
+{{#operations}}
+  {{#variants}}{{>operationFormType}}{{/variants}}
+{{/operations}}
+
 {{{tsComments}}}@Injectable({
   providedIn: 'root',
 })
