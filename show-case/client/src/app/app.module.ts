@@ -13,7 +13,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { InputComponent } from './components/input/input.component';
 import { MatIconModule } from '@angular/material/icon';
 import { FormComponent } from './components/form/form.component';
-import { LetDirective } from './directives/let.directive';
 import { RouterModule, Routes } from '@angular/router';
 const isCordovaApp = Object(window).cordova !== undefined;
 
@@ -23,7 +22,7 @@ class AppComponent {}
 const routes: Routes = [];
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, InputComponent, FormComponent, LetDirective],
+  declarations: [AppComponent, AuthComponent, InputComponent, FormComponent],
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes, { useHash: isCordovaApp }),
