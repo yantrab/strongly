@@ -1,5 +1,6 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService, loginFormGroupType } from '../../api/services/auth.service';
+import { FormModel } from '../../components/form/form.component';
 
 @Component({
   selector: 'app-auth',
@@ -8,15 +9,21 @@ import { AuthService, loginFormGroupType } from '../../api/services/auth.service
 })
 export class AuthComponent {
   constructor(private service: AuthService) {}
-  loginFormGroup = this.service.loginFormGroup();
+  loginError?: string;
+  model: FormModel<loginFormGroupType> = {
+    formGroup: this.service.loginFormGroup(),
+    formTitle: 'Login Form',
+    formSaveButtonTitle: 'Login',
+    fields: [{ key: 'email' }, { key: 'password', type: 'password' }]
+  };
 
   login() {
-    if (!this.loginFormGroup?.value) return;
-    this.service.login(this.loginFormGroup.value).subscribe(
+    this.service.login(this.model.formGroup.value).subscribe(
       res => {
         console.log(res);
       },
       error => {
+        this.loginError = 'user or password is incorrect';
         console.log(error);
       }
     );
