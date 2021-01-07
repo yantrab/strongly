@@ -1,4 +1,4 @@
-import { body, post, email, min, get, app, reply, user, request } from "strongly";
+import { body, post, email, min, get, app, reply, user, request, params } from "strongly";
 import { UserService } from "../../services/user/user.service";
 import { User } from "../../domain/user";
 import { Unauthorized } from "http-errors";

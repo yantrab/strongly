@@ -1,0 +1,39 @@
+/* tslint:disable */
+/* eslint-disable */
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { {{baseServiceClass}} } from '../{{baseServiceFile}}';
+import { {{configurationClass}} } from '../{{configurationFile}}';
+import { {{responseClass}} } from '../{{responseFile}}';
+import { {{requestBuilderClass}} } from '../{{requestBuilderFile}}';
+import { Observable } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
+
+import Ajv from 'ajv';
+import { FormBuilderTypeSafe, FormGroupTypeSafe } from 'angular-typesafe-reactive-forms-helper';
+import { FormControl } from "@angular/forms";
+
+{{#imports}}import { {{{typeName}}}{{#useAlias}} as {{{qualifiedName}}}{{/useAlias}}, {{{typeName}}}{{#useAlias}} as {{{qualifiedName}}}{{/useAlias}}Schema } from '{{{file}}}';{{/imports}}
+
+{{#operations}}
+  {{#variants}}{{>operationFormType}}{{/variants}}
+{{/operations}}
+
+{{{tsComments}}}@Injectable({
+  providedIn: 'root',
+})
+export class {{typeName}} extends {{baseServiceClass}} {
+  constructor(
+    config: {{configurationClass}},
+    http: HttpClient,
+    private ajv: Ajv,
+    private fb: FormBuilderTypeSafe
+  ) {
+    super(config, http);
+  }
+
+{{#operations}}
+{{>operationPath}}
+{{#variants}}{{>operationResponse}}{{>operationBody}}{{>operationForm}}{{/variants}}
+{{/operations}}
+}

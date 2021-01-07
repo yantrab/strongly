@@ -1,0 +1,5 @@
+{{{bodyMethodTsComments}}}{{methodName}}({{>operationParameters}}): Observable<{{{resultType}}}> {
+    return this.{{responseMethodName}}({{# if operation.hasParameters}}params{{else}} {{# if operation.requestBody}}params{{/if}}{{/if}}).pipe(
+      map((r: {{@root.responseClass}}<{{{resultType}}}>) => r.body as {{{resultType}}})
+    );
+  }
