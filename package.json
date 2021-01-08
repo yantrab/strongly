@@ -33,6 +33,7 @@
   "license": "MIT",
   "dependencies": {
     "ajv": "^7.0.2",
+    "ajv-keywords": "^3.5.2",
     "fastify": "^3.9.2",
     "fastify-static": "^3.3.0",
     "globby": "^11.0.1",

@@ -5,17 +5,16 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 import { FormBuilderTypeSafe } from 'angular-typesafe-reactive-forms-helper';
 
+import { ShowCaseService } from './services/show-case.service';
 import { AdminService } from './services/admin.service';
 import { AuthService } from './services/auth.service';
+import { AService } from './services/a.service';
 import Ajv from "ajv";
 import addFormats from 'ajv-formats';
+import ajvKeywords from 'ajv-keywords';
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
-ajv.addKeyword('notEmptyString', {
-  validate: (_: any, data: any) => {
-    return data.trim().length > 0;
-  }
-} as any);
+ajvKeywords(ajv)
 /**
  * Module that provides all services and configuration.
  */
@@ -25,8 +24,10 @@ ajv.addKeyword('notEmptyString', {
   declarations: [],
   providers: [FormBuilderTypeSafe,
 {provide:Ajv, useValue: ajv},
+    ShowCaseService,
     AdminService,
     AuthService,
+    AService,
     ApiConfiguration
   ],
 })

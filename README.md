@@ -195,13 +195,13 @@ examples
 // request.query.id
 @get getUser(@query("id") id: number) {}
 ```
-- string - ```{notEmptyString: true, type: "string"}```
+- string - ```{allOf:[{ transform: ["trim"] }, { minLength: 1 }], type: "string"}```
 - number - ```{type: "number"}```
 
 ## Validation
 Fastify uses a schema-based approach, and using [ajv](https://www.npmjs.com/package/ajv) by default. 
 we are build the schema from your types - 
-- string - ```{notEmptyString: true, type: "string"}```
+- string - ```{allOf:[{ transform: ["trim"] }, { minLength: 1 }], type: "string"}```
 
   notEmptyString trim the value and validate that the string.length > 0
 - number - ```{type: "number"}```
@@ -275,7 +275,7 @@ the swagger specification is -
             required: true,
             schema: {
               properties: {
-                password: { type: "string", notEmptyString: true, minLength: 6 },
+                password: { type: "string", allOf:[{ transform: ["trim"] }, { minLength: 1 }], minLength: 6 },
                 email: { format: "email", type: "string", notEmptyString: true }
               },
               type: "object",

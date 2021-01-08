@@ -1,7 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface User {
-  '_id'?: string;
   email: string;
   fName: string;
   lName: string;
@@ -9,4 +8,4 @@ export interface User {
   role: 'admin' | 'user';
 }
 
-export const UserSchema  = {"type":"object","properties":{"phone":{"type":"string","notEmptyString":true},"email":{"type":"string","notEmptyString":true},"fName":{"type":"string","notEmptyString":true},"lName":{"type":"string","notEmptyString":true},"role":{"type":"string","enum":["admin","user"]},"_id":{"type":"string","notEmptyString":true}},"required":["phone","email","fName","lName","role"]}
+export const UserSchema  = {"type":"object","properties":{"phone":{"type":"string","transform":["trim"]},"email":{"type":"string","transform":["trim"]},"fName":{"type":"string","transform":["trim"]},"lName":{"type":"string","transform":["trim"]},"role":{"type":"string","enum":["admin","user"]}},"required":["phone","email","fName","lName","role"]}

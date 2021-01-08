@@ -19,4 +19,5 @@ export declare type Schema = {
   required?: string[];
   allOf?: any[];
   enum?: string[];
+  transform?: string[];
 };

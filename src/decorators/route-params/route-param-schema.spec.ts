@@ -110,7 +110,7 @@ class RouteSchemaTests {
             type: "number"
           },
           name: {
-            notEmptyString: true,
+            allOf: [{ transform: ["trim"] }, { minLength: 1 }],
             type: "string"
           }
         },
@@ -133,7 +133,7 @@ class RouteSchemaTests {
     expect(definitions.Contact).toStrictEqual({
       properties: {
         address: {
-          notEmptyString: true,
+          allOf: [{ transform: ["trim"] }, { minLength: 1 }],
           type: "string"
         },
         id: {
@@ -153,12 +153,12 @@ class RouteSchemaTests {
           type: "array"
         },
         name: {
-          notEmptyString: true,
+          allOf: [{ transform: ["trim"] }, { minLength: 1 }],
           type: "string"
         },
         somePrimitiveArray: {
           items: {
-            notEmptyString: true,
+            allOf: [{ transform: ["trim"] }, { minLength: 1 }],
             type: "string"
           },
           type: "array"
@@ -179,7 +179,7 @@ class RouteSchemaTests {
               type: "number"
             },
             name: {
-              notEmptyString: true,
+              allOf: [{ transform: ["trim"] }, { minLength: 1 }],
               type: "string"
             }
           },
@@ -213,7 +213,7 @@ class RouteSchemaTests {
         properties: {
           address: {
             maxLength: 10,
-            notEmptyString: true,
+            allOf: [{ transform: ["trim"] }, { minLength: 1 }],
             type: "string"
           },
           id: {

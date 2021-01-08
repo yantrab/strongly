@@ -25,6 +25,7 @@
     "@angular/router": "~11.0.5",
     "ajv": "^7.0.3",
     "ajv-formats": "^1.5.1",
+    "ajv-keywords": "^4.0.0",
     "angular-typesafe-reactive-forms-helper": "^2.0.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
