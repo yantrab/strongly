@@ -48,8 +48,8 @@ export class AdminService extends BaseService {
 
     const rb = new RequestBuilder(this.rootUrl, AdminService.UsersPath, 'get');
     return this.http.request(rb.build({
-      responseType: 'blob',
-      accept: '*/*'
+      responseType: 'json',
+      accept: 'application/json'
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {

@@ -58,12 +58,12 @@ class ajvDecoratorsTests {
     expect(definitions.c123.properties).toStrictEqual({
       date: {
         format: "date",
-        notEmptyString: true,
+        allOf: [{ transform: ["trim"] }, { minLength: 1 }],
         type: "string"
       },
       array1: {
         items: {
-          notEmptyString: true,
+          allOf: [{ transform: ["trim"] }, { minLength: 1 }],
           type: "string"
         },
         minItems: 4,
@@ -71,7 +71,7 @@ class ajvDecoratorsTests {
       },
       array2: {
         items: {
-          notEmptyString: true,
+          allOf: [{ transform: ["trim"] }, { minLength: 1 }],
           type: "string"
         },
         maxItems: 8,
@@ -80,7 +80,7 @@ class ajvDecoratorsTests {
       },
       array3: {
         items: {
-          notEmptyString: true,
+          allOf: [{ transform: ["trim"] }, { minLength: 1 }],
           type: "string"
         },
         maxItems: 8,
@@ -132,18 +132,18 @@ class ajvDecoratorsTests {
       },
       string1: {
         minLength: 4,
-        notEmptyString: true,
+        allOf: [{ transform: ["trim"] }, { minLength: 1 }],
         type: "string"
       },
       string2: {
         maxLength: 8,
         minLength: 4,
-        notEmptyString: true,
+        allOf: [{ transform: ["trim"] }, { minLength: 1 }],
         type: "string"
       },
       string3: {
         maxLength: 8,
-        notEmptyString: true,
+        allOf: [{ transform: ["trim"] }, { minLength: 1 }],
         type: "string"
       }
     });

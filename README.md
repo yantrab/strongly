@@ -195,15 +195,13 @@ examples
 // request.query.id
 @get getUser(@query("id") id: number) {}
 ```
-- string - ```{notEmptyString: true, type: "string"}```
+- string - ```{allOf:[{ transform: ["trim"] }, { minLength: 1 }], type: "string"}```
 - number - ```{type: "number"}```
 
 ## Validation
 Fastify uses a schema-based approach, and using [ajv](https://www.npmjs.com/package/ajv) by default. 
 we are build the schema from your types - 
-- string - ```{notEmptyString: true, type: "string"}```
-
-  notEmptyString trim the value and validate that the string.length > 0
+- string - ```{allOf:[{ transform: ["trim"] }, { minLength: 1 }], type: "string"}```
 - number - ```{type: "number"}```
 - boolean - ```{type: "boolean"}```
 
@@ -249,7 +247,7 @@ see [here](https://github.com/yantrab/strongly/blob/master/show-case/src/app.ts)
 ## OpenAPI - Swagger
 Like ajv schema we are build the open api schema from you types.
 just open http://localhost:3000/api-doc to see it,
-for example - for this controller
+for example - for the show-case controllers - this is the swagger specification -
 ```typescript
 export class AuthController {
   @post async login(@body("email") @email email: string, @body("password") @min(6) password: string) { }
@@ -261,49 +259,254 @@ export class AuthController {
 
 ```
 the swagger specification is - 
-```js
+```json
 {
-  swagger: "2.0",
-          info: { title: "show-case", version: "1.0.0", description: "some examples of using Strongly framework." },
-  paths: {
-    "/auth/login": {
-      post: {
-        parameters: [
-          {
-            name: "body",
-            in: "body",
-            required: true,
-            schema: {
-              properties: {
-                password: { type: "string", notEmptyString: true, minLength: 6 },
-                email: { format: "email", type: "string", notEmptyString: true }
-              },
-              type: "object",
-              required: ["password", "email"]
+  "openapi": "3.0.0",
+  "info": {
+    "title": "show-case",
+    "version": "1.0.0",
+    "description": "some examples of using Strongly framework."
+  },
+  "paths": {
+    "/admin/users": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
             }
           }
-        ],
-                tags: ["auth"],
-                responses: { "201": { schema: { $ref: "#/definitions/User" } } }
+        },
+        "operationId": "users"
       }
     },
-    "/auth/logout": { post: { parameters: [], tags: ["auth"] } },
+    "/admin/add-user": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "tags": [
+          "admin"
+        ],
+        "responses": {
+          "default": {
+            "description": "Default response"
+          }
+        },
+        "operationId": "addUser"
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "transform": [
+                          "trim"
+                        ]
+                      },
+                      {
+                        "minLength": 1
+                      }
+                    ],
+                    "minLength": 6
+                  },
+                  "email": {
+                    "format": "email",
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "transform": [
+                          "trim"
+                        ]
+                      },
+                      {
+                        "minLength": 1
+                      }
+                    ]
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "password",
+                  "email"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "login"
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "default": {
+            "description": "Default response"
+          }
+        },
+        "operationId": "logout"
+      }
+    },
     "/auth/get-user-authenticated": {
-      get: { parameters: [], tags: ["auth"], responses: { "201": { schema: { $ref: "#/definitions/User" } } } }
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "getUserAuthenticated"
+      }
     }
   },
-  definitions: {
-    User: {
-      type: "object",
-              properties: {
-        phone: { type: "string", notEmptyString: true },
-        email: { type: "string", notEmptyString: true },
-        fName: { type: "string", notEmptyString: true },
-        lName: { type: "string", notEmptyString: true },
-        role: { type: "string", enum: ["admin", "user"] },
-        _id: { type: "string", notEmptyString: true }
-      },
-      required: ["phone", "email", "fName", "lName", "role"]
+  "tags": [
+    {
+      "name": "admin"
+    },
+    {
+      "name": "auth",
+      "description": "User authentication stuff"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "allOf": [
+              {
+                "transform": [
+                  "trim"
+                ]
+              },
+              {
+                "minLength": 1
+              }
+            ]
+          },
+          "email": {
+            "type": "string",
+            "allOf": [
+              {
+                "transform": [
+                  "trim"
+                ]
+              },
+              {
+                "minLength": 1
+              }
+            ]
+          },
+          "fName": {
+            "type": "string",
+            "allOf": [
+              {
+                "transform": [
+                  "trim"
+                ]
+              },
+              {
+                "minLength": 1
+              }
+            ]
+          },
+          "lName": {
+            "type": "string",
+            "allOf": [
+              {
+                "transform": [
+                  "trim"
+                ]
+              },
+              {
+                "minLength": 1
+              }
+            ]
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "user"
+            ]
+          },
+          "_id": {
+            "type": "string",
+            "allOf": [
+              {
+                "transform": [
+                  "trim"
+                ]
+              },
+              {
+                "minLength": 1
+              }
+            ]
+          }
+        },
+        "required": [
+          "phone",
+          "email",
+          "fName",
+          "lName",
+          "role"
+        ]
+      }
     }
   }
 }

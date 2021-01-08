@@ -88,7 +88,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
   if (isPrimitive(nonNullableType)) {
     schema.type = typeText.replace(" | undefined", "");
     if (schema.type === "string") {
-      schema["notEmptyString"] = true;
+      schema["allOf"] = [{ transform: ["trim"] }, { minLength: 1 }];
     }
     schema = handleExplicitValidation(nonNullableType.getText(), schema, decorators);
     return schema;

@@ -5,7 +5,7 @@
   </mat-toolbar>
   <mat-card>
 
-    <form  [formGroup]="model.formGroup" (ngSubmit)="submit.emit(model.formGroup.value)">
+    <form  [formGroup]="model.formGroup" (ngSubmit)="emitter.emit(model.formGroup.value)">
       <mat-card-content fxLayout="row wrap" fxLayoutAlign="space-between" >
         <app-input *ngFor="let field of model.fields" [model]="field" [control]="getControl(field.key)"></app-input>
       </mat-card-content>

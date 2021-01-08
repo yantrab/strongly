@@ -9,13 +9,10 @@ import { AdminService } from './services/admin.service';
 import { AuthService } from './services/auth.service';
 import Ajv from "ajv";
 import addFormats from 'ajv-formats';
+import ajvKeywords from 'ajv-keywords';
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
-ajv.addKeyword('notEmptyString', {
-  validate: (_: any, data: any) => {
-    return data.trim().length > 0;
-  }
-} as any);
+ajvKeywords(ajv)
 /**
  * Module that provides all services and configuration.
  */

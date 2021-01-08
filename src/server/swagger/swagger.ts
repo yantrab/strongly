@@ -34,7 +34,8 @@ export const addSwagger = (controllers, app) => {
         parameters: [],
         tags: schema.tags,
         ...getMethodSchema(controller, key),
-        operationId: key
+        operationId: key,
+        produces: ["application/json"]
       };
       Object.keys(schema.params?.properties || []).forEach(prop => {
         const param = schema.params.properties[prop];

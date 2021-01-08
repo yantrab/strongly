@@ -9,6 +9,7 @@ import glob from "globby";
 import { dirname } from "path";
 import { DIService } from "./di/di.service";
 import { addSwagger } from "./swagger/swagger";
+import ajvKeywords from "ajv-keywords";
 const diService = new DIService();
 
 async function getControllers(controllers): Promise<any[]> {
@@ -35,18 +36,7 @@ export class ServerFactory {
     await diService.setDependencies(opts?.providers);
 
     const app = fastify({
-      ajv: {
-        customOptions: {
-          keywords: {
-            notEmptyString: {
-              validate: (_, data, parentData, path, o, u) => {
-                o[u] = data.trim();
-                return o[u].length > 0;
-              }
-            }
-          }
-        }
-      }
+      ajv: { plugins: [require("ajv-keywords")] }
     });
 
     for (const controller of controllers) {
