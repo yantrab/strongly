@@ -60,7 +60,7 @@ export const addSwagger = (controllers, app) => {
           name: "query",
           in: "query",
           required: true,
-          schema: schema.body
+          schema: schema.query
         });
       }
     });
