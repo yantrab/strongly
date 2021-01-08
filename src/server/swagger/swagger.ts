@@ -55,14 +55,17 @@ export const addSwagger = (controllers, app) => {
           schema: schema.body
         });
       }
-      if (schema.query) {
+
+      Object.keys(schema.query?.properties || []).forEach(prop => {
+        const param = schema.query.properties[prop];
         swaggerSchema.paths[url][method.routeType].parameters.push({
-          name: "query",
+          name: prop,
           in: "query",
-          required: true,
-          schema: schema.query
+          type: param.type,
+          description: param.description,
+          required: schema.query.required.includes(prop)
         });
-      }
+      });
     });
   }
   const definitions = getDefinitions() || {};

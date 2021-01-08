@@ -84,7 +84,11 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     delete schema.items.optional;
     return schema;
   }
-
+  if (typeText === "Date") {
+    schema.type = "string";
+    schema["format"] = "date-time";
+    return schema;
+  }
   if (isPrimitive(nonNullableType)) {
     schema.type = typeText.replace(" | undefined", "");
     if (schema.type === "string") {

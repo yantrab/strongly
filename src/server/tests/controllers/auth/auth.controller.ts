@@ -1,5 +1,6 @@
 import { body, post, email, min, get, user, reply, Controller } from "../../../../index";
 import { UserService } from "../../services/user.service";
+import { query } from "../../../../decorators/route-params/route-param.decorators";
 
 @Controller("auth", { description: "User authentication stuff" })
 export class AuthController {
@@ -19,5 +20,13 @@ export class AuthController {
 
   @post notEmptyString(@body("str") str?: string) {
     return { str };
+  }
+
+  @get queryParams(@query arg: { a: number; b: string }) {
+    return arg.a + arg.b;
+  }
+
+  @get dateReturn() {
+    return new Date();
   }
 }
