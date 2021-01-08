@@ -23,10 +23,6 @@ export class AuthController {
   }
 
   @get queryParams(@query arg: { a: number; b: string }) {
-    return arg.a + arg.b;
-  }
-
-  @get dateReturn() {
-    return new Date();
+    return { r: arg.a + arg.b };
   }
 }

@@ -64,6 +64,6 @@ class LoginTests {
   @test
   async queryParams() {
     const res = await this.app.inject({ method: "GET", url: "/auth/query-params", query: { a: 1, b: "a" } } as any);
-    expect(res).toEqual("1a");
+    expect(res.json().r).toEqual("1a");
   }
 }
