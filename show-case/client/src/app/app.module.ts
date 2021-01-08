@@ -1,43 +1,36 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { Component, NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { ApiModule } from './api/api.module';
-import { AuthComponent } from './pages/auth/auth.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { InputComponent } from './components/input/input.component';
-import { MatIconModule } from '@angular/material/icon';
-import { FormComponent } from './components/form/form.component';
 import { RouterModule, Routes } from '@angular/router';
+import { Guard } from './guard';
+import { HttpClientModule } from '@angular/common/http';
+import { ApiModule } from './api/api.module';
+
 const isCordovaApp = Object(window).cordova !== undefined;
 
-@Component({ selector: 'app-root', template: '<app-auth></app-auth><router-outlet></router-outlet>' })
+@Component({ selector: 'app-root', template: '<router-outlet></router-outlet>' })
 class AppComponent {}
 
-const routes: Routes = [];
+const routes: Routes = [
+  { path: 'auth', loadChildren: () => import('src/app/auth/auth.module').then(m => m.AuthModule) },
+  {
+    path: '',
+    canActivate: [Guard],
+    loadChildren: () => import('src/app/main/main.module').then(m => m.MainModule)
+  }
+];
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, InputComponent, FormComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(routes, { useHash: isCordovaApp }),
-    ApiModule,
-    ReactiveFormsModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatIconModule
+    RouterModule.forRoot(routes, { useHash: isCordovaApp }),
+    HttpClientModule,
+    ApiModule.forRoot({ rootUrl: 'http://localhost:3000' })
   ],
-  providers: [],
+
+  providers: [Guard],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

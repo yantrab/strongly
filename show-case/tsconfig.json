@@ -4,7 +4,7 @@
     "outDir": "dist",
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
     "stripInternal": true,
     "keyofStringsOnly": false,
     "noImplicitUseStrict": true,

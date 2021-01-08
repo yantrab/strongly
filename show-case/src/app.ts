@@ -34,7 +34,17 @@ const start = async () => {
         });
       } catch (err) {}
     });
-
+    app.register(require("fastify-cors"), {
+      origin: (origin, cb) => {
+        if (/localhost/.test(origin)) {
+          //  Request from localhost will pass
+          cb(null, true);
+          return;
+        }
+        // Generate an error on other origins, disabling access
+        cb(null, true);
+      }
+    });
     app.listen(3000, err => {
       if (err) {
         console.log(err);

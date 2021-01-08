@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { AuthService, loginFormGroupType } from '../../api/services/auth.service';
-import { FormModel } from '../../components/form/form.component';
+import { AuthService, loginFormGroupType } from '../api/services/auth.service';
+import { FormModel } from '../components/form/form.component';
 
 @Component({
-  selector: 'app-auth',
+  selector: 'app-login',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']
 })
-export class AuthComponent {
+export class LoginComponent {
   constructor(private service: AuthService) {}
   loginError?: string;
   model: FormModel<loginFormGroupType> = {
