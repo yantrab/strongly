@@ -18,7 +18,7 @@ export interface FormModel<T = any> {
 export class FormComponent implements OnInit {
   constructor() {}
   @Input() model?: FormModel;
-  @Output() submit = new EventEmitter();
+  @Output() emitter = new EventEmitter();
   ngOnInit(): void {
     console.log(this.model);
   }

@@ -16,7 +16,7 @@ import { FormControl } from "@angular/forms";
 import { User, UserSchema } from '../models/user';
 
   
-  export declare type addUserFormGroupType = FormGroupTypeSafe<Array<User>>
+  export declare type addUserFormGroupType = FormGroupTypeSafe<User>
 
 
 @Injectable({
@@ -82,7 +82,7 @@ export class AdminService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  addUser$Response(      params:  Array<User>
+  addUser$Response(      params:  User
 
 ): Observable<StrictHttpResponse<void>> {
 
@@ -105,15 +105,15 @@ export class AdminService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  addUser(      params:  Array<User>
+  addUser(      params:  User
 
 ): Observable<void> {
     return this.addUser$Response( params).pipe(
       map((r: StrictHttpResponse<void>) => r.body as void)
     );
   }
-   addUserFormGroup(value?:Array<User>) {
-    let schema: any = {"type":"array","items":{"$ref":"#/components/schemas/User"}}
+   addUserFormGroup(value?:User) {
+    let schema: any = {"$ref":"#/components/schemas/User"}
     if (schema["ref"]){
       schema = this.ajv.getSchema(schema.ref)
     }
@@ -124,10 +124,10 @@ export class AdminService extends BaseService {
     // @ts-ignore
     formControls[key] = new FormControl((value && value[key]) || '');
     }
-    return this.fb.group<Array<User>>( formControls as any,
+    return this.fb.group<User>( formControls as any,
       {
         validators: [
-          (formGroup: FormGroupTypeSafe<Array<User>>) => {
+          (formGroup: FormGroupTypeSafe<User>) => {
             const isValid = validate(formGroup.value);
             if (isValid) return null;
             const result: any = {};
