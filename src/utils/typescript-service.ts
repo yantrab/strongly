@@ -58,7 +58,7 @@ const getObjectSchema = (type: Type, decorators) => {
     if (["request", "reply"].includes(key) || isGetter) return;
     const valueDeclaration = prop.getValueDeclarationOrThrow();
     const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
-    schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
+    schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop) || { type: "object" };
     if (schema.properties[key].optional !== true) {
       schema.required?.push(key);
     }
@@ -79,7 +79,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
   if (nonNullableType.isArray()) {
     schema = handleExplicitValidation("array", schema, decorators);
     schema.type = "array";
-    schema.items = getParamSchema(nonNullableType.getArrayElementTypeOrThrow(), []);
+    schema.items = getParamSchema(nonNullableType.getArrayElementTypeOrThrow(), []) || {};
     Object.keys(schema.items).forEach(key => delete schema.items[key].optional);
     delete schema.items.optional;
     return schema;

@@ -55,6 +55,14 @@ export const addSwagger = (controllers, app) => {
           schema: schema.body
         });
       }
+      if (schema.query) {
+        swaggerSchema.paths[url][method.routeType].parameters.push({
+          name: "query",
+          in: "query",
+          required: true,
+          schema: schema.body
+        });
+      }
     });
   }
   const definitions = getDefinitions() || {};
