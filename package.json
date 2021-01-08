@@ -32,6 +32,7 @@
   "author": "yantrab@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "ajv": "^6.12.6",
     "ajv-keywords": "^3.5.2",
     "fastify": "^3.9.2",
     "fastify-static": "^3.3.0",

@@ -1,6 +1,6 @@
 // TODO change after fastify migration
-//import { JSONSchemaType as _JSONSchemaType } from "ajv";
-//export declare type JSONSchemaType<T> = NestedPartial<_JSONSchemaType<T>>;
+// import { JSONSchemaType as _JSONSchemaType } from "ajv";
+// export declare type JSONSchemaType<T> = NestedPartial<_JSONSchemaType<T>>;
 export declare type JSONSchemaType<T> = any;
 
 export const toSnack = key => key.replace(/([A-Z])/g, $1 => "-" + $1.toLowerCase()).replace(/^-/, "");
