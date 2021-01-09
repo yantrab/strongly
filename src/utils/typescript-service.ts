@@ -131,6 +131,11 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
   const unionTypes = type.getUnionTypes().filter(t => !t.isUndefined());
   if (unionTypes.length > 1) {
     schema.oneOf = unionTypes.map(t => getParamSchema(t, decorators)) as Schema[];
+    if (!schema.oneOf[0]) {
+      delete schema.oneOf;
+      schema.type = "string";
+      schema.enum = unionTypes.map(t => t.getText().slice(1, -1));
+    }
     return schema;
   }
 };

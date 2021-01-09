@@ -31,4 +31,8 @@ export class AuthController {
       return Promise.resolve("a");
     } else return Promise.resolve(1);
   }
+
+  @post manyString(@body("x") x: number | string): "a" | "b" {
+    return "a";
+  }
 }
