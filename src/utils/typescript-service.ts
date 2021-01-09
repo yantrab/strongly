@@ -99,8 +99,8 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     return schema;
   }
 
-  if (type.isClass()) {
-    const name = type.getText().split(").")[1] || type.getText();
+  if (nonNullableType.isClass() || nonNullableType.isInterface()) {
+    const name = nonNullableType.getText().split(").")[1] || nonNullableType.getText();
     schema["$ref"] = "#/definitions/" + name;
     if (!definitions[name]) definitions[name] = getObjectSchema(nonNullableType, decorators);
     return schema;
