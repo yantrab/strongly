@@ -69,7 +69,7 @@ export const addSwagger = (controllers, app) => {
       });
 
       if (schema.query?.$ref) {
-        swaggerSchema.paths[url][method.routeType].parameters.push({ name: "query", in: "query", ...schema.query });
+        swaggerSchema.paths[url][method.routeType].parameters.push({ name: "query", in: "query", schema: schema.query });
       }
     });
   }
