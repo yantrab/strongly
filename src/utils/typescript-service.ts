@@ -58,7 +58,11 @@ const getObjectSchema = (type: Type, decorators) => {
     if (["request", "reply"].includes(key) || isGetter) return;
     const valueDeclaration = prop.getValueDeclarationOrThrow();
     const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
-    schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop) || { type: "object" };
+    schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
+    if (!schema.properties[key]) {
+      console.warn("missing type for - " + key);
+      schema.properties[key] = { type: "object" };
+    }
     if (schema.properties[key].optional !== true) {
       schema.required?.push(key);
     }

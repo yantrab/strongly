@@ -64,6 +64,9 @@ class ajvDecoratorsTests {
     expect(schema).toStrictEqual({ optional: false, $ref: "#/definitions/c123" });
     const definitions: any = getDefinitions();
     expect(definitions.c123.properties).toStrictEqual({
+      someInterface: {
+        $ref: "#/definitions/SomeInterface"
+      },
       date: {
         format: "date",
         allOf: [{ transform: ["trim"] }, { minLength: 1 }],
