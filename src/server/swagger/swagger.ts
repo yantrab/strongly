@@ -58,12 +58,14 @@ export const addSwagger = (controllers, app) => {
 
       Object.keys(schema.query?.properties || []).forEach(prop => {
         const param = schema.query.properties[prop];
-        swaggerSchema.paths[url][method.routeType].parameters.push({
-          name: prop,
-          in: "query",
-          ...param,
-          required: schema.query.required.includes(prop)
-        });
+        const toAdd: any = { name: prop, in: "query", required: schema.query.required.includes(prop) };
+        if (param.type === "object") {
+          toAdd.type = "object";
+          toAdd.schema = param;
+        } else {
+          Object.assign(toAdd, param);
+        }
+        swaggerSchema.paths[url][method.routeType].parameters.push(toAdd);
       });
     });
   }

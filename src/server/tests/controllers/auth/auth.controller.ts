@@ -35,4 +35,8 @@ export class AuthController {
   @post manyString(@body("x") x: number | string): "a" | "b" {
     return "a";
   }
+
+  @get queryParams2(@query arg: { a: { c: number }; b: string }) {
+    return { r: arg.a + arg.b };
+  }
 }
