@@ -42,8 +42,8 @@ export const addSwagger = (controllers, app) => {
         swaggerSchema.paths[url][method.routeType].parameters.push({
           name: prop,
           in: "path",
-          description: param.description,
-          required: schema.params.required.includes(prop)
+          required: schema.params.required.includes(prop),
+          schema: param
         });
       });
 
@@ -61,8 +61,7 @@ export const addSwagger = (controllers, app) => {
         swaggerSchema.paths[url][method.routeType].parameters.push({
           name: prop,
           in: "query",
-          type: param.type,
-          description: param.description,
+          schema: param,
           required: schema.query.required.includes(prop)
         });
       });

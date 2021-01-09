@@ -1,4 +1,4 @@
-import { body, post, email, min, get, user, reply, Controller } from "../../../../index";
+import { body, post, email, min, get, user, reply, Controller, params } from "../../../../index";
 import { UserService } from "../../services/user.service";
 import { query } from "../../../../decorators/route-params/route-param.decorators";
 
@@ -24,5 +24,11 @@ export class AuthController {
 
   @get queryParams(@query arg: { a: number; b: string }) {
     return { r: arg.a + arg.b };
+  }
+
+  @get manyTypes(@params("x") x: number | string): Promise<number | string> {
+    if (x === 1) {
+      return Promise.resolve("a");
+    } else return Promise.resolve(1);
   }
 }

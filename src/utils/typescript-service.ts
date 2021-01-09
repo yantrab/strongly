@@ -76,19 +76,13 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
   let schema: Schema = {};
   schema.optional = typeText.includes("| undefined");
 
-  if (nonNullableType.isArray()) {
-    schema = handleExplicitValidation("array", schema, decorators);
-    schema.type = "array";
-    schema.items = getParamSchema(nonNullableType.getArrayElementTypeOrThrow(), []) || {};
-    Object.keys(schema.items).forEach(key => delete schema.items[key].optional);
-    delete schema.items.optional;
-    return schema;
-  }
-  if (typeText === "Date") {
-    schema.type = "string";
-    schema["format"] = "date-time";
-    return schema;
-  }
+  if (nonNullableType.isArray())
+    if (typeText === "Date") {
+      schema.type = "string";
+      schema["format"] = "date-time";
+      return schema;
+    }
+
   if (isPrimitive(nonNullableType)) {
     schema.type = typeText.replace(" | undefined", "");
     if (schema.type === "string") {
@@ -124,6 +118,12 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
   if (nonNullableType.isEnum()) {
     schema.type = "string";
     schema.enum = nonNullableType.getUnionTypes().map(t => last(t.getText().split(".")) as string);
+    return schema;
+  }
+
+  const unionTypes = type.getUnionTypes().filter(t => !t.isUndefined());
+  if (unionTypes.length > 1) {
+    schema.oneOf = unionTypes.map(t => getParamSchema(t, decorators)) as Schema[];
     return schema;
   }
 };
