@@ -56,22 +56,25 @@ const getObjectSchema = (type: Type, decorators) => {
   const nonNullableType = type.getNonNullableType();
   const nonNullableTypeText = nonNullableType.getText();
   schema.optional = nonNullableTypeText !== typeText;
-  type.getProperties().forEach(prop => {
-    const key = prop.getName();
-    const isGetter = prop.hasFlags(SymbolFlags.GetAccessor);
-    if (["request", "reply"].includes(key) || isGetter) return;
-    const valueDeclaration = prop.getValueDeclarationOrThrow();
-    const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
-    schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
-    if (!schema.properties[key]) {
-      console.warn("missing type for - " + key);
-      schema.properties[key] = { type: "object" };
-    }
-    if (schema.properties[key].optional !== true) {
-      schema.required?.push(key);
-    }
-    delete schema.properties[key].optional;
-  });
+  type
+    .getNonNullableType()
+    .getProperties()
+    .forEach(prop => {
+      const key = prop.getName();
+      const isGetter = prop.hasFlags(SymbolFlags.GetAccessor);
+      if (["request", "reply"].includes(key) || isGetter) return;
+      const valueDeclaration = prop.getValueDeclarationOrThrow();
+      const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
+      schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
+      if (!schema.properties[key]) {
+        console.warn("missing type for - " + key);
+        schema.properties[key] = { type: "object" };
+      }
+      if (schema.properties[key].optional !== true) {
+        schema.required?.push(key);
+      }
+      delete schema.properties[key].optional;
+    });
 
   if (!schema.required.length) {
     delete schema.required;
