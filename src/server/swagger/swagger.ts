@@ -58,7 +58,7 @@ export const addSwagger = (controllers, app) => {
 
       Object.keys(schema.query?.properties || []).forEach(prop => {
         const param = schema.query.properties[prop];
-        const toAdd: any = { name: prop, in: "query", required: schema.query.required.includes(prop) };
+        const toAdd: any = { name: prop, in: "query", required: schema.query.required?.includes(prop) };
         if (param.type === "object") {
           toAdd.type = "object";
           toAdd.schema = param;
