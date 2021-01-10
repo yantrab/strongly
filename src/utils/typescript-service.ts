@@ -52,6 +52,10 @@ const getObjectSchema = (type: Type, decorators) => {
   schema.type = "object";
   schema.properties = {};
   schema.required = schema.required || [];
+  const typeText = type.getText();
+  const nonNullableType = type.getNonNullableType();
+  const nonNullableTypeText = nonNullableType.getText();
+  schema.optional = nonNullableTypeText !== typeText;
   type.getProperties().forEach(prop => {
     const key = prop.getName();
     const isGetter = prop.hasFlags(SymbolFlags.GetAccessor);
@@ -77,8 +81,10 @@ const getObjectSchema = (type: Type, decorators) => {
 export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: tsSymbol | undefined = undefined) => {
   const typeText = type.getText();
   const nonNullableType = type.getNonNullableType();
+  const nonNullableTypeText = nonNullableType.getText();
   let schema: Schema = {};
-  schema.optional = typeText.includes("| undefined");
+
+  schema.optional = nonNullableTypeText !== typeText;
 
   if (nonNullableType.isArray()) {
     schema = handleExplicitValidation("array", schema, decorators);
@@ -106,12 +112,12 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
   if (nonNullableType.isClass() || nonNullableType.isInterface()) {
     const name = nonNullableType.getText().split(").")[1] || nonNullableType.getText();
     schema["$ref"] = "#/definitions/" + name;
-    if (!definitions[name]) definitions[name] = getObjectSchema(nonNullableType, decorators);
+    if (!definitions[name]) definitions[name] = getObjectSchema(type, decorators);
     return schema;
   }
 
   if (nonNullableType.isObject()) {
-    schema = getObjectSchema(nonNullableType, decorators);
+    schema = getObjectSchema(type, decorators);
     return schema;
   }
 
