@@ -52,18 +52,29 @@ const getObjectSchema = (type: Type, decorators) => {
   schema.type = "object";
   schema.properties = {};
   schema.required = schema.required || [];
-  type.getProperties().forEach(prop => {
-    const key = prop.getName();
-    const isGetter = prop.hasFlags(SymbolFlags.GetAccessor);
-    if (["request", "reply"].includes(key) || isGetter) return;
-    const valueDeclaration = prop.getValueDeclarationOrThrow();
-    const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
-    schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
-    if (schema.properties[key].optional !== true) {
-      schema.required?.push(key);
-    }
-    delete schema.properties[key].optional;
-  });
+  const typeText = type.getText();
+  const nonNullableType = type.getNonNullableType();
+  const nonNullableTypeText = nonNullableType.getText();
+  schema.optional = nonNullableTypeText !== typeText;
+  type
+    .getNonNullableType()
+    .getProperties()
+    .forEach(prop => {
+      const key = prop.getName();
+      const isGetter = prop.hasFlags(SymbolFlags.GetAccessor);
+      if (["request", "reply"].includes(key) || isGetter) return;
+      const valueDeclaration = prop.getValueDeclarationOrThrow();
+      const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
+      schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
+      if (!schema.properties[key]) {
+        console.warn("missing type for - " + key);
+        schema.properties[key] = { type: "object" };
+      }
+      if (schema.properties[key].optional !== true) {
+        schema.required?.push(key);
+      }
+      delete schema.properties[key].optional;
+    });
 
   if (!schema.required.length) {
     delete schema.required;
@@ -73,15 +84,22 @@ const getObjectSchema = (type: Type, decorators) => {
 export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: tsSymbol | undefined = undefined) => {
   const typeText = type.getText();
   const nonNullableType = type.getNonNullableType();
+  const nonNullableTypeText = nonNullableType.getText();
   let schema: Schema = {};
-  schema.optional = typeText.includes("| undefined");
+
+  schema.optional = nonNullableTypeText !== typeText;
 
   if (nonNullableType.isArray()) {
     schema = handleExplicitValidation("array", schema, decorators);
     schema.type = "array";
-    schema.items = getParamSchema(nonNullableType.getArrayElementTypeOrThrow(), []);
+    schema.items = getParamSchema(nonNullableType.getArrayElementTypeOrThrow(), []) || {};
     Object.keys(schema.items).forEach(key => delete schema.items[key].optional);
     delete schema.items.optional;
+    return schema;
+  }
+  if (nonNullableType.getText() === "Date") {
+    schema.type = "string";
+    schema["format"] = "date-time";
     return schema;
   }
 
@@ -94,15 +112,15 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     return schema;
   }
 
-  if (type.isClass()) {
-    const name = type.getText().split(").")[1] || type.getText();
+  if (nonNullableType.isClass() || nonNullableType.isInterface()) {
+    const name = nonNullableType.getText().split(").")[1] || nonNullableType.getText();
     schema["$ref"] = "#/definitions/" + name;
-    if (!definitions[name]) definitions[name] = getObjectSchema(nonNullableType, decorators);
+    if (!definitions[name]) definitions[name] = getObjectSchema(type, decorators);
     return schema;
   }
 
   if (nonNullableType.isObject()) {
-    schema = getObjectSchema(nonNullableType, decorators);
+    schema = getObjectSchema(type, decorators);
     return schema;
   }
 
@@ -120,6 +138,17 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
   if (nonNullableType.isEnum()) {
     schema.type = "string";
     schema.enum = nonNullableType.getUnionTypes().map(t => last(t.getText().split(".")) as string);
+    return schema;
+  }
+
+  const unionTypes = type.getUnionTypes().filter(t => !t.isUndefined());
+  if (unionTypes.length > 1) {
+    schema.oneOf = unionTypes.map(t => getParamSchema(t, decorators)) as Schema[];
+    if (!schema.oneOf[0]) {
+      delete schema.oneOf;
+      schema.type = "string";
+      schema.enum = unionTypes.map(t => t.getText().slice(1, -1));
+    }
     return schema;
   }
 };

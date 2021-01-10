@@ -131,6 +131,7 @@ class RouteSchemaTests {
 
     const definitions: any = getDefinitions();
     expect(definitions.Contact).toStrictEqual({
+      optional: false,
       properties: {
         address: {
           allOf: [{ transform: ["trim"] }, { minLength: 1 }],
@@ -143,8 +144,8 @@ class RouteSchemaTests {
       required: ["id"],
       type: "object"
     });
-
     expect(definitions.UserDetails).toStrictEqual({
+      optional: false,
       properties: {
         contacts: {
           items: {

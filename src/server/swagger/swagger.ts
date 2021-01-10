@@ -27,7 +27,7 @@ export const addSwagger = (controllers, app) => {
     Object.keys(routes || {}).forEach(key => {
       const method = routes[key];
       const path = method.path || toSnack(key);
-      const url = `/${basePath}/${path}`;
+      const url = `/${basePath}/${path}`.replace(/(\/?:[a-z]+)(\/)?/gi, $1 => `/{${$1.replace(/[:/]/g, "")}}/`).replace(/\/$/g, "");
       const schema = { ...method.schema?.request, tags: [basePath] };
       swaggerSchema.paths[url] = {};
       swaggerSchema.paths[url][method.routeType] = {
@@ -42,8 +42,8 @@ export const addSwagger = (controllers, app) => {
         swaggerSchema.paths[url][method.routeType].parameters.push({
           name: prop,
           in: "path",
-          description: param.description,
-          required: schema.params.required.includes(prop)
+          required: schema.params.required.includes(prop),
+          ...param
         });
       });
 
@@ -54,6 +54,22 @@ export const addSwagger = (controllers, app) => {
           required: true,
           schema: schema.body
         });
+      }
+
+      Object.keys(schema.query?.properties || []).forEach(prop => {
+        const param = schema.query.properties[prop];
+        const toAdd: any = { name: prop, in: "query", required: schema.query.required?.includes(prop) };
+        if (param.type === "object") {
+          toAdd.type = "object";
+          toAdd.schema = param;
+        } else {
+          Object.assign(toAdd, param);
+        }
+        swaggerSchema.paths[url][method.routeType].parameters.push(toAdd);
+      });
+
+      if (schema.query?.$ref) {
+        swaggerSchema.paths[url][method.routeType].parameters.push({ name: "query", in: "query", schema: schema.query });
       }
     });
   }

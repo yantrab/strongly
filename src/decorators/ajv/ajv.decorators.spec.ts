@@ -3,7 +3,15 @@ import { min, max, date } from "./ajv.decorators";
 import "reflect-metadata";
 import { getClass, getDefinitions, getParamSchema } from "../../utils/typescript-service";
 
+export interface SomeInterface {
+  filter?: {
+    someArray: number[];
+  };
+}
+
 export class c123 {
+  someInterface?: SomeInterface;
+
   @date
   date: string;
 
@@ -56,6 +64,9 @@ class ajvDecoratorsTests {
     expect(schema).toStrictEqual({ optional: false, $ref: "#/definitions/c123" });
     const definitions: any = getDefinitions();
     expect(definitions.c123.properties).toStrictEqual({
+      someInterface: {
+        $ref: "#/definitions/SomeInterface"
+      },
       date: {
         format: "date",
         allOf: [{ transform: ["trim"] }, { minLength: 1 }],

@@ -1,5 +1,5 @@
 import { get } from "../../../../decorators/routes/route.decorators";
-import { Controller } from "../../../../decorators";
+import { Controller, query } from "../../../../decorators";
 import { UserService } from "../../services/user.service";
 
 @Controller("a")

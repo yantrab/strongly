@@ -60,4 +60,10 @@ class LoginTests {
     const res = await this.app.inject({ method: "POST", url: "/auth/not-empty-string", body: {} } as any);
     expect(res.json()).toStrictEqual({});
   }
+
+  @test
+  async queryParams() {
+    const res = await this.app.inject({ method: "GET", url: "/auth/query-params", query: { a: 1, b: "a" } } as any);
+    expect(res.json().r).toEqual("1a");
+  }
 }

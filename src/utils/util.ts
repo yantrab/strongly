@@ -13,6 +13,7 @@ export declare type ValueProvider = { provide: any; useValue: any };
 export declare type Provider = { new (...args) } | ValueProvider;
 
 export declare type Schema = {
+  oneOf?: Schema[];
   optional?: boolean;
   type?: string;
   items?: any;

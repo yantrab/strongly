@@ -1,5 +1,6 @@
-import { body, post, email, min, get, user, reply, Controller } from "../../../../index";
+import { body, post, email, min, get, user, reply, Controller, params } from "../../../../index";
 import { UserService } from "../../services/user.service";
+import { query } from "../../../../decorators/route-params/route-param.decorators";
 
 @Controller("auth", { description: "User authentication stuff" })
 export class AuthController {
@@ -19,5 +20,23 @@ export class AuthController {
 
   @post notEmptyString(@body("str") str?: string) {
     return { str };
+  }
+
+  @get queryParams(@query arg: { a: number; b: string }) {
+    return { r: arg.a + arg.b };
+  }
+
+  @get manyTypes(@params("x") x: number | string): Promise<number | string> {
+    if (x === 1) {
+      return Promise.resolve("a");
+    } else return Promise.resolve(1);
+  }
+
+  @post manyString(@body("x") x: number | string): "a" | "b" {
+    return "a";
+  }
+
+  @get queryParams2(@query arg: { a: { c: number }; b: string }) {
+    return { r: arg.a + arg.b };
   }
 }
