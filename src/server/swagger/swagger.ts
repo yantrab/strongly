@@ -27,7 +27,7 @@ export const addSwagger = (controllers, app) => {
     Object.keys(routes || {}).forEach(key => {
       const method = routes[key];
       const path = method.path || toSnack(key);
-      const url = `/${basePath}/${path}`;
+      const url = `/${basePath}/${path}`.replace(/(\/?:[a-z]+)(\/)?/gi, $1 => `/{${$1.replace(/[:/]/g, "")}}`);
       const schema = { ...method.schema?.request, tags: [basePath] };
       swaggerSchema.paths[url] = {};
       swaggerSchema.paths[url][method.routeType] = {
