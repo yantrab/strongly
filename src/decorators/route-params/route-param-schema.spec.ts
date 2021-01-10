@@ -211,7 +211,6 @@ class RouteSchemaTests {
   schemaWithNestedNumberValidation() {
     expect(this.routes["getUsers10"].schema.request).toStrictEqual({
       body: {
-        optional: false,
         properties: {
           address: {
             maxLength: 10,
