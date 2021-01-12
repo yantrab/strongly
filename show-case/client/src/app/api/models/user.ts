@@ -1,5 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
 export interface User {
   '_id'?: any & any;
   email: any & any;

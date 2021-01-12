@@ -1,5 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
