@@ -17,7 +17,7 @@
     "mongodb": "^3.6.3",
     "node-cache": "^5.1.2",
     "nodemailer": "^6.4.17",
-    "strongly": "^1.0.35"
+    "strongly": "^1.0.51"
   },
   "devDependencies": {
     "@testdeck/jest": "^0.1.2",

@@ -8,7 +8,7 @@ import { getDefinitions } from "../utils/typescript-service";
 import glob from "globby";
 import { dirname } from "path";
 import { DIService } from "./di/di.service";
-import { addSwagger } from "./swagger/swagger";
+import { addSwagger, SwaggerOptions } from "./swagger/swagger";
 import ajvKeywords from "ajv-keywords";
 const diService = new DIService();
 
@@ -28,7 +28,13 @@ async function getControllers(controllers): Promise<any[]> {
 }
 
 export class ServerFactory {
-  static async create(opts?: FastifyServerOptions & { controllers?: { new (...args: any[]) }[] | string; providers?: Provider[] }) {
+  static async create(
+    opts?: FastifyServerOptions & {
+      controllers?: { new (...args: any[]) }[] | string;
+      providers?: Provider[];
+      swagger?: SwaggerOptions;
+    }
+  ) {
     const controllers = await getControllers(opts?.controllers);
     if (!controllers.length) {
       throw new Error("There is no controllers!");
@@ -70,7 +76,7 @@ export class ServerFactory {
       return { hello: "world" };
     });
 
-    addSwagger(controllers, app);
+    await addSwagger(controllers, app, opts?.swagger);
     app.ready(err => {
       if (err) throw err;
     });

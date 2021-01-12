@@ -1,5 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration } from './api-configuration';
@@ -9,13 +7,9 @@ import { ApiConfiguration } from './api-configuration';
  */
 @Injectable()
 export class BaseService {
-  constructor(
-    protected config: ApiConfiguration,
-    protected http: HttpClient
-  ) {
-  }
+  constructor(protected config: ApiConfiguration, protected http: HttpClient) {}
 
-  private _rootUrl: string = '';
+  private _rootUrl = '';
 
   /**
    * Returns the root url for all operations in this service. If not set directly in this

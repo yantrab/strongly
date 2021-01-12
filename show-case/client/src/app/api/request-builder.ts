@@ -1,5 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
 import { HttpRequest, HttpParameterCodec, HttpParams, HttpHeaders } from '@angular/common/http';
 
 /**
@@ -51,13 +49,21 @@ abstract class Parameter {
     if (value === null || value === undefined) {
       return '';
     } else if (value instanceof Array) {
-      return value.map(v => this.serializeValue(v).split(separator).join(encodeURIComponent(separator))).join(separator);
+      return value
+        .map(v =>
+          this.serializeValue(v)
+            .split(separator)
+            .join(encodeURIComponent(separator))
+        )
+        .join(separator);
     } else if (typeof value === 'object') {
       const array: string[] = [];
       for (const key of Object.keys(value)) {
         let propVal = value[key];
         if (propVal !== null && propVal !== undefined) {
-          propVal = this.serializeValue(propVal).split(separator).join(encodeURIComponent(separator));
+          propVal = this.serializeValue(propVal)
+            .split(separator)
+            .join(encodeURIComponent(separator));
           if (this.options.explode) {
             array.push(`${key}=${propVal}`);
           } else {
@@ -87,7 +93,7 @@ class PathParameter extends Parameter {
       value = '';
     }
     let prefix = this.options.style === 'label' ? '.' : '';
-    let separator = this.options.explode ? prefix === '' ? ',' : prefix : ',';
+    let separator = this.options.explode ? (prefix === '' ? ',' : prefix) : ',';
     if (this.options.style === 'matrix') {
       // The parameter name is just used as prefix, except in some cases...
       prefix = `;${this.name}=`;
@@ -127,9 +133,7 @@ class QueryParameter extends Parameter {
           params = params.append(this.name, this.serializeValue(v));
         }
       } else {
-        const separator = this.options.style === 'spaceDelimited'
-          ? ' ' : this.options.style === 'pipeDelimited'
-            ? '|' : ',';
+        const separator = this.options.style === 'spaceDelimited' ? ' ' : this.options.style === 'pipeDelimited' ? '|' : ',';
         return params.append(this.name, this.serializeValue(this.value, separator));
       }
     } else if (this.value !== null && typeof this.value === 'object') {
@@ -196,18 +200,13 @@ class HeaderParameter extends Parameter {
  * Helper to build http requests from parameters
  */
 export class RequestBuilder {
-
   private _path = new Map<string, PathParameter>();
   private _query = new Map<string, QueryParameter>();
   private _header = new Map<string, HeaderParameter>();
   _bodyContent: any | null;
   _bodyContentType?: string;
 
-  constructor(
-    public rootUrl: string,
-    public operationPath: string,
-    public method: string) {
-  }
+  constructor(public rootUrl: string, public operationPath: string, public method: string) {}
 
   /**
    * Sets a path parameter
@@ -309,7 +308,6 @@ export class RequestBuilder {
     /** Whether to report progress on uploads / downloads */
     reportProgress?: boolean;
   }): HttpRequest<T> {
-
     options = options || {};
 
     // Path parameters
@@ -350,4 +348,3 @@ export class RequestBuilder {
     });
   }
 }
-

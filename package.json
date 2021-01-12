@@ -1,6 +1,6 @@
 {
   "name": "strongly",
-  "version": "1.0.49",
+  "version": "1.0.51",
   "description": "Make your server strongly type without adding any piece of code",
   "main": "index.js",
   "types": "index.d.ts",
@@ -19,7 +19,7 @@
     "url": "https://github.com/yantrab/strongly.git"
   },
   "scripts": {
-    "clean": "rm -rf dist/",
+    "clean": "rm -rf dist/ && rm -rf coverage/",
     "build": "tsc  --p  tsconfig.build.json\n",
     "prebuild": "npm run clean",
     "test": "jest --coverage",

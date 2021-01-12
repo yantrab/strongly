@@ -9,10 +9,12 @@ import { getAbsoluteFSPath } from "swagger-ui-dist";
 import { ControllerOptions } from "../../decorators";
 import { OpenAPIV2 } from "openapi-types";
 import converter from "swagger2openapi";
+import { omitDeepBy } from "../../utils/deepOmit";
+import { writeFile } from "fs";
 const pk = JSON.parse(readFileSync(resolve("./package.json"), { encoding: "utf-8" }));
-
-export const addSwagger = (controllers, app) => {
-  const swaggerSchema: OpenAPIV2.Document = {
+export declare type SwaggerOptions = { outPutPath?: string };
+export const addSwagger = async (controllers, app, options?: SwaggerOptions) => {
+  let swaggerSchema: OpenAPIV2.Document = {
     swagger: "2.0",
     info: { title: pk.name, version: pk.version, description: pk.description },
     paths: {},
@@ -78,6 +80,18 @@ export const addSwagger = (controllers, app) => {
   Object.keys(definitions).forEach(key => {
     if (swaggerSchema.definitions) swaggerSchema.definitions[key] = definitions[key];
   });
+  swaggerSchema = omitDeepBy(swaggerSchema, (x, y) => {
+    return (y === "allOf" && x && x[0] && x[0].transform) || y === "optional";
+  });
+  swaggerSchema = await new Promise<OpenAPIV2.Document>(res =>
+    converter.convertObj(swaggerSchema, { patch: true }, (err, options) => res(options.openapi))
+  );
+  if (options?.outPutPath) {
+    writeFile(options.outPutPath, JSON.stringify(swaggerSchema), { encoding: "utf-8" }, err => {
+      console.log(1);
+    });
+  }
+
   const swaggerUIPath = getAbsoluteFSPath();
 
   app.register(serveStatic, {
@@ -85,7 +99,7 @@ export const addSwagger = (controllers, app) => {
   });
 
   app.get("/api-doc/json", {}, _ => {
-    return new Promise(res => converter.convertObj(swaggerSchema, { patch: true }, (err, options) => res(options.openapi)));
+    return swaggerSchema;
   });
 
   app.get("/api-doc", {}, async (request, reply) => {
