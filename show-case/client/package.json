@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "gen": "ng-openapi-gen  --config ./swagger/swagger.config.json"
+    "gen": "ng-openapi-gen  --config ./swagger/swagger.config.json && eslint src/app/api/** --fix"
   },
   "private": true,
   "dependencies": {
