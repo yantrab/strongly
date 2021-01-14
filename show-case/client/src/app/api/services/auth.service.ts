@@ -15,7 +15,7 @@ import { User, UserSchema } from '../models/user';
 
 export declare type loginFormGroupType = FormGroupTypeSafe<{ password: string; email: string }>;
 
-export declare type setPasswordFormGroupType = FormGroupTypeSafe<{ token: string; password: string; email: string }>;
+export declare type setPasswordFormGroupType = FormGroupTypeSafe<{ rePassword: string; password: string; email: string }>;
 
 /**
  * User authentication stuff
@@ -111,7 +111,7 @@ export class AuthService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  setPassword$Response(params: { token: string; password: string; email: string }): Observable<StrictHttpResponse<void>> {
+  setPassword$Response(params: { rePassword: string; password: string; email: string }): Observable<StrictHttpResponse<void>> {
     const rb = new RequestBuilder(this.rootUrl, AuthService.SetPasswordPath, 'post');
     rb.body(params, 'application/json');
     return this.http
@@ -135,18 +135,18 @@ export class AuthService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  setPassword(params: { token: string; password: string; email: string }): Observable<void> {
+  setPassword(params: { rePassword: string; password: string; email: string }): Observable<void> {
     return this.setPassword$Response(params).pipe(map((r: StrictHttpResponse<void>) => r.body as void));
   }
-  setPasswordFormGroup(value?: { token: string; password: string; email: string }) {
+  setPasswordFormGroup(value?: { rePassword: string; password: string; email: string }) {
     let schema: any = {
       properties: {
-        token: { format: 'uuid', type: 'string' },
+        rePassword: { type: 'string', minLength: 6 },
         password: { type: 'string', minLength: 6 },
         email: { format: 'email', type: 'string' }
       },
       type: 'object',
-      required: ['token', 'password', 'email']
+      required: ['rePassword', 'password', 'email']
     };
     if (schema.ref) {
       schema = this.ajv.getSchema(schema.ref);
@@ -158,9 +158,9 @@ export class AuthService extends BaseService {
       // @ts-ignore
       formControls[key] = new FormControl((value && value[key]) || '');
     }
-    return this.fb.group<{ token: string; password: string; email: string }>(formControls as any, {
+    return this.fb.group<{ rePassword: string; password: string; email: string }>(formControls as any, {
       validators: [
-        (formGroup: FormGroupTypeSafe<{ token: string; password: string; email: string }>) => {
+        (formGroup: FormGroupTypeSafe<{ rePassword: string; password: string; email: string }>) => {
           const isValid = validate(formGroup.value);
           if (isValid) return null;
           const result: any = {};

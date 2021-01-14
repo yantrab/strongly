@@ -9,7 +9,7 @@ import { FormModel } from '../components/form/form.component';
 })
 export class SetPasswordComponent {
   loginError?: string;
-  model: FormModel<loginFormGroupType & { rePassword: string }> = {
+  model: FormModel<loginFormGroupType> = {
     formGroup: this.service.loginFormGroup(),
     formTitle: 'Login Form',
     formSaveButtonTitle: 'Login',
@@ -18,14 +18,15 @@ export class SetPasswordComponent {
   constructor(private service: AuthService) {}
 
   login() {
-    this.service.(this.model.formGroup.value).subscribe(
-      res => {
-        console.log(res);
-      },
-      error => {
-        this.loginError = 'user or password is incorrect';
-        console.log(error);
-      }
-    );
+    if (this.model.formGroup.value..)
+      this.service.setPassword(this.model.formGroup.value).subscribe(
+        res => {
+          console.log(res);
+        },
+        error => {
+          this.loginError = 'user or password is incorrect';
+          console.log(error);
+        }
+      );
   }
 }

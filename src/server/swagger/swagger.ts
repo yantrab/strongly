@@ -68,6 +68,18 @@ export const addSwagger = async (controllers, app, options?: SwaggerOptions) => 
         swaggerSchema.paths[url][method.routeType].parameters.push(toAdd);
       });
 
+      Object.keys(schema.headers?.properties || []).forEach(prop => {
+        const param = schema.headers.properties[prop];
+        const toAdd: any = { name: prop, in: "header", required: schema.headers.required?.includes(prop) };
+        if (param.type === "object") {
+          toAdd.type = "object";
+          toAdd.schema = param;
+        } else {
+          Object.assign(toAdd, param);
+        }
+        swaggerSchema.paths[url][method.routeType].parameters.push(toAdd);
+      });
+
       if (schema.query?.$ref) {
         swaggerSchema.paths[url][method.routeType].parameters.push({ name: "query", in: "query", schema: schema.query });
       }

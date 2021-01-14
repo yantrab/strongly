@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { InputModel } from '../input/input.component';
+import { FormGroupTypeSafe } from 'angular-typesafe-reactive-forms-helper';
 
 export interface FormModel<T = any> {
-  formGroup: FormGroup;
+  formGroup: T;
   fields: Array<InputModel>;
   appearance?: 'legacy' | 'standard' | 'fill' | 'outline';
   formTitle?: string;
