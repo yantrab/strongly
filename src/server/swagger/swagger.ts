@@ -4,15 +4,13 @@ import { method } from "../../utils/interfaces";
 import { getDefinitions, getMethodSchema } from "../../utils/typescript-service";
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import serveStatic from "fastify-static";
-import { getAbsoluteFSPath } from "swagger-ui-dist";
 import { ControllerOptions } from "../../decorators";
 import { OpenAPIV2 } from "openapi-types";
 import converter from "swagger2openapi";
 import { omitDeepBy } from "../../utils/deepOmit";
 import { writeFile } from "fs";
 const pk = JSON.parse(readFileSync(resolve("./package.json"), { encoding: "utf-8" }));
-export declare type SwaggerOptions = { outPutPath?: string };
+export declare type SwaggerOptions = { outPutPath?: string; uiPath?: string };
 export const addSwagger = async (controllers, app, options?: SwaggerOptions) => {
   let swaggerSchema: OpenAPIV2.Document = {
     swagger: "2.0",
@@ -92,21 +90,13 @@ export const addSwagger = async (controllers, app, options?: SwaggerOptions) => 
     });
   }
 
-  const swaggerUIPath = getAbsoluteFSPath();
-
-  app.register(serveStatic, {
-    root: swaggerUIPath
-  });
-
   app.get("/api-doc/json", {}, _ => {
     return swaggerSchema;
   });
 
   app.get("/api-doc", {}, async (request, reply) => {
-    const file = readFileSync(swaggerUIPath + "/index.html", { encoding: "utf-8" }).replace(
-      "https://petstore.swagger.io/v2/swagger.json",
-      "api-doc/json"
-    );
+    const path = options?.uiPath || "./swagger.html";
+    const file = readFileSync(require.resolve(path), { encoding: "utf-8" });
     reply.type("text/html").send(file);
   });
 };

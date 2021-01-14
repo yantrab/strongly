@@ -35,12 +35,10 @@
     "ajv": "^6.12.6",
     "ajv-keywords": "^3.5.2",
     "fastify": "^3.9.2",
-    "fastify-static": "^3.3.0",
     "globby": "^11.0.1",
     "http-errors": "^1.8.0",
     "lodash": "^4.17.20",
     "reflect-metadata": "^0.1.13",
-    "swagger-ui-dist": "^3.38.0",
     "swagger2openapi": "^7.0.4",
     "ts-morph": "^9.0.0"
   },

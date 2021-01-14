@@ -1,4 +1,5 @@
-import { body, post, get, params, min, email } from "../../../index";
+import { body, post, get, params, min, email, uuid, query } from "../../../index";
+import { GetDataArgsI } from "./interface";
 
 class Contact {
   address?: string;
@@ -45,5 +46,29 @@ export class ShowCaseController {
    */
   @post saveContact(@body<Contact>({ properties: { address: { maxLength: 10 } } }) contact: { address?: string; id: number }) {
     return contact;
+  }
+
+  @get async getData(
+    @query({
+      example: {
+        filter: {
+          categoryIds: [1112]
+        },
+        exclude: {
+          categoryIds: [0]
+        },
+        page: {
+          limit: 0,
+          offset: 0
+        },
+        configurationType: "string",
+        timestamp: 0,
+        uuid: "string",
+        count: 0
+      }
+    })
+    query: GetDataArgsI
+  ) {
+    return Promise.resolve({});
   }
 }
