@@ -7,18 +7,18 @@ import { FormModel } from '../components/form/form.component';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']
 })
-export class LoginComponent {
+export class SetPasswordComponent {
   loginError?: string;
-  model: FormModel<loginFormGroupType> = {
+  model: FormModel<loginFormGroupType & { rePassword: string }> = {
     formGroup: this.service.loginFormGroup(),
     formTitle: 'Login Form',
     formSaveButtonTitle: 'Login',
-    fields: [{ key: 'email' }, { key: 'password', type: 'password' }]
+    fields: [{ key: 'email' }, { key: 'password', type: 'password' }, { key: 'rePassword', type: 'password' }]
   };
   constructor(private service: AuthService) {}
 
   login() {
-    this.service.login(this.model.formGroup.value).subscribe(
+    this.service.(this.model.formGroup.value).subscribe(
       res => {
         console.log(res);
       },
