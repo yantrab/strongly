@@ -3,7 +3,7 @@ import { toSnack } from "../../utils/util";
 import { method } from "../../utils/interfaces";
 import { getDefinitions, getMethodSchema } from "../../utils/typescript-service";
 import { readFileSync } from "fs";
-import { resolve } from "path";
+import { resolve, join, dirname } from "path";
 import { ControllerOptions } from "../../decorators";
 import { OpenAPIV2 } from "openapi-types";
 import converter from "swagger2openapi";
@@ -95,8 +95,8 @@ export const addSwagger = async (controllers, app, options?: SwaggerOptions) => 
   });
 
   app.get("/api-doc", {}, async (request, reply) => {
-    const path = options?.uiPath || "./swagger.html";
-    const file = readFileSync(require.resolve(path), { encoding: "utf-8" });
+    const path = options?.uiPath || resolve(__dirname + "/swagger.html");
+    const file = readFileSync(path, { encoding: "utf-8" });
     reply.type("text/html").send(file);
   });
 };
