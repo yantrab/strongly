@@ -17,7 +17,7 @@
       "plugins": ["@typescript-eslint", "prettier"],
       "rules": {
         "prettier/prettier": "warn",
-
+        "no-underscore-dangle": "off",
         "@angular-eslint/component-selector": [
           "error",
           {

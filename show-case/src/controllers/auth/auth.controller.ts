@@ -27,7 +27,7 @@ export class AuthController {
   @post async setPassword(
     @body("email") @email email: string,
     @body("password") @min(6) password: string,
-    @body("rePassword") @min(6) rePassword: string,
+    @body("rePassword", { const: { $data: "1/password" } }) @min(6) rePassword: string,
     @headers("token") @uuid token: string
   ) {
     if (!this.userService.validateToken(email, token)) throw new Unauthorized();

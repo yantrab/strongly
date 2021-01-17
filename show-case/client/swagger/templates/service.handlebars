@@ -21,17 +21,25 @@ import { FormControl } from "@angular/forms";
   providedIn: 'root',
 })
 export class {{typeName}} extends {{baseServiceClass}} {
+{{#operations}}
+  {{>operationPath}}
+{{/operations}}
+
   constructor(
     config: {{configurationClass}},
     http: HttpClient,
-    private ajv: Ajv,
-    private fb: FormBuilderTypeSafe
+    ajv: Ajv,
+    fb: FormBuilderTypeSafe
   ) {
-    super(config, http);
+    super(config, http, ajv, fb);
   }
-
 {{#operations}}
-{{>operationPath}}
-{{#variants}}{{>operationResponse}}{{>operationBody}}{{>operationForm}}{{/variants}}
+  {{#variants}}{{>operationBody}}{{/variants}}
+{{/operations}}
+{{#operations}}
+  {{#variants}}{{>operationForm}}{{/variants}}
+{{/operations}}
+{{#operations}}
+{{#variants}}{{>operationResponse}}{{/variants}}
 {{/operations}}
 }

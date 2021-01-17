@@ -19,22 +19,32 @@ export declare type addUserFormGroupType = FormGroupTypeSafe<User>;
   providedIn: 'root'
 })
 export class AdminService extends BaseService {
-  constructor(config: ApiConfiguration, http: HttpClient, private ajv: Ajv, private fb: FormBuilderTypeSafe) {
-    super(config, http);
-  }
-
   /**
    * Path part for operation users
    */
   static readonly UsersPath = '/admin/users';
-
   /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `users()` instead.
-   *
-   * This method doesn't expect any request body.
+   * Path part for operation addUser
    */
-  users$Response(): Observable<StrictHttpResponse<Array<User>>> {
+  static readonly AddUserPath = '/admin/add-user';
+
+  constructor(config: ApiConfiguration, http: HttpClient, ajv: Ajv, fb: FormBuilderTypeSafe) {
+    super(config, http, ajv, fb);
+  }
+  users(): Observable<Array<User>> {
+    return this.users$Response().pipe(map((r: StrictHttpResponse<Array<User>>) => r.body as Array<User>));
+  }
+
+  addUser(params: User): Observable<void> {
+    return this.addUser$Response(params).pipe(map((r: StrictHttpResponse<void>) => r.body as void));
+  }
+
+  addUserFormGroup(value?: User) {
+    const schema: any = { $ref: '#/components/schemas/User' };
+    return this.getFormGroup<User>(schema, value);
+  }
+
+  private users$Response(): Observable<StrictHttpResponse<Array<User>>> {
     const rb = new RequestBuilder(this.rootUrl, AdminService.UsersPath, 'get');
     return this.http
       .request(
@@ -51,28 +61,7 @@ export class AdminService extends BaseService {
       );
   }
 
-  /**
-   * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `users$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  users(): Observable<Array<User>> {
-    return this.users$Response().pipe(map((r: StrictHttpResponse<Array<User>>) => r.body as Array<User>));
-  }
-
-  /**
-   * Path part for operation addUser
-   */
-  static readonly AddUserPath = '/admin/add-user';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `addUser()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  addUser$Response(params: User): Observable<StrictHttpResponse<void>> {
+  private addUser$Response(params: User): Observable<StrictHttpResponse<void>> {
     const rb = new RequestBuilder(this.rootUrl, AdminService.AddUserPath, 'post');
     rb.body(params, 'application/json');
     return this.http
@@ -88,44 +77,5 @@ export class AdminService extends BaseService {
           return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
         })
       );
-  }
-
-  /**
-   * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `addUser$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  addUser(params: User): Observable<void> {
-    return this.addUser$Response(params).pipe(map((r: StrictHttpResponse<void>) => r.body as void));
-  }
-  addUserFormGroup(value?: User) {
-    let schema: any = { $ref: '#/components/schemas/User' };
-    if (schema.ref) {
-      schema = this.ajv.getSchema(schema.ref);
-    }
-    const validate = this.ajv.compile(schema);
-    const formControls: any = {};
-    const keys = Object.keys(schema.properties);
-    for (const key of keys) {
-      // @ts-ignore
-      formControls[key] = new FormControl((value && value[key]) || '');
-    }
-    return this.fb.group<User>(formControls as any, {
-      validators: [
-        (formGroup: FormGroupTypeSafe<User>) => {
-          const isValid = validate(formGroup.value);
-          if (isValid) return null;
-          const result: any = {};
-          const errors = validate.errors;
-          errors?.forEach(error => {
-            const key = error.dataPath.replace('/', '');
-            result[key] = error.message;
-            formControls[key].setErrors([error.message]);
-          });
-          return result;
-        }
-      ]
-    });
   }
 }

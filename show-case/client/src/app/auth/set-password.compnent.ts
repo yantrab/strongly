@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService, loginFormGroupType } from '../api/services/auth.service';
+import { AuthService, loginFormGroupType, setPasswordFormGroupType } from '../api/services/auth.service';
 import { FormModel } from '../components/form/form.component';
 
 @Component({
@@ -9,24 +9,23 @@ import { FormModel } from '../components/form/form.component';
 })
 export class SetPasswordComponent {
   loginError?: string;
-  model: FormModel<loginFormGroupType> = {
-    formGroup: this.service.loginFormGroup(),
-    formTitle: 'Login Form',
-    formSaveButtonTitle: 'Login',
+  model: FormModel<setPasswordFormGroupType> = {
+    formGroup: this.service.setPasswordFormGroup(),
+    formTitle: 'Change password',
+    formSaveButtonTitle: 'Save',
     fields: [{ key: 'email' }, { key: 'password', type: 'password' }, { key: 'rePassword', type: 'password' }]
   };
   constructor(private service: AuthService) {}
 
   login() {
-    if (this.model.formGroup.value..)
-      this.service.setPassword(this.model.formGroup.value).subscribe(
-        res => {
-          console.log(res);
-        },
-        error => {
-          this.loginError = 'user or password is incorrect';
-          console.log(error);
-        }
-      );
+    this.service.setPassword({ token: '', body: this.model.formGroup.value }).subscribe(
+      res => {
+        console.log(res);
+      },
+      error => {
+        this.loginError = 'user or password is incorrect';
+        console.log(error);
+      }
+    );
   }
 }

@@ -17,9 +17,10 @@ export interface FormModel<T = any> {
   styleUrls: ['./form.component.scss']
 })
 export class FormComponent implements OnInit {
-  constructor() {}
   @Input() model?: FormModel;
   @Output() emitter = new EventEmitter();
+  constructor() {}
+
   ngOnInit(): void {
     console.log(this.model);
   }
