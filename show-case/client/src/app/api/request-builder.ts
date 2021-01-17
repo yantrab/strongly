@@ -344,7 +344,8 @@ export class RequestBuilder {
       params: httpParams,
       headers: httpHeaders,
       responseType: options.responseType,
-      reportProgress: options.reportProgress
+      reportProgress: options.reportProgress,
+      withCredentials: true
     });
   }
 }

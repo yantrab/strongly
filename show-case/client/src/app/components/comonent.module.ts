@@ -1,7 +1,5 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,21 +10,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { InputComponent } from './input/input.component';
 import { FormComponent } from './form/form.component';
 import { CommonModule } from '@angular/common';
-
+const materialModules = [
+  FlexLayoutModule,
+  MatCardModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatButtonModule,
+  MatToolbarModule,
+  MatIconModule
+];
 @NgModule({
   declarations: [InputComponent, FormComponent],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatIconModule
-  ],
-  exports: [FormComponent, CommonModule, FlexLayoutModule],
+  imports: [CommonModule, ReactiveFormsModule, ...materialModules],
+  exports: [FormComponent, CommonModule, ...materialModules],
   providers: []
 })
 export class ComponentModule {}

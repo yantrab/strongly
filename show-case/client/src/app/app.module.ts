@@ -3,8 +3,9 @@ import { Component, NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { Guard } from './guard';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ApiModule } from './api/api.module';
+import { InterceptorsService } from './services/interceptors.service';
 
 const isCordovaApp = Object(window).cordova !== undefined;
 
@@ -30,7 +31,14 @@ const routes: Routes = [
     ApiModule.forRoot({ rootUrl: 'http://localhost:3000' })
   ],
 
-  providers: [Guard],
+  providers: [
+    Guard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InterceptorsService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
