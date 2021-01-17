@@ -26,6 +26,7 @@
             "style": "kebab-case"
           }
         ],
+        "@typescript-eslint/member-ordering": "warn",
         "@angular-eslint/directive-selector": [
           "error",
           {

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService, loginFormGroupType } from '../api/services/auth.service';
 import { FormModel } from '../components/form/form.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,12 +16,12 @@ export class LoginComponent {
     formSaveButtonTitle: 'Login',
     fields: [{ key: 'email' }, { key: 'password', type: 'password' }]
   };
-  constructor(private service: AuthService) {}
+  constructor(private service: AuthService, private router: Router) {}
 
   login() {
     this.service.login(this.model.formGroup.value).subscribe(
-      res => {
-        console.log(res);
+      user => {
+        this.router.navigate(['']).catch(console.log);
       },
       error => {
         this.loginError = 'user or password is incorrect';

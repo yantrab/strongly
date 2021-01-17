@@ -1,6 +1,7 @@
 import { ServerFactory } from "strongly";
 import fastifyJwt from "fastify-jwt";
 import fastifyCookie from "fastify-cookie";
+import fastifyCors from "fastify-cors";
 import { MongoClient } from "mongodb";
 import { mongoUrl } from "./services/config/config.service";
 import { MongoMemoryServer } from "mongodb-memory-server";
@@ -34,17 +35,15 @@ const start = async () => {
         });
       } catch (err) {}
     });
-    app.register(require("fastify-cors"), {
-      origin: (origin, cb) => {
-        if (/localhost/.test(origin)) {
-          //  Request from localhost will pass
-          cb(null, true);
-          return;
-        }
-        // Generate an error on other origins, disabling access
-        cb(null, true);
-      }
-    });
+
+    // enable cors for static angular site.
+    const corsOptions = {
+      origin: ["https://localhost:4200", "http://localhost:4200"],
+      optionsSuccessStatus: 200,
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+    };
+    app.register(fastifyCors, corsOptions);
     app.listen(3000, err => {
       if (err) {
         console.log(err);
