@@ -1,33 +1,6 @@
 {{#if requestBody}}
    {{methodName}}FormGroup(value?:{{{requestBody.type}}}) {
     let schema: any = {{{json requestBody.spec.schema}}}
-    if (schema["ref"]){
-      schema = this.ajv.getSchema(schema.ref)
-    }
-    const validate = this.ajv.compile(schema);
-    const formControls: any = {};
-    const keys = Object.keys(schema.properties)
-    for (const key of keys) {
-    // @ts-ignore
-    formControls[key] = new FormControl((value && value[key]) || '');
-    }
-    return this.fb.group<{{{requestBody.type}}}>( formControls as any,
-      {
-        validators: [
-          (formGroup: FormGroupTypeSafe<{{{requestBody.type}}}>) => {
-            const isValid = validate(formGroup.value);
-            if (isValid) return null;
-            const result: any = {};
-            const errors = validate.errors;
-            errors?.forEach(error => {
-              const key =  error.dataPath.replace('/', '')
-              result[key] = error.message;
-              formControls[key].setErrors([error.message])
-            });
-            return result;
-          }
-        ]
-      }
-    );
+    return this.getFormGroup<{{{requestBody.type}}}>(schema, value);
   }
 {{/if}}

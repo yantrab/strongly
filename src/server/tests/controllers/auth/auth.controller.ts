@@ -1,4 +1,4 @@
-import { body, post, email, min, get, user, reply, Controller, params } from "../../../../index";
+import { body, post, email, min, get, user, reply, Controller, params, headers } from "../../../../index";
 import { UserService } from "../../services/user.service";
 import { query } from "../../../../decorators/route-params/route-param.decorators";
 
@@ -38,5 +38,9 @@ export class AuthController {
 
   @get queryParams2(@query arg: { a: { c: number }; b: string }) {
     return { r: arg.a + arg.b };
+  }
+
+  @post someHeader(@headers("a") a: string) {
+    return { a };
   }
 }

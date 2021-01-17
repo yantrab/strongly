@@ -8,7 +8,6 @@ import { FormModel } from '../components/form/form.component';
   styleUrls: ['./auth.component.scss']
 })
 export class LoginComponent {
-  constructor(private service: AuthService) {}
   loginError?: string;
   model: FormModel<loginFormGroupType> = {
     formGroup: this.service.loginFormGroup(),
@@ -16,6 +15,7 @@ export class LoginComponent {
     formSaveButtonTitle: 'Login',
     fields: [{ key: 'email' }, { key: 'password', type: 'password' }]
   };
+  constructor(private service: AuthService) {}
 
   login() {
     this.service.login(this.model.formGroup.value).subscribe(

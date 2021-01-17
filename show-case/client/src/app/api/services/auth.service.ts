@@ -15,6 +15,8 @@ import { User, UserSchema } from '../models/user';
 
 export declare type loginFormGroupType = FormGroupTypeSafe<{ password: string; email: string }>;
 
+export declare type setPasswordFormGroupType = FormGroupTypeSafe<{ rePassword: string; password: string; email: string }>;
+
 /**
  * User authentication stuff
  */
@@ -22,22 +24,65 @@ export declare type loginFormGroupType = FormGroupTypeSafe<{ password: string; e
   providedIn: 'root'
 })
 export class AuthService extends BaseService {
-  constructor(config: ApiConfiguration, http: HttpClient, private ajv: Ajv, private fb: FormBuilderTypeSafe) {
-    super(config, http);
-  }
-
   /**
    * Path part for operation login
    */
   static readonly LoginPath = '/auth/login';
-
   /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `login()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * Path part for operation setPassword
    */
-  login$Response(params: { password: string; email: string }): Observable<StrictHttpResponse<User>> {
+  static readonly SetPasswordPath = '/auth/set-password';
+  /**
+   * Path part for operation logout
+   */
+  static readonly LogoutPath = '/auth/logout';
+  /**
+   * Path part for operation getUserAuthenticated
+   */
+  static readonly GetUserAuthenticatedPath = '/auth/get-user-authenticated';
+
+  constructor(config: ApiConfiguration, http: HttpClient, ajv: Ajv, fb: FormBuilderTypeSafe) {
+    super(config, http, ajv, fb);
+  }
+  login(params: { password: string; email: string }): Observable<User> {
+    return this.login$Response(params).pipe(map((r: StrictHttpResponse<User>) => r.body as User));
+  }
+
+  setPassword(params: { token: string; body: { rePassword: string; password: string; email: string } }): Observable<void> {
+    return this.setPassword$Response(params).pipe(map((r: StrictHttpResponse<void>) => r.body as void));
+  }
+
+  logout(): Observable<void> {
+    return this.logout$Response().pipe(map((r: StrictHttpResponse<void>) => r.body as void));
+  }
+
+  getUserAuthenticated(): Observable<User> {
+    return this.getUserAuthenticated$Response().pipe(map((r: StrictHttpResponse<User>) => r.body as User));
+  }
+
+  loginFormGroup(value?: { password: string; email: string }) {
+    const schema: any = {
+      properties: { password: { type: 'string', minLength: 6 }, email: { format: 'email', type: 'string' } },
+      type: 'object',
+      required: ['password', 'email']
+    };
+    return this.getFormGroup<{ password: string; email: string }>(schema, value);
+  }
+
+  setPasswordFormGroup(value?: { rePassword: string; password: string; email: string }) {
+    const schema: any = {
+      properties: {
+        rePassword: { type: 'string', minLength: 6, const: { $data: '1/password' } },
+        password: { type: 'string', minLength: 6 },
+        email: { format: 'email', type: 'string' }
+      },
+      type: 'object',
+      required: ['rePassword', 'password', 'email']
+    };
+    return this.getFormGroup<{ rePassword: string; password: string; email: string }>(schema, value);
+  }
+
+  private login$Response(params: { password: string; email: string }): Observable<StrictHttpResponse<User>> {
     const rb = new RequestBuilder(this.rootUrl, AuthService.LoginPath, 'post');
     rb.body(params, 'application/json');
     return this.http
@@ -55,61 +100,28 @@ export class AuthService extends BaseService {
       );
   }
 
-  /**
-   * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `login$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  login(params: { password: string; email: string }): Observable<User> {
-    return this.login$Response(params).pipe(map((r: StrictHttpResponse<User>) => r.body as User));
-  }
-  loginFormGroup(value?: { password: string; email: string }) {
-    let schema: any = {
-      properties: { password: { type: 'string', minLength: 6 }, email: { format: 'email', type: 'string' } },
-      type: 'object',
-      required: ['password', 'email']
-    };
-    if (schema.ref) {
-      schema = this.ajv.getSchema(schema.ref);
-    }
-    const validate = this.ajv.compile(schema);
-    const formControls: any = {};
-    const keys = Object.keys(schema.properties);
-    for (const key of keys) {
-      // @ts-ignore
-      formControls[key] = new FormControl((value && value[key]) || '');
-    }
-    return this.fb.group<{ password: string; email: string }>(formControls as any, {
-      validators: [
-        (formGroup: FormGroupTypeSafe<{ password: string; email: string }>) => {
-          const isValid = validate(formGroup.value);
-          if (isValid) return null;
-          const result: any = {};
-          const errors = validate.errors;
-          errors?.forEach(error => {
-            const key = error.dataPath.replace('/', '');
-            result[key] = error.message;
-            formControls[key].setErrors([error.message]);
-          });
-          return result;
-        }
-      ]
-    });
+  private setPassword$Response(params: {
+    token: string;
+    body: { rePassword: string; password: string; email: string };
+  }): Observable<StrictHttpResponse<void>> {
+    const rb = new RequestBuilder(this.rootUrl, AuthService.SetPasswordPath, 'post');
+    rb.header('token', params.token, {});
+    return this.http
+      .request(
+        rb.build({
+          responseType: 'text',
+          accept: '*/*'
+        })
+      )
+      .pipe(
+        filter((r: any) => r instanceof HttpResponse),
+        map((r: HttpResponse<any>) => {
+          return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+        })
+      );
   }
 
-  /**
-   * Path part for operation logout
-   */
-  static readonly LogoutPath = '/auth/logout';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `logout()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  logout$Response(): Observable<StrictHttpResponse<void>> {
+  private logout$Response(): Observable<StrictHttpResponse<void>> {
     const rb = new RequestBuilder(this.rootUrl, AuthService.LogoutPath, 'post');
     return this.http
       .request(
@@ -126,28 +138,7 @@ export class AuthService extends BaseService {
       );
   }
 
-  /**
-   * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `logout$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  logout(): Observable<void> {
-    return this.logout$Response().pipe(map((r: StrictHttpResponse<void>) => r.body as void));
-  }
-
-  /**
-   * Path part for operation getUserAuthenticated
-   */
-  static readonly GetUserAuthenticatedPath = '/auth/get-user-authenticated';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getUserAuthenticated()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getUserAuthenticated$Response(): Observable<StrictHttpResponse<User>> {
+  private getUserAuthenticated$Response(): Observable<StrictHttpResponse<User>> {
     const rb = new RequestBuilder(this.rootUrl, AuthService.GetUserAuthenticatedPath, 'get');
     return this.http
       .request(
@@ -162,15 +153,5 @@ export class AuthService extends BaseService {
           return r as StrictHttpResponse<User>;
         })
       );
-  }
-
-  /**
-   * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `getUserAuthenticated$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getUserAuthenticated(): Observable<User> {
-    return this.getUserAuthenticated$Response().pipe(map((r: StrictHttpResponse<User>) => r.body as User));
   }
 }

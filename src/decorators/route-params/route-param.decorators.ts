@@ -25,6 +25,9 @@ function addRouteParam(target, key: string, paramIndex: number, routeParamType: 
   const route = (allRoutes[key] = allRoutes[key] || { params: [], schema: {} });
   const fullPath = routeParamType + (path ? "." + path : "");
   const schema = Object.assign({}, route.params[paramIndex]?.schema || {}, getControllerSchema(target, key, paramIndex) || {});
+  if (!route.schema) {
+    route.schema = {};
+  }
   route.params[paramIndex] = { path: fullPath };
   if (Object.keys(schema).length) {
     const schemaPath = routeParamType + (path ? ".properties." + path : "");

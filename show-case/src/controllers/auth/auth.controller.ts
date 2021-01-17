@@ -1,4 +1,4 @@
-import { body, post, email, min, get, app, reply, user, request, params } from "strongly";
+import { body, post, email, min, get, app, reply, user, request, params, uuid, headers } from "strongly";
 import { UserService } from "../../services/user/user.service";
 import { User } from "../../domain/user";
 import { Unauthorized } from "http-errors";
@@ -24,6 +24,15 @@ export class AuthController {
     return user;
   }
 
+  @post async setPassword(
+    @body("email") @email email: string,
+    @body("password") @min(6) password: string,
+    @body("rePassword", { const: { $data: "1/password" } }) @min(6) rePassword: string,
+    @headers("token") @uuid token: string
+  ) {
+    if (!this.userService.validateToken(email, token)) throw new Unauthorized();
+    await this.userService.changePassword(email, token, password);
+  }
   @post logout(@reply reply, @request req) {
     reply.setCookie("token", req.cookies.token, {
       path: "/",

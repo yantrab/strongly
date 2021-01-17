@@ -1,18 +1,11 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "projects/**/*"
-  ],
+  "ignorePatterns": ["projects/**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
+      "files": ["*.ts"],
       "parserOptions": {
-        "project": [
-          "tsconfig.json",
-          "e2e/tsconfig.json"
-        ],
+        "project": ["tsconfig.json", "e2e/tsconfig.json"],
         "createDefaultProgram": true
       },
       "extends": [
@@ -24,7 +17,7 @@
       "plugins": ["@typescript-eslint", "prettier"],
       "rules": {
         "prettier/prettier": "warn",
-
+        "no-underscore-dangle": "off",
         "@angular-eslint/component-selector": [
           "error",
           {
@@ -44,17 +37,10 @@
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
-      "extends": [
-        "plugin:@angular-eslint/template/recommended",
-        "prettier"
-      ],
-      "rules": {
-        "prettier/prettier": "warn"
-      },
-      "plugins": ["@typescript-eslint", "prettier"]
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "rules": {},
+      "plugins": ["@typescript-eslint"]
     }
   ]
 }

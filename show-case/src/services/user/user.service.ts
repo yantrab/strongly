@@ -48,10 +48,13 @@ export class UserService {
   saveUserToken(email: string, token: string) {
     this.cache.set(email, token);
   }
-
-  async changePassword(email: string, token: string, password: string): Promise<boolean> {
+  validateToken(email: string, token: string) {
     const cacheToken = this.cache.get(email);
     if (!cacheToken || cacheToken !== token) return false;
+    return true;
+  }
+
+  async changePassword(email: string, token: string, password: string): Promise<boolean> {
     const salt = await genSalt(10);
     const hashPassword = hash(password, salt);
     await this.userRepo.collection.updateOne({ email: email }, { $set: { password: hashPassword } });
