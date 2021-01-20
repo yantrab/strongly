@@ -3,12 +3,17 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 import { FormBuilderTypeSafe } from 'angular-typesafe-reactive-forms-helper';
 
+import { UserSchema } from './models';
+
 import { AdminService } from './services/admin.service';
 import { AuthService } from './services/auth.service';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 const ajv = new Ajv({ allErrors: true, $data: true });
 addFormats(ajv);
+
+ajv.addSchema(UserSchema, '#/components/schemas/User');
+
 /**
  * Module that provides all services and configuration.
  */

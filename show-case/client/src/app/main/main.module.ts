@@ -1,18 +1,28 @@
 import { Component, NgModule } from '@angular/core';
 import { ComponentModule } from '../components/comonent.module';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { User } from '../api/models/user';
 import { AuthService } from '../auth/auth.service';
+import { Guard } from '../guard';
 @Component({
   selector: 'app-root',
   template: `
-    <mat-toolbar>
-      <a mat-button>Some page</a>
-      <a mat-button>admin</a>
-      <span style="flex: 1 1 auto;"></span>
-      <span> Hello {{ user?.fName }} {{ user?.lName }}</span>
-      <a (click)="logout()" mat-button>logout</a>
-    </mat-toolbar>
+    <div fxLayout="column" fxFlexFill>
+      <mat-toolbar>
+        <a mat-button>Some page</a>
+        <a mat-button routerLink="admin">admin</a>
+        <span style="flex: 1 1 auto;"></span>
+        <span> Hello {{ user?.fName }} {{ user?.lName }}</span>
+        <a (click)="logout()" mat-button>logout</a>
+      </mat-toolbar>
+      <div fxFlex style="padding: 1%;">
+        <router-outlet
+          style="flex: 1 1 auto;
+          display: flex;
+          overflow: hidden;"
+        ></router-outlet>
+      </div>
+    </div>
   `
 })
 class MainComponent {
@@ -33,11 +43,10 @@ class MainComponent {
     RouterModule.forChild([
       {
         path: '',
-        component: MainComponent
+        component: MainComponent,
+        children: [{ path: 'admin', loadChildren: () => import('src/app/main/admin/admin.module').then(m => m.AdminModule) }]
       }
     ])
-  ],
-  providers: [],
-  bootstrap: [MainComponent]
+  ]
 })
 export class MainModule {}

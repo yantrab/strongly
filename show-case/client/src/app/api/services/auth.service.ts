@@ -13,9 +13,9 @@ import { FormControl } from '@angular/forms';
 
 import { User, UserSchema } from '../models/user';
 
-export declare type loginFormGroupType = FormGroupTypeSafe<{ password: string; email: string }>;
+export declare type loginFormGroupType = { password: string; email: string };
 
-export declare type setPasswordFormGroupType = FormGroupTypeSafe<{ rePassword: string; password: string; email: string }>;
+export declare type setPasswordFormGroupType = { rePassword: string; password: string; email: string };
 
 /**
  * User authentication stuff

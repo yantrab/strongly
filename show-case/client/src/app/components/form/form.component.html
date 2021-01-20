@@ -1,19 +1,23 @@
-
 <ng-container *ngIf="model">
-  <mat-toolbar *ngIf="model.formTitle" style="margin-bottom: -5px">
-    <span>{{model.formTitle}}</span>
+  <mat-toolbar *ngIf="model.formTitle" style="margin-bottom: -5px" color="primary">
+    <span>{{ model.formTitle }}</span>
   </mat-toolbar>
   <mat-card>
-
-    <form  [formGroup]="model.formGroup" (ngSubmit)="emitter.emit(model.formGroup.value)">
-      <mat-card-content fxLayout="row wrap" fxLayoutAlign="space-between" >
+    <form [formGroup]="model.formGroup" (ngSubmit)="emitter.emit(model.formGroup.value)">
+      <mat-card-content fxLayout="row wrap" fxLayoutAlign="space-between">
         <app-input *ngFor="let field of model.fields" [model]="field" [control]="getControl(field.key)"></app-input>
       </mat-card-content>
-      <mat-card-actions>
-        <button class="save-button" type="submit"  mat-raised-button color="primary" [disabled]="!model?.formGroup?.valid">{{model.formSaveButtonTitle || 'SAVE'}}</button>
+
+      <mat-dialog-actions *ngIf="dialogRef">
+        <button (click)="save()" mat-raised-button>{{ model.formSaveButtonTitle || "SAVE" }}</button>
+        <button (click)="cancel()" mat-raised-button>{{ model.formSaveButtonTitle || "CANCEL" }}</button>
+      </mat-dialog-actions>
+
+      <mat-card-actions *ngIf="!dialogRef">
+        <button class="save-button" type="submit" mat-raised-button color="primary" [disabled]="!model?.formGroup?.valid">
+          {{ model.formSaveButtonTitle || "SAVE" }}
+        </button>
       </mat-card-actions>
     </form>
-
   </mat-card>
-
 </ng-container>

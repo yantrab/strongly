@@ -13,7 +13,7 @@ import { FormControl } from '@angular/forms';
 
 import { User, UserSchema } from '../models/user';
 
-export declare type addUserFormGroupType = FormGroupTypeSafe<User>;
+export declare type addUserFormGroupType = User;
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +40,7 @@ export class AdminService extends BaseService {
   }
 
   addUserFormGroup(value?: User) {
-    const schema: any = { $ref: '#/components/schemas/User' };
+    const schema: any = UserSchema;
     return this.getFormGroup<User>(schema, value);
   }
 

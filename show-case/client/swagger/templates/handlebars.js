@@ -9,4 +9,8 @@ module.exports = function(handlebars) {
     haystack = handlebars.escapeExpression(haystack);
     return haystack.indexOf(needle) > -1 ? options.fn(this) : options.inverse(this);
   });
+
+  handlebars.registerHelper("isRef", function(needle, options) {
+    return needle.$ref ? options.fn(this) : options.inverse(this);
+  });
 };

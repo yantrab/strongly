@@ -1,3 +1,4 @@
+import { email } from "strongly";
 import { Entity } from "./entity";
 
 export enum Role {
@@ -12,7 +13,7 @@ export class User extends Entity<User> {
   }
 
   phone: string;
-  email: string;
+  @email email: string;
   fName: string;
   lName: string;
   role: Role;

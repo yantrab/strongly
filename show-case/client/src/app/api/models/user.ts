@@ -11,7 +11,7 @@ export const UserSchema = {
   type: 'object',
   properties: {
     phone: { type: 'string' },
-    email: { type: 'string' },
+    email: { type: 'string', format: 'email' },
     fName: { type: 'string' },
     lName: { type: 'string' },
     role: { type: 'string', enum: ['admin', 'user'] },

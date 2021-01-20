@@ -30,24 +30,35 @@ export class BaseService {
   }
 
   getFormGroup<T>(schema: any, value?: T) {
-    if (schema.ref) {
+    if (schema.$ref) {
       schema = this.ajv.getSchema(schema.ref);
     }
     const validate = this.ajv.compile(schema);
     const formControls: any = {};
     const keys = Object.keys(schema.properties);
     for (const key of keys) {
-      formControls[key] = new FormControl((value && (value as any)[key]) || '');
+      formControls[key] = new FormControl(value && (value as any)[key]);
     }
     return this.fb.group<T>(formControls as any, {
       validators: [
         (formGroup: FormGroupTypeSafe<T>) => {
+          Object.keys(formGroup.value).forEach(key => {
+            // @ts-ignore
+            value = formGroup.value[key];
+            if (typeof value === 'string') {
+              // @ts-ignore
+              value = value.trim();
+            }
+            if (!value) value = undefined;
+            // @ts-ignore
+            formGroup.value[key] = value;
+          });
           const isValid = validate(formGroup.value);
           if (isValid) return null;
           const result: any = {};
           const errors = validate.errors;
           errors?.forEach((error: any) => {
-            const key = error.dataPath.replace('/', '');
+            const key = error.dataPath.replace('/', '') || error.params.missingProperty;
             result[key] = error.message;
             formControls[key].setErrors([error.message]);
           });

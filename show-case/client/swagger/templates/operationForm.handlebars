@@ -1,6 +1,10 @@
 {{#if requestBody}}
    {{methodName}}FormGroup(value?:{{{requestBody.type}}}) {
-    let schema: any = {{{json requestBody.spec.schema}}}
+   {{#isRef requestBody.spec.schema }}
+     let schema: any =  {{{requestBody.type}}}Schema;
+   {{else}}
+     let schema: any = {{{json requestBody.spec.schema}}}
+   {{/isRef}}
     return this.getFormGroup<{{{requestBody.type}}}>(schema, value);
   }
 {{/if}}
