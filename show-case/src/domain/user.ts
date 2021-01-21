@@ -1,5 +1,6 @@
 import { email } from "strongly";
 import { Entity } from "./entity";
+import { EntityWithoutGetters } from "../utils/typescript.util";
 
 export enum Role {
   admin = "admin",
@@ -7,7 +8,7 @@ export enum Role {
 }
 
 export class User extends Entity<User> {
-  constructor(props) {
+  constructor(props: EntityWithoutGetters<User>) {
     super(props);
     delete this["password"];
   }

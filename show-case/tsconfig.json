@@ -8,7 +8,6 @@
     "stripInternal": true,
     "keyofStringsOnly": false,
     "noImplicitUseStrict": true,
-    "noStrictGenericChecks": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -18,16 +17,10 @@
     "declaration": true,
     "module": "commonjs",
     "importHelpers": true,
-    "types": [
-      "jest",
-      "node"
-    ],
+    "types": ["jest", "node"],
     "sourceMap": false,
     "target": "es6",
-    "plugins": [
-    ]
+    "plugins": []
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

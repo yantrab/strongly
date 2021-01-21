@@ -6,7 +6,7 @@ export class DIService {
 
   private async getDependency(target) {
     if (!this.dependencies[target.name]) {
-      this.dependencies[target.name] = new target(...(await this.getDependencies(target)));
+      await this.getDependencies(target);
     }
     return this.dependencies[target.name];
   }
