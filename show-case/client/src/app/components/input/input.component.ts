@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MatFormFieldAppearance } from '@angular/material/form-field/form-field';
 import { FormControl } from '@angular/forms';
 export type ValuesOf<T extends readonly any[]> = T[number];
 // https://material.angular.io/components/input/overview
@@ -17,14 +16,13 @@ const materialInputTypes = [
   'url',
   'week'
 ] as const;
-export declare type inputType = ValuesOf<typeof materialInputTypes> & 'textarea';
-
+export declare type InputType = ValuesOf<typeof materialInputTypes> | 'textarea' | 'select' | 'multi-select';
 export declare type InputModel<T = any> = {
   key: keyof T & string;
   label?: string;
   appearance?: 'legacy' | 'standard' | 'fill' | 'outline';
   hint?: string;
-  type?: ValuesOf<typeof materialInputTypes>;
+  type?: InputType;
   options?: { value: any; title: string }[];
 };
 
@@ -34,10 +32,13 @@ export declare type InputModel<T = any> = {
   styleUrls: ['./input.component.scss']
 })
 export class InputComponent implements OnInit {
-  constructor() {}
-  ngOnInit(): void {}
   @Input() model?: InputModel;
   @Input() control?: FormControl;
+  hidePassword = true;
+
+  constructor() {}
+  ngOnInit(): void {}
+
   get label() {
     return this.model?.label;
   }
@@ -47,11 +48,10 @@ export class InputComponent implements OnInit {
   }
 
   get type() {
-    return this.model?.type as string;
+    return this.model?.type || 'text';
   }
 
   get appearance() {
     return this.model?.appearance;
   }
-  hidePassword = true;
 }

@@ -14,10 +14,7 @@ export class User extends Entity<User> {
 
   phone: string;
   @email email: string;
-  fName: string;
-  lName: string;
+  firstName: string;
+  lastName: string;
   role: Role;
-  get fullName() {
-    return this.fName + " " + this.lName;
-  }
 }

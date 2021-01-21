@@ -10,7 +10,7 @@
 
       <mat-dialog-actions *ngIf="dialogRef">
         <button (click)="save()" mat-raised-button>{{ model.formSaveButtonTitle || "SAVE" }}</button>
-        <button (click)="cancel()" mat-raised-button>{{ model.formSaveButtonTitle || "CANCEL" }}</button>
+        <button (click)="cancel()" mat-raised-button>{{ model.formCancelButtonTitle || "CANCEL" }}</button>
       </mat-dialog-actions>
 
       <mat-card-actions *ngIf="!dialogRef">

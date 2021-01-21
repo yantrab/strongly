@@ -4,6 +4,8 @@ import { ApiConfiguration } from './api-configuration';
 import { FormControl } from '@angular/forms';
 import { FormBuilderTypeSafe, FormGroupTypeSafe } from 'angular-typesafe-reactive-forms-helper';
 import Ajv from 'ajv';
+import { FormModel } from '../components/form/form.component';
+import * as _ from 'lodash';
 
 /**
  * Base class for services
@@ -29,6 +31,38 @@ export class BaseService {
     this._rootUrl = rootUrl;
   }
 
+  ajvFormatToHtml: any = { time: 'time', date: 'date', dateTime: 'datetime-local', email: 'email', uri: 'url' };
+  getPropertyType(prop: any) {
+    if (prop.enum) return 'select';
+    if (prop.type === 'array') return 'multi-select';
+    return this.ajvFormatToHtml[prop.format] || prop.type;
+  }
+
+  getFormModel<T>(schema: any, options?: Partial<FormModel<T>> & { displayProperties?: (keyof T & string)[] }, value?: T) {
+    const optionFields = _.keyBy(options?.fields, 'key');
+    const properties: any[] = Object.keys(schema.properties).map(key => ({ key, ...schema.properties[key] }));
+    const userFormModel: FormModel<T> = {
+      formGroup: options?.formGroup || this.getFormGroup(schema, value),
+      formSaveButtonTitle: options?.formSaveButtonTitle || 'Save',
+      formCancelButtonTitle: options?.formCancelButtonTitle || 'Cancel',
+      formTitle: options?.formTitle,
+      appearance: options?.appearance,
+      fields: _(properties)
+        .filter(p => !p.key.startsWith('_') && (!options?.displayProperties || options.displayProperties.includes(p.key)))
+        .orderBy(p => options?.displayProperties?.findIndex(prop => prop === p.key))
+        .map(
+          p =>
+            optionFields[p.key] || {
+              key: p.key,
+              label: p.key.charAt(0).toUpperCase() + p.key.slice(1).replace(/([A-Z])/g, ($1: string) => ' ' + $1),
+              type: this.getPropertyType(p),
+              options: p.enum?.map((key: any) => ({ title: key, value: key })) // TODO array
+            }
+        )
+        .value()
+    };
+    return userFormModel;
+  }
   getFormGroup<T>(schema: any, value?: T) {
     if (schema.$ref) {
       schema = this.ajv.getSchema(schema.ref);

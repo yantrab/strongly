@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +18,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { CellDefDirective } from './table/cell-def.directive';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
 const materialModules = [
   FlexLayoutModule,
   MatCardModule,
@@ -33,7 +34,7 @@ const materialModules = [
 ];
 @NgModule({
   declarations: [InputComponent, FormComponent, TableComponent, CellDefDirective],
-  imports: [CommonModule, ReactiveFormsModule, ...materialModules, MatSortModule, MatDialogModule],
+  imports: [CommonModule, ReactiveFormsModule, ...materialModules, MatSortModule, MatDialogModule, MatSelectModule, FormsModule],
   exports: [FormComponent, TableComponent, CommonModule, ...materialModules],
   providers: []
 })

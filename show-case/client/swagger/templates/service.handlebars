@@ -10,7 +10,7 @@ import { map, filter } from 'rxjs/operators';
 import Ajv from 'ajv';
 import { FormBuilderTypeSafe, FormGroupTypeSafe } from 'angular-typesafe-reactive-forms-helper';
 import { FormControl } from "@angular/forms";
-
+import { FormModel } from '../../components/form/form.component';
 {{#imports}}import { {{{typeName}}}{{#useAlias}} as {{{qualifiedName}}}{{/useAlias}}, {{{typeName}}}{{#useAlias}} as {{{qualifiedName}}}{{/useAlias}}Schema } from '{{{file}}}';{{/imports}}
 
 {{#operations}}
