@@ -24,15 +24,16 @@ export class someController6 {
 }
 @suite
 class diTests {
+  @test("should create only one someService service") async di2() {
+    await ServerFactory.create({ controllers: [someController5, someController6] });
+    expect(counter).toEqual(1);
+  }
+
   @test
   async di() {
     const diService = new DIService();
 
     const d = await diService.getDependencies(someController5);
     expect(Object.values(d).length).toBe(2);
-  }
-  @test("should create only one someService service") async di2() {
-    await ServerFactory.create({ controllers: [someController5, someController6] });
-    expect(counter).toEqual(1);
   }
 }
