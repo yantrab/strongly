@@ -1,7 +1,6 @@
 import { email } from "strongly";
 import { Entity } from "./entity";
 import { EntityWithoutGetters } from "../utils/typescript.util";
-import { WritableKeys } from "ts-essentials";
 
 export enum Role {
   admin = "admin",
