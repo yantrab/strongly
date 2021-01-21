@@ -1,9 +1,9 @@
-import { suite, test, timeout } from "@testdeck/jest";
+import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
 import { DbService } from "./db.service";
 import { MongoClient } from "mongodb";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import { User } from "../../domain/user";
+import { Role, User } from "../../domain/user";
 
 @suite
 class DbServiceSpec {
@@ -14,30 +14,30 @@ class DbServiceSpec {
     this.service = new DbService(mongoClient);
   }
   @test async saveOrUpdateOne() {
-    const user = new User({ lName: "saba", fName: "yo", email: "a@b.c", phone: "555" });
+    const user = new User({ lastName: "saba", firstName: "yo", email: "a@b.c", phone: "555", role: Role.admin });
     const userRepo = this.service.getRepository<User>(User, "db");
     const savedUser = await userRepo.saveOrUpdateOne(user);
     expect(user).toHaveProperty("_id");
     expect(savedUser).toHaveProperty("_id");
-    savedUser.lName = "baba";
+    savedUser.lastName = "baba";
     await userRepo.saveOrUpdateOne(savedUser);
-    let result = await userRepo.find({ fName: "yo", lName: "saba" });
+    let result = await userRepo.find({ firstName: "yo", lastName: "saba" });
     expect(result.length).toBe(0);
 
-    result = await userRepo.find({ fName: "yo", lName: "baba" });
+    result = await userRepo.find({ firstName: "yo", lastName: "baba" });
     expect(result.length).toBe(1);
     savedUser._id = savedUser?._id.toHexString() as any;
-    savedUser.lName = "last";
+    savedUser.lastName = "last";
     await userRepo.saveOrUpdateOne(savedUser);
 
     result = await userRepo.find({});
     expect(result.length).toBe(1);
 
-    result = await userRepo.find({ fName: "yo", lName: "baba" });
+    result = await userRepo.find({ firstName: "yo", lastName: "baba" });
     ``;
     expect(result.length).toBe(0);
 
-    const userDb = await userRepo.findOne({ fName: "yo", lName: "last" });
+    const userDb = await userRepo.findOne({ firstName: "yo", lastName: "last" });
     expect(userDb).toBeDefined();
   }
 }

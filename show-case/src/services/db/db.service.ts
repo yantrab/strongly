@@ -29,7 +29,7 @@ export class Repository<T extends Entity<T>> {
 export class DbService {
   constructor(private connection: MongoClient) {}
 
-  getRepository<T extends Entity<T>, P = new () => T>(entity: P, db: string): Repository<T> {
+  getRepository<T extends Entity<T>, P = new (...args) => T>(entity: P, db: string): Repository<T> {
     return new Repository(this.connection.db(db).collection<Partial<EntityWithoutGetters<T>>>((entity as any).name));
   }
 }

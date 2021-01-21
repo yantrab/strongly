@@ -12,7 +12,7 @@ import { Guard } from '../guard';
         <a mat-button>Some page</a>
         <a mat-button routerLink="admin">admin</a>
         <span style="flex: 1 1 auto;"></span>
-        <span> Hello {{ user?.fName }} {{ user?.lName }}</span>
+        <span> Hello {{ user?.firstName }} {{ user?.lastName }}</span>
         <a (click)="logout()" mat-button>logout</a>
       </mat-toolbar>
       <div fxFlex style="padding: 1%;">

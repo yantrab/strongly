@@ -1,7 +1,7 @@
 import { EntityWithoutGetters } from "../utils/typescript.util";
 
 export abstract class Entity<T> {
-  constructor(data?: EntityWithoutGetters<T>) {
+  protected constructor(data?) {
     if (data) {
       Object.assign(this, data);
     }

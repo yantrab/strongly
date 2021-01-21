@@ -20,8 +20,8 @@ export class UserService {
       const user = new User({
         email: "admin@admin.com",
         phone: "0555555",
-        fName: "Admin",
-        lName: "",
+        firstName: "Admin",
+        lastName: "Sara",
         role: Role.admin
       });
       user["password"] = await cryptPassword("123456");
