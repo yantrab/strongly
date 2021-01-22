@@ -6,7 +6,7 @@ import { EntityWithoutGetters } from "../../utils/typescript.util";
 export class Repository<T extends Entity<T>> {
   constructor(public collection: Collection<Partial<EntityWithoutGetters<T>>>) {}
 
-  async saveOrUpdateOne(entity: T): Promise<typeof entity & { _id: ObjectId }> {
+  async saveOrUpdateOne(entity: T): Promise<typeof entity> {
     if (entity.isNew) {
       await this.collection.insertOne(entity as any);
     } else {
@@ -14,7 +14,7 @@ export class Repository<T extends Entity<T>> {
       const _id = new ObjectId(entity._id);
       await this.collection.updateOne({ _id } as any, { $set: itemToUpdate as any });
     }
-    return entity as T & { _id: ObjectId };
+    return entity as T;
   }
 
   find(query?: Partial<EntityWithoutGetters<T>>): Promise<T[]> {

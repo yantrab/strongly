@@ -25,7 +25,7 @@ export class UserService {
         role: Role.admin
       });
       user["password"] = await cryptPassword("123456");
-      await this.saveUser(user);
+      await this.saveOrUpdateUser(user);
     });
   }
 
@@ -35,7 +35,7 @@ export class UserService {
     return new User(userDb as User);
   }
 
-  saveUser(user: User) {
+  saveOrUpdateUser(user: User) {
     return this.userRepo.saveOrUpdateOne(user);
   }
   getUsers(query?: Partial<User>) {
