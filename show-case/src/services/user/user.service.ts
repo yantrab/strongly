@@ -30,7 +30,7 @@ export class UserService {
   }
 
   async validateAndGetUser(email: string, password: string): Promise<User | undefined> {
-    const userDb: User & { password: string } = (await this.userRepo.collection.findOne({ email })) as any;
+    const userDb: User & { password: string } = (await this.userRepo.collection.findOne({ email, _isDeleted: undefined })) as any;
     if (!userDb?.password || !(await compare(password, userDb.password))) return;
     return new User(userDb as User);
   }

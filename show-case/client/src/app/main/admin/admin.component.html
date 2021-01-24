@@ -1,4 +1,4 @@
 <div fxFlexFill *ngIf="users.length" fxLayout="column">
   <button style="width: 150px;" (click)="openEditUserDialog()" mat-raised-button color="primary">Create New User</button>
-  <app-table fxFlex [dataSource]="users"></app-table>
+  <app-table style="padding: 50px" fxFlex [dataSource]="users" [options]="usersTableOptions"></app-table>
 </div>

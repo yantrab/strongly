@@ -1,4 +1,4 @@
-import { Component, ContentChildren, Input, QueryList, ViewChild, ElementRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ContentChildren, ElementRef, Input, QueryList, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Dictionary, keyBy } from 'lodash';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
@@ -12,22 +12,27 @@ export interface ColumnDef<T = any> {
   width?: string;
 }
 
+export declare type TableOptions<T> = {
+  columns: ColumnDef<T>[];
+  filter?: { placeholder: string };
+  filterable?: boolean;
+  rowActions?: { icon: string; action: ($event: MouseEvent, row: any) => any }[];
+};
+
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
-  styleUrls: ['./table.component.scss']
+  styleUrls: ['./table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableComponent {
+export class TableComponent implements AfterViewInit {
   @Input() set dataSource(data: any[]) {
     this._dataSource = new TableVirtualScrollDataSource(data);
-    if (!this.options) {
-      this.options = { columns: Object.keys(data[0] || {}).map(key => ({ key })) };
-    }
-    this.columns = this.options?.columns.map(c => c.key);
-    this._matCellDefs = keyBy(this.matCellDefs, 'key');
   }
-  @Input() options?: { columns: ColumnDef[]; filter?: { placeholder: string } };
-  @ContentChildren(CellDefDirective) matCellDefs?: QueryList<CellDefDirective>;
+  @Input() options?: TableOptions<any>;
+  @ContentChildren(CellDefDirective) set matCellDefs(cells: QueryList<CellDefDirective>) {
+    this._matCellDefs = keyBy(cells || {}, 'key');
+  }
   @ViewChild('filter', { static: false }) filter?: ElementRef;
   _dataSource?: MatTableDataSource<any>;
 
@@ -36,5 +41,12 @@ export class TableComponent {
 
   applyFilter($event: KeyboardEvent) {
     if (this._dataSource) this._dataSource.filter = ($event.target as any).value.trim().toLowerCase();
+  }
+  ngAfterViewInit() {
+    if (!this.options) {
+      this.options = { columns: Object.keys(this._dataSource?.data[0] || {}).map(key => ({ key })) };
+    }
+    this.columns = this.options.rowActions ? ['actions'] : [];
+    this.columns?.push(...this.options?.columns.map(c => c.key));
   }
 }

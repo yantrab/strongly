@@ -1,5 +1,3 @@
-import { EntityWithoutGetters } from "../utils/typescript.util";
-
 export abstract class Entity<T> {
   protected constructor(data?) {
     if (data) {
@@ -7,6 +5,7 @@ export abstract class Entity<T> {
     }
   }
   _id?: string;
+  _isDeleted?: boolean;
   get isNew() {
     return !this._id;
   }

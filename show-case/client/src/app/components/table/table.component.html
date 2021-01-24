@@ -1,11 +1,24 @@
 <div fxFlexFill fxLayout="column" *ngIf="_dataSource && options">
-  <mat-form-field *ngIf="options.filter" fxFlex="50px">
+  <mat-form-field *ngIf="options.filterable !== false" fxFlex="50px">
     <input matInput #filter [placeholder]="options.filter?.placeholder || 'Filter'" (keyup)="applyFilter($event)" />
   </mat-form-field>
   <cdk-virtual-scroll-viewport fxFlex [tvsItemSize]="48">
     <table matSort mat-table [dataSource]="_dataSource">
       <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      <ng-container *ngIf="options.rowActions" matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="actions-column"></th>
+        <td mat-cell *matCellDef="let row">
+          <button
+            class="actions"
+            *ngFor="let action of options.rowActions; let i = index"
+            mat-mini-fab
+            (click)="action.action($event, row)"
+          >
+            <mat-icon>{{ action.icon }}</mat-icon>
+          </button>
+        </td>
+      </ng-container>
       <ng-container *ngFor="let column of options?.columns; let i = index" matColumnDef="{{ column.key }}">
         <th mat-header-cell mat-sort-header [disabled]="column.isSortable === false" *matHeaderCellDef>
           {{ column.title || column.key }}

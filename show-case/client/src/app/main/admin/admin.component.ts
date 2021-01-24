@@ -4,6 +4,7 @@ import { User } from '../../api/models/user';
 import { FormComponent } from '../../components/form/form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TableOptions } from '../../components/table/table.component';
 
 @Component({
   selector: 'app-admin',
@@ -16,14 +17,34 @@ export class AdminComponent implements OnInit {
     displayProperties: ['firstName', 'lastName', 'email', 'phone', 'role'],
     formTitle: 'Add New User'
   });
-
+  usersTableOptions: TableOptions<User> = {
+    columns: [
+      { key: 'firstName', title: 'First Name' },
+      { key: 'lastName', title: 'Last Name' },
+      { key: 'phone', title: 'Phone Number' },
+      { key: 'email', title: 'Email' },
+      { key: 'role', title: 'Role' }
+    ],
+    rowActions: [
+      {
+        icon: 'edit',
+        action: ($event, row) => this.openEditUserDialog(row)
+      },
+      {
+        icon: 'delete',
+        action: ($event, row) => this.deleteUser(row)
+      }
+    ]
+  };
   constructor(private api: AdminService, private dialog: MatDialog, private snackBar: MatSnackBar) {
     api.users().subscribe(users => (this.users = users));
   }
 
   ngOnInit(): void {}
+
   openEditUserDialog(user?: User): void {
-    if (user) this.userFormModel.formGroup.setValue(user);
+    if (user) this.userFormModel.formGroup.patchValue(user);
+    else this.userFormModel.formGroup.reset();
     const dialogRef = this.dialog.open(FormComponent, {
       width: '80%',
       maxWidth: '540px',
@@ -37,12 +58,24 @@ export class AdminComponent implements OnInit {
           if (!relevant) this.users = this.users.concat([savedUser]);
           else {
             Object.keys(result).forEach(key => ((relevant as any)[key] = result[key]));
+            this.users = [...this.users];
           }
-          this.snackBar.open('User was saved successfully', 'Cancel', {
-            duration: 2000
-          });
+          this.snackBar.open('User was saved successfully', '', { duration: 2000 });
         });
       }
+    });
+  }
+
+  deleteUser(row: User) {
+    this.api.deleteUser(row).subscribe(user => {
+      this.users = this.users.filter(u => u._id !== user._id);
+      const snackBarRef = this.snackBar.open('User was deleted successfully', 'Cancel', {
+        duration: 2000
+      });
+      snackBarRef.onAction().subscribe(() => {
+        this.users = this.users.concat([user]);
+        this.api.unDeleteUser(row).subscribe(() => this.snackBar.open('User was undeleted successfully', '', { duration: 2000 }));
+      });
     });
   }
 }

@@ -8,7 +8,7 @@ import { randomBytes } from "crypto";
 export class AdminController {
   constructor(private userService: UserService, private mailer: MailerService) {}
   @get users() {
-    return this.userService.getUsers();
+    return this.userService.getUsers({ _isDeleted: undefined });
   }
 
   private async addUser(user: User) {
@@ -27,6 +27,18 @@ export class AdminController {
       return this.addUser(user);
     }
 
+    return this.userService.saveOrUpdateUser(user);
+  }
+
+  @post deleteUser(@body user: User): Promise<User> {
+    user = new User(user);
+    user._isDeleted = true;
+    return this.userService.saveOrUpdateUser(user);
+  }
+
+  @post unDeleteUser(@body user: User): Promise<User> {
+    user = new User(user);
+    user._isDeleted = undefined;
     return this.userService.saveOrUpdateUser(user);
   }
 }
