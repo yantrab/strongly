@@ -1,15 +1,9 @@
 {{#if requestBody}}
-   {{methodName}}FormGroup(value?:{{{requestBody.type}}}) {
-   {{#isRef requestBody.spec.schema }}
-     let schema: any =  {{{requestBody.type}}}Schema;
-   {{else}}
-     let schema: any = {{{json requestBody.spec.schema}}}
-   {{/isRef}}
-    return this.getFormGroup<{{{requestBody.type}}}>(schema, value);
+   {{methodName}}FormGroup(value?:{{upperFirstLetter methodName}}FormGroupType) {
+    return this.getFormGroup<{{upperFirstLetter methodName}}FormGroupType>({{methodName}}FormGroupSchema, value);
   }
 
-   {{methodName}}FormModel(options?: Partial<FormModel> & { displayProperties?: (keyof {{{requestBody.type}}} & string)[] }, value?: {{{requestBody.type}}}) {
-    const schema: any = UserSchema;
-    return this.getFormModel<{{{requestBody.type}}}>(schema, options, value);
+   {{methodName}}FormModel(options?: Partial<FormModel> & { displayProperties?: (keyof {{upperFirstLetter methodName}}FormGroupType & string)[] }, value?: {{upperFirstLetter methodName}}FormGroupType) {
+    return this.getFormModel<{{upperFirstLetter methodName}}FormGroupType>({{methodName}}FormGroupSchema, options, value);
   }
 {{/if}}

@@ -8,8 +8,7 @@ import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import Ajv from 'ajv';
-import { FormBuilderTypeSafe, FormGroupTypeSafe } from 'angular-typesafe-reactive-forms-helper';
-import { FormControl } from "@angular/forms";
+import { FormBuilderTypeSafe } from 'angular-typesafe-reactive-forms-helper';
 import { FormModel } from '../../components/form/form.component';
 {{#imports}}import { {{{typeName}}}{{#useAlias}} as {{{qualifiedName}}}{{/useAlias}}, {{{typeName}}}{{#useAlias}} as {{{qualifiedName}}}{{/useAlias}}Schema } from '{{{file}}}';{{/imports}}
 

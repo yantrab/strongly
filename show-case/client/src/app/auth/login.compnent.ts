@@ -1,16 +1,12 @@
 import { Component } from '@angular/core';
-import { AuthService, loginFormGroupType } from '../api/services/auth.service';
+import { AuthService, LoginFormGroupType } from '../api/services/auth.service';
 import { FormModel } from '../components/form/form.component';
 import { Router } from '@angular/router';
 
-@Component({
-  selector: 'app-login',
-  templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.scss']
-})
+@Component({ selector: 'app-login', templateUrl: './auth.component.html', styleUrls: ['./auth.component.scss'] })
 export class LoginComponent {
   loginError?: string;
-  model: FormModel<loginFormGroupType> = {
+  model: FormModel<LoginFormGroupType> = {
     formGroup: this.service.loginFormGroup(),
     formTitle: 'Login Form',
     formSaveButtonTitle: 'Login',

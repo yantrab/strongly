@@ -8,14 +8,15 @@ import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import Ajv from 'ajv';
-import { FormBuilderTypeSafe, FormGroupTypeSafe } from 'angular-typesafe-reactive-forms-helper';
-import { FormControl } from "@angular/forms";
+import { FormBuilderTypeSafe } from 'angular-typesafe-reactive-forms-helper';
 import { FormModel } from '../../components/form/form.component';
 import { User, UserSchema } from '../models/user';
 
-  export declare type loginFormGroupType = { 'password': string, 'email': string }
+    export declare type LoginFormGroupType = { 'password': string, 'email': string }
+    export const loginFormGroupSchema = {"properties":{"password":{"type":"string","minLength":6},"email":{"format":"email","type":"string"}},"type":"object","required":["password","email"]}
 
-  export declare type setPasswordFormGroupType = { 'rePassword': string, 'password': string, 'email': string }
+    export declare type SetPasswordFormGroupType = { 'rePassword': string, 'password': string, 'email': string }
+    export const setPasswordFormGroupSchema = {"properties":{"rePassword":{"type":"string","minLength":6,"const":{"$data":"1/password"}},"password":{"type":"string","minLength":6},"email":{"format":"email","type":"string"}},"type":"object","required":["rePassword","password","email"]}
 
   
   
@@ -86,24 +87,20 @@ export class AuthService extends BaseService {
     );
   }
 
-     loginFormGroup(value?:{ 'password': string, 'email': string }) {
-     let schema: any = {"properties":{"password":{"type":"string","minLength":6},"email":{"format":"email","type":"string"}},"type":"object","required":["password","email"]}
-    return this.getFormGroup<{ 'password': string, 'email': string }>(schema, value);
+     loginFormGroup(value?:LoginFormGroupType) {
+    return this.getFormGroup<LoginFormGroupType>(loginFormGroupSchema, value);
   }
 
-   loginFormModel(options?: Partial<FormModel> & { displayProperties?: (keyof { 'password': string, 'email': string } & string)[] }, value?: { 'password': string, 'email': string }) {
-    const schema: any = UserSchema;
-    return this.getFormModel<{ 'password': string, 'email': string }>(schema, options, value);
+   loginFormModel(options?: Partial<FormModel> & { displayProperties?: (keyof LoginFormGroupType & string)[] }, value?: LoginFormGroupType) {
+    return this.getFormModel<LoginFormGroupType>(loginFormGroupSchema, options, value);
   }
 
-     setPasswordFormGroup(value?:{ 'rePassword': string, 'password': string, 'email': string }) {
-     let schema: any = {"properties":{"rePassword":{"type":"string","minLength":6,"const":{"$data":"1/password"}},"password":{"type":"string","minLength":6},"email":{"format":"email","type":"string"}},"type":"object","required":["rePassword","password","email"]}
-    return this.getFormGroup<{ 'rePassword': string, 'password': string, 'email': string }>(schema, value);
+     setPasswordFormGroup(value?:SetPasswordFormGroupType) {
+    return this.getFormGroup<SetPasswordFormGroupType>(setPasswordFormGroupSchema, value);
   }
 
-   setPasswordFormModel(options?: Partial<FormModel> & { displayProperties?: (keyof { 'rePassword': string, 'password': string, 'email': string } & string)[] }, value?: { 'rePassword': string, 'password': string, 'email': string }) {
-    const schema: any = UserSchema;
-    return this.getFormModel<{ 'rePassword': string, 'password': string, 'email': string }>(schema, options, value);
+   setPasswordFormModel(options?: Partial<FormModel> & { displayProperties?: (keyof SetPasswordFormGroupType & string)[] }, value?: SetPasswordFormGroupType) {
+    return this.getFormModel<SetPasswordFormGroupType>(setPasswordFormGroupSchema, options, value);
   }
 
   

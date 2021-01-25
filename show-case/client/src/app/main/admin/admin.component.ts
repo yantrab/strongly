@@ -6,11 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TableOptions } from '../../components/table/table.component';
 
-@Component({
-  selector: 'app-admin',
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
-})
+@Component({ selector: 'app-admin', templateUrl: './admin.component.html', styleUrls: ['./admin.component.scss'] })
 export class AdminComponent implements OnInit {
   users: User[] = [];
   userFormModel = this.api.saveOrUpdateUserFormModel({
@@ -48,7 +44,8 @@ export class AdminComponent implements OnInit {
     const dialogRef = this.dialog.open(FormComponent, {
       width: '80%',
       maxWidth: '540px',
-      data: this.userFormModel
+      data: this.userFormModel,
+      panelClass: 'admin-form'
     });
 
     dialogRef.afterClosed().subscribe(result => {

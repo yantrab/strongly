@@ -30,11 +30,15 @@ const materialModules = [
   ScrollingModule,
   TableVirtualScrollModule,
   MatTableModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatSortModule,
+  MatDialogModule,
+  MatSelectModule,
+  FormsModule
 ];
 @NgModule({
   declarations: [InputComponent, FormComponent, TableComponent, CellDefDirective],
-  imports: [CommonModule, ReactiveFormsModule, ...materialModules, MatSortModule, MatDialogModule, MatSelectModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ...materialModules],
   exports: [FormComponent, TableComponent, CommonModule, ...materialModules],
   providers: []
 })

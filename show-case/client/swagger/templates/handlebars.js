@@ -1,7 +1,14 @@
 module.exports = function(handlebars) {
-  // Adding a custom handlebars helper: loud
   handlebars.registerHelper("json", function(context) {
     return JSON.stringify(context);
+  });
+
+  handlebars.registerHelper("lowerFirstLetter", function(context) {
+    return context.charAt(0).toLowerCase() + context.slice(1);
+  });
+
+  handlebars.registerHelper("upperFirstLetter", function(context) {
+    return context.charAt(0).toUpperCase() + context.slice(1);
   });
 
   handlebars.registerHelper("contains", function(needle, haystack, options) {

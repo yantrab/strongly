@@ -1,15 +1,11 @@
 import { Component } from '@angular/core';
-import { AuthService, loginFormGroupType, setPasswordFormGroupType } from '../api/services/auth.service';
+import { AuthService, SetPasswordFormGroupType } from '../api/services/auth.service';
 import { FormModel } from '../components/form/form.component';
 
-@Component({
-  selector: 'app-login',
-  templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.scss']
-})
+@Component({ selector: 'app-login', templateUrl: './auth.component.html', styleUrls: ['./auth.component.scss'] })
 export class SetPasswordComponent {
   loginError?: string;
-  model: FormModel<setPasswordFormGroupType> = {
+  model: FormModel<SetPasswordFormGroupType> = {
     formGroup: this.service.setPasswordFormGroup(),
     formTitle: 'Change password',
     formSaveButtonTitle: 'Save',
