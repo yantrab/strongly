@@ -6,10 +6,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
+import { FormModel, SwagularService } from 'swagular';
 
-import Ajv from 'ajv';
-import { FormBuilderTypeSafe } from 'angular-typesafe-reactive-forms-helper';
-import { FormModel } from '../../components/form/form.component';
 import { User, UserSchema } from '../models/user';
 
     export declare type LoginFormGroupType = { 'password': string, 'email': string }
@@ -45,14 +43,8 @@ export class AuthService extends BaseService {
      * Path part for operation getUserAuthenticated
      */
     static readonly GetUserAuthenticatedPath = '/auth/get-user-authenticated';
-
-  constructor(
-    config: ApiConfiguration,
-    http: HttpClient,
-    ajv: Ajv,
-    fb: FormBuilderTypeSafe
-  ) {
-    super(config, http, ajv, fb);
+  constructor(config: ApiConfiguration, http: HttpClient, private swagularService: SwagularService) {
+    super(config, http);
   }
   login(      params:  { 'password': string, 'email': string }
 
@@ -88,19 +80,19 @@ export class AuthService extends BaseService {
   }
 
      loginFormGroup(value?:LoginFormGroupType) {
-    return this.getFormGroup<LoginFormGroupType>(loginFormGroupSchema, value);
+    return this.swagularService.getFormGroup<LoginFormGroupType>(loginFormGroupSchema, value);
   }
 
    loginFormModel(options?: Partial<FormModel> & { displayProperties?: (keyof LoginFormGroupType & string)[] }, value?: LoginFormGroupType) {
-    return this.getFormModel<LoginFormGroupType>(loginFormGroupSchema, options, value);
+    return this.swagularService.getFormModel<LoginFormGroupType>(loginFormGroupSchema, options, value);
   }
 
      setPasswordFormGroup(value?:SetPasswordFormGroupType) {
-    return this.getFormGroup<SetPasswordFormGroupType>(setPasswordFormGroupSchema, value);
+    return this.swagularService.getFormGroup<SetPasswordFormGroupType>(setPasswordFormGroupSchema, value);
   }
 
    setPasswordFormModel(options?: Partial<FormModel> & { displayProperties?: (keyof SetPasswordFormGroupType & string)[] }, value?: SetPasswordFormGroupType) {
-    return this.getFormModel<SetPasswordFormGroupType>(setPasswordFormGroupSchema, options, value);
+    return this.swagularService.getFormModel<SetPasswordFormGroupType>(setPasswordFormGroupSchema, options, value);
   }
 
   

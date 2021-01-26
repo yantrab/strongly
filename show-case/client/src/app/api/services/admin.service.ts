@@ -6,10 +6,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
+import { FormModel, SwagularService } from 'swagular';
 
-import Ajv from 'ajv';
-import { FormBuilderTypeSafe } from 'angular-typesafe-reactive-forms-helper';
-import { FormModel } from '../../components/form/form.component';
 import { User, UserSchema } from '../models/user';
 
   
@@ -43,14 +41,8 @@ export class AdminService extends BaseService {
      * Path part for operation unDeleteUser
      */
     static readonly UnDeleteUserPath = '/admin/un-delete-user';
-
-  constructor(
-    config: ApiConfiguration,
-    http: HttpClient,
-    ajv: Ajv,
-    fb: FormBuilderTypeSafe
-  ) {
-    super(config, http, ajv, fb);
+  constructor(config: ApiConfiguration, http: HttpClient, private swagularService: SwagularService) {
+    super(config, http);
   }
   users(
 ): Observable<Array<User>> {
@@ -85,27 +77,27 @@ export class AdminService extends BaseService {
 
   
      saveOrUpdateUserFormGroup(value?:SaveOrUpdateUserFormGroupType) {
-    return this.getFormGroup<SaveOrUpdateUserFormGroupType>(saveOrUpdateUserFormGroupSchema, value);
+    return this.swagularService.getFormGroup<SaveOrUpdateUserFormGroupType>(saveOrUpdateUserFormGroupSchema, value);
   }
 
    saveOrUpdateUserFormModel(options?: Partial<FormModel> & { displayProperties?: (keyof SaveOrUpdateUserFormGroupType & string)[] }, value?: SaveOrUpdateUserFormGroupType) {
-    return this.getFormModel<SaveOrUpdateUserFormGroupType>(saveOrUpdateUserFormGroupSchema, options, value);
+    return this.swagularService.getFormModel<SaveOrUpdateUserFormGroupType>(saveOrUpdateUserFormGroupSchema, options, value);
   }
 
      deleteUserFormGroup(value?:DeleteUserFormGroupType) {
-    return this.getFormGroup<DeleteUserFormGroupType>(deleteUserFormGroupSchema, value);
+    return this.swagularService.getFormGroup<DeleteUserFormGroupType>(deleteUserFormGroupSchema, value);
   }
 
    deleteUserFormModel(options?: Partial<FormModel> & { displayProperties?: (keyof DeleteUserFormGroupType & string)[] }, value?: DeleteUserFormGroupType) {
-    return this.getFormModel<DeleteUserFormGroupType>(deleteUserFormGroupSchema, options, value);
+    return this.swagularService.getFormModel<DeleteUserFormGroupType>(deleteUserFormGroupSchema, options, value);
   }
 
      unDeleteUserFormGroup(value?:UnDeleteUserFormGroupType) {
-    return this.getFormGroup<UnDeleteUserFormGroupType>(unDeleteUserFormGroupSchema, value);
+    return this.swagularService.getFormGroup<UnDeleteUserFormGroupType>(unDeleteUserFormGroupSchema, value);
   }
 
    unDeleteUserFormModel(options?: Partial<FormModel> & { displayProperties?: (keyof UnDeleteUserFormGroupType & string)[] }, value?: UnDeleteUserFormGroupType) {
-    return this.getFormModel<UnDeleteUserFormGroupType>(unDeleteUserFormGroupSchema, options, value);
+    return this.swagularService.getFormModel<UnDeleteUserFormGroupType>(unDeleteUserFormGroupSchema, options, value);
   }
 
 private users$Response(

@@ -1,8 +1,0 @@
-{{#if requestBody}}
-  export declare type {{upperFirstLetter methodName}}FormGroupType = {{{requestBody.type}}}
-  {{#isRef requestBody.spec.schema }}
-    export const {{methodName}}FormGroupSchema = {{{requestBody.type}}}Schema;
-  {{else}}
-    export const {{methodName}}FormGroupSchema = {{{json requestBody.spec.schema}}}
-  {{/isRef}}
-{{/if}}

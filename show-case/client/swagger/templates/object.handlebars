@@ -1,9 +1,0 @@
-export interface {{typeName}}{{#hasSuperClasses}} extends {{#superClasses}}{{{.}}}{{^@last}}, {{/@last}}{{/superClasses}}{{/hasSuperClasses}} {
-{{#properties}}
-{{{tsComments}}}{{{identifier}}}{{^required}}?{{/required}}: {{{type}}};
-{{/properties}}
-{{#additionalPropertiesType}}
-
-  [key: string]: {{{.}}};
-{{/additionalPropertiesType}}
-}

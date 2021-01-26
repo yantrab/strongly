@@ -6,6 +6,7 @@ import { Guard } from './guard';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ApiModule } from './api/api.module';
 import { InterceptorsService } from './services/interceptors.service';
+import { SwagularModule, SwagularService } from 'swagular';
 
 const isCordovaApp = Object(window).cordova !== undefined;
 
@@ -28,10 +29,12 @@ const routes: Routes = [
     BrowserAnimationsModule,
     RouterModule.forRoot(routes, { useHash: isCordovaApp }),
     HttpClientModule,
-    ApiModule.forRoot({ rootUrl: 'http://localhost:3000' })
+    ApiModule.forRoot({ rootUrl: 'http://localhost:3000' }),
+    SwagularModule
   ],
 
   providers: [
+    SwagularService,
     Guard,
     {
       provide: HTTP_INTERCEPTORS,
