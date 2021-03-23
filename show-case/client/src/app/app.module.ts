@@ -7,6 +7,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ApiModule } from './api/api.module';
 import { InterceptorsService } from './services/interceptors.service';
 import { SwagularModule, SwagularService } from 'swagular';
+import { NgDialogAnimationService } from 'ng-dialog-animation';
 
 const isCordovaApp = Object(window).cordova !== undefined;
 
@@ -28,7 +29,6 @@ const routes: Routes = [
     BrowserModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(routes, { useHash: isCordovaApp }),
-    HttpClientModule,
     ApiModule.forRoot({ rootUrl: 'http://localhost:3000' }),
     SwagularModule
   ],
@@ -40,7 +40,8 @@ const routes: Routes = [
       provide: HTTP_INTERCEPTORS,
       useClass: InterceptorsService,
       multi: true
-    }
+    },
+    NgDialogAnimationService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService, SetPasswordFormGroupType } from '../api/services/auth.service';
-import { FormModel } from '../components/form/form.component';
+import { FormModel } from 'swagular';
 
 @Component({ selector: 'app-login', templateUrl: './auth.component.html', styleUrls: ['./auth.component.scss'] })
 export class SetPasswordComponent {

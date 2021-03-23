@@ -1,5 +1,5 @@
 import { Component, NgModule } from '@angular/core';
-import { ComponentModule } from '../components/comonent.module';
+import { ComponentModule } from '../components/component.module';
 import { LoginComponent } from './login.compnent';
 import { RouterModule } from '@angular/router';
 import { SetPasswordComponent } from './set-password.compnent';

@@ -1,5 +1,5 @@
 import { Component, NgModule } from '@angular/core';
-import { ComponentModule } from '../components/comonent.module';
+import { ComponentModule } from '../components/component.module';
 import { RouterModule, Routes } from '@angular/router';
 import { User } from '../api/models/user';
 import { AuthService } from '../auth/auth.service';

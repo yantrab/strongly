@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../../api/services/admin.service';
 import { User } from '../../api/models/user';
-import { FormComponent } from '../../components/form/form.component';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TableOptions } from '../../components/table/table.component';
-
+import { NgDialogAnimationService } from 'ng-dialog-animation';
+import { FormComponent, TableOptions } from 'swagular';
+import { MatDialog } from '@angular/material/dialog';
 @Component({ selector: 'app-admin', templateUrl: './admin.component.html', styleUrls: ['./admin.component.scss'] })
 export class AdminComponent implements OnInit {
   users: User[] = [];

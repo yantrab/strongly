@@ -1,5 +1,4 @@
-
-:host{
+:host {
   .main {
     background-image: linear-gradient(to top, #1e90ff, #70a1ff);
     width: 100vw;
@@ -9,16 +8,16 @@
       width: 470px;
       height: 372px;
       ::ng-deep {
-        mat-card{
+        mat-card {
           padding-right: 5em;
           padding-left: 5em;
           padding-top: 40px;
-          app-input{
+          swagular-input {
             width: 100% !important;
           }
-          .mat-card-actions{
+          .mat-card-actions {
             margin: 0;
-            .save-button{
+            .save-button {
               width: 100%;
             }
           }
@@ -26,5 +25,4 @@
       }
     }
   }
-
 }

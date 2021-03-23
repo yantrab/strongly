@@ -32,9 +32,9 @@
   "author": "yantrab@gmail.com",
   "license": "MIT",
   "dependencies": {
-    "ajv": "^6.12.6",
+    "ajv": "^7.2.3",
     "ajv-keywords": "^3.5.2",
-    "fastify": "^3.9.2",
+    "fastify": "^3.14.0",
     "globby": "^11.0.1",
     "http-errors": "^1.8.0",
     "lodash": "^4.17.20",

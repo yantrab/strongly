@@ -66,4 +66,24 @@ class LoginTests {
     const res = await this.app.inject({ method: "GET", url: "/auth/query-params", query: { a: 1, b: "a" } } as any);
     expect(res.json().r).toEqual("1a");
   }
+
+  @test
+  async setPasswordValid() {
+    const res = await this.app.inject({
+      method: "POST",
+      url: "/auth/set-password",
+      body: { email: "a@b.caaaa", password: "123456", rePassword: "123456" }
+    } as any);
+    expect(res.statusCode).toStrictEqual(200);
+  }
+
+  @test
+  async setPasswordUnValid() {
+    const res = await this.app.inject({
+      method: "POST",
+      url: "/auth/set-password",
+      body: { email: "a@b.caaaa", password: "123456", rePassword: "1234562" }
+    } as any);
+    expect(res.statusCode).toStrictEqual(400);
+  }
 }

@@ -1,11 +1,12 @@
 import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
-import { ServerFactory, mock } from "strongly";
+import { ServerFactory, mock, post, body, min, headers, uuid } from "strongly";
 import { AuthController } from "./auth.controller";
 import { FastifyInstance } from "fastify";
 import fastifyJwt from "fastify-jwt";
 import fastifyCookie from "fastify-cookie";
 import { UserService } from "../../services/user/user.service";
+import { Unauthorized } from "http-errors";
 
 @suite
 class LoginTests {

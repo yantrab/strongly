@@ -62,7 +62,7 @@ export class ShowCaseController {
         return { name: "saba" };
     }
 
-    /**
+    /**>
      * you can add validation on the class,  name should be ta least 10 letters
      */
     @post saveUser(@body user: UserDetails) {

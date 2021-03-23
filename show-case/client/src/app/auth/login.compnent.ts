@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService, LoginFormGroupType } from '../api/services/auth.service';
-import { FormModel } from '../components/form/form.component';
 import { Router } from '@angular/router';
+import { FormModel } from 'swagular';
 
 @Component({ selector: 'app-login', templateUrl: './auth.component.html', styleUrls: ['./auth.component.scss'] })
 export class LoginComponent {

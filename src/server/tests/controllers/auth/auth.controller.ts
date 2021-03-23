@@ -43,4 +43,11 @@ export class AuthController {
   @post someHeader(@headers("a") a: string) {
     return { a };
   }
+  @post async setPassword(
+    @body("email") email: string,
+    @body("password") @min(6) password: string,
+    @body("rePassword", { const: { $data: "1/password" } }) @min(6) rePassword: string
+  ) {
+    return {};
+  }
 }
