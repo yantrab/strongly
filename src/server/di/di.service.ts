@@ -6,7 +6,8 @@ export class DIService {
 
   private async getDependency(target) {
     if (!this.dependencies[target.name]) {
-      await this.getDependencies(target);
+      const deps = await this.getDependencies(target);
+      this.override(target.name, new target(deps));
     }
     return this.dependencies[target.name];
   }
@@ -39,7 +40,6 @@ export class DIService {
         }
       }
     }
-    this.dependencies[target.name] = new target(...classDependencies);
     return classDependencies;
   }
 
@@ -58,7 +58,7 @@ export class DIService {
         provider = new p(...(await this.getDependencies(p)));
       }
 
-      this.dependencies[name] = provider;
+      this.override(name, provider);
     }
   }
 
@@ -66,7 +66,8 @@ export class DIService {
     await this.setDependencies(providers);
 
     if (!this.dependencies[target.name]) {
-      await this.getDependencies(target);
+      const deps = await this.getDependencies(target);
+      this.override(target.name, new target(deps));
     }
     return this.dependencies[target.name];
   }

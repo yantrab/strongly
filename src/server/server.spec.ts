@@ -55,9 +55,12 @@ export class someService {
     return { x: 1 };
   }
 }
+let diControllerCounter = 0;
 
 class diController {
-  constructor(private s: someService) {}
+  constructor(private s: someService) {
+    diControllerCounter++;
+  }
 
   @get("v")
   getFromService() {
@@ -175,5 +178,12 @@ class ServerTests {
     }
     const res = await this.inject(diController, { method: "get", url: "/di/v" }, [someService]);
     expect(res.json()).toStrictEqual({ x: 3 });
+  }
+
+  @test("constructor need to be called only once")
+  async diController2Test() {
+    diControllerCounter = 0;
+    await this.inject(diController, { method: "get", url: "/di/v" });
+    expect(diControllerCounter).toEqual(1);
   }
 }
