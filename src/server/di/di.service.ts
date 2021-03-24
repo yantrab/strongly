@@ -4,10 +4,9 @@ import { Provider, ValueProvider } from "../../utils/util";
 export class DIService {
   private dependencies = {};
 
-  private async getDependency(target) {
+  public async getDependency(target) {
     if (!this.dependencies[target.name]) {
-      const deps = await this.getDependencies(target);
-      this.override(target.name, new target(deps));
+      await this.getDependencies(target);
     }
     return this.dependencies[target.name];
   }
@@ -15,34 +14,38 @@ export class DIService {
   async getDependencies(target) {
     const classDeclaration = getClass(target.name);
     const classDependencies: any[] = [];
-    if (!classDeclaration) {
-      return [];
-    }
-    for (const c of classDeclaration.getConstructors()) {
-      for (const p of c.getParameters()) {
-        const type = p.getType();
-        const cName = type.getText().split(".")[type.getText().split(".").length - 1];
+    if (classDeclaration) {
+      for (const c of classDeclaration.getConstructors()) {
+        for (const p of c.getParameters()) {
+          const type = p.getType();
+          const cName = type.getText().split(".")[type.getText().split(".").length - 1];
 
-        if (this.dependencies[cName]) {
-          classDependencies.push(this.dependencies[cName]);
-          continue;
-        }
+          if (this.dependencies[cName]) {
+            classDependencies.push(this.dependencies[cName]);
+            continue;
+          }
 
-        const firstProp = type.getProperties()[0];
-        if (firstProp) {
-          const d: any = await import(
-            firstProp
-              .getValueDeclarationOrThrow()
-              .getSourceFile()
-              .getFilePath()
-          );
-          classDependencies.push(await this.getDependency(d[cName]));
+          const firstProp = type.getProperties()[0];
+          if (firstProp) {
+            const d: any = await import(
+              firstProp
+                .getValueDeclarationOrThrow()
+                .getSourceFile()
+                .getFilePath()
+            );
+            classDependencies.push(await this.getDependency(d[cName]));
+          }
         }
       }
     }
+    this.dependencies[target.name] = new target(...classDependencies);
     return classDependencies;
   }
 
+  async createInstance(target) {
+    await this.getDependencies(target);
+    return this.dependencies[target.name];
+  }
   async setDependencies(providers?: Provider[]) {
     let name;
     let provider;
@@ -66,8 +69,7 @@ export class DIService {
     await this.setDependencies(providers);
 
     if (!this.dependencies[target.name]) {
-      const deps = await this.getDependencies(target);
-      this.override(target.name, new target(deps));
+      await this.getDependencies(target);
     }
     return this.dependencies[target.name];
   }

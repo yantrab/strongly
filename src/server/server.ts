@@ -45,9 +45,7 @@ export class ServerFactory {
     });
 
     for (const controller of controllers) {
-      const args = await diService.getDependencies(controller);
-      const instance = new controller(...args);
-      diService.override(controller.name, instance);
+      const instance = await diService.createInstance(controller);
       const basePath = Reflect.getMetadata(symbols.basePath, controller) || toSnack(controller.name.replace("Controller", ""));
       const routes: method = Reflect.getMetadata(symbols.route, controller.prototype);
       Object.keys(routes || {}).forEach(key => {
