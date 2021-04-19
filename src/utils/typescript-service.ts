@@ -123,24 +123,31 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     schema = getObjectSchema(type, decorators);
     return schema;
   }
-
+  // enum --------------------------------------
   if (nonNullableType.isEnumLiteral() && prop) {
+    const name = prop.getName();
     const enumMembers = (prop as any)
       .getValueDeclarationOrThrow()
       .getSourceFile()
       .getEnum(e => e.getName() === nonNullableType.getText())
       .getMembers();
-    schema.type = "string";
-    schema.enum = enumMembers.map(m => m.getName());
-    schema["x-enumNames"] = enumMembers.map(m => m.getValue());
+    const enumSchema: any = {};
+    enumSchema.enum = enumMembers.map(m => m.getName());
+    enumSchema["x-enumNames"] = enumMembers.map(m => m.getValue());
+    enumSchema.type = typeof enumSchema.enum[0];
+    definitions[name] = enumSchema;
+    schema["$ref"] = "#/definitions/" + name;
     return schema;
   }
 
   if (nonNullableType.isEnum()) {
-    schema.enum = nonNullableType.getUnionTypes().map(t => t.getLiteralValueOrThrow());
-    schema["x-enumNames"] = nonNullableType.getUnionTypes().map(t => last(t.getText().split(".")) as string);
-    schema.type = typeof schema["x-enumNames"][1];
-
+    const name = last(nonNullableType.getText().split("."))!;
+    const enumSchema: any = {};
+    enumSchema.enum = nonNullableType.getUnionTypes().map(t => t.getLiteralValueOrThrow());
+    enumSchema["x-enumNames"] = nonNullableType.getUnionTypes().map(t => last(t.getText().split(".")) as string);
+    enumSchema.type = typeof enumSchema.enum[0];
+    definitions[name] = enumSchema;
+    schema["$ref"] = "#/definitions/" + name;
     return schema;
   }
 
@@ -149,8 +156,9 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     schema.oneOf = unionTypes.map(t => getParamSchema(t, decorators)) as Schema[];
     if (!schema.oneOf[0]) {
       delete schema.oneOf;
-      schema.type = "string";
       schema.enum = unionTypes.map(t => t.getText().slice(1, -1));
+      schema["x-enumNames"] = unionTypes.map(t => t.getText().slice(1, -1));
+      schema.type = typeof schema.enum[0];
     }
     return schema;
   }

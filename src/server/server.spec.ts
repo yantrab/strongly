@@ -6,7 +6,7 @@ import { body, Controller, get, params, post, reply, request, email, onRequest, 
 import { FastifyRequest, FastifyReply } from "fastify";
 
 enum SomeEnum {
-  a = "a"
+  a
 }
 class someNestedClass {
   @min(4)
