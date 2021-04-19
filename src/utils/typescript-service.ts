@@ -125,19 +125,22 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
   }
 
   if (nonNullableType.isEnumLiteral() && prop) {
-    schema.type = "string";
-    schema.enum = (prop as any)
+    const enumMembers = (prop as any)
       .getValueDeclarationOrThrow()
       .getSourceFile()
       .getEnum(e => e.getName() === nonNullableType.getText())
-      .getMembers()
-      .map(m => m.getName());
+      .getMembers();
+    schema.type = "string";
+    schema.enum = enumMembers.map(m => m.getName());
+    schema["x-enumNames"] = enumMembers.map(m => m.getValue());
     return schema;
   }
 
   if (nonNullableType.isEnum()) {
-    schema.type = "string";
-    schema.enum = nonNullableType.getUnionTypes().map(t => last(t.getText().split(".")) as string);
+    schema.enum = nonNullableType.getUnionTypes().map(t => t.getLiteralValueOrThrow());
+    schema["x-enumNames"] = nonNullableType.getUnionTypes().map(t => last(t.getText().split(".")) as string);
+    schema.type = typeof schema["x-enumNames"][1];
+
     return schema;
   }
 

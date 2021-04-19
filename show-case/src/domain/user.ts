@@ -3,8 +3,8 @@ import { Entity } from "./entity";
 import { EntityWithoutGetters } from "../utils/typescript.util";
 
 export enum Role {
-  admin = "admin",
-  user = "user"
+  admin,
+  user
 }
 
 export class User extends Entity<User> {

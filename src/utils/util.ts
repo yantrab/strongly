@@ -20,6 +20,6 @@ export declare type Schema = {
   properties?: any;
   required?: string[];
   allOf?: any[];
-  enum?: string[];
+  enum?: any[];
   transform?: string[];
 };
