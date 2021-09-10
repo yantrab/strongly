@@ -43,7 +43,8 @@ export class ServerFactory {
     await diService.setDependencies(opts?.providers);
 
     const app = fastify({
-      ajv: { plugins: [require("ajv-keywords")], customOptions: { $data: true } }
+      ajv: { plugins: [require("ajv-keywords")], customOptions: { $data: true } },
+      ...opts
     });
 
     for (const controller of controllers) {
