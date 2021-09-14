@@ -8,14 +8,14 @@ export interface SomeInterface {
     someArray: number[];
   };
 }
-
+const a = 4;
 export class c123 {
   someInterface?: SomeInterface;
 
   @date
   date: string;
 
-  @min(4)
+  @min(a)
   number1: number;
 
   @min(4)

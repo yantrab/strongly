@@ -1,6 +1,8 @@
 import { symbols } from "../../utils/consts";
 import set = Reflect.set;
 import { toSnack } from "../../utils/util";
+import { merge } from "lodash";
+import { getMinMaxValidation } from "../../utils/ajv.service";
 const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
 const ARGUMENT_NAMES = /([^\s,]+)/g;
 function getParamNames(func) {
@@ -12,18 +14,12 @@ function getParamNames(func) {
   return result;
 }
 function getMinmaxDecorator(keyword) {
-  // const ajvMap = {
-  //   number: "imum",
-  //   string: "Length",
-  //   array: "Items",
-  //   object: "Properties",
-  // };
   const decorator = value => {
     return function(target: () => any, key: string) {
-      // const schema = Reflect.getMetadata(symbols.validations, target) || {};
-      // const t = Reflect.getMetadata("design:type", target, key);
-      // set(schema, key + "." + keyword + ajvMap[t.name.toLowerCase()], value);
-      // Reflect.defineMetadata(symbols.validations, schema, target);
+      const schema = Reflect.getMetadata(symbols.validations, target) || {};
+      const t = Reflect.getMetadata("design:type", target, key);
+      schema[key] = Object.assign(schema[key] || {}, getMinMaxValidation(keyword, t.name, value));
+      Reflect.defineMetadata(symbols.validations, schema, target);
     };
   };
   return decorator;

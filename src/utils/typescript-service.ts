@@ -2,6 +2,7 @@ import { last, merge } from "lodash";
 import { ClassDeclaration, Decorator, Project, Type, Symbol as tsSymbol, SymbolFlags } from "ts-morph";
 import { getMinMaxValidation } from "./ajv.service";
 import { Schema, toSnack } from "../utils/util";
+import { symbols } from "./consts";
 const project = new Project({ tsConfigFilePath: process.cwd() + "/tsconfig.json" });
 const sourceFiles = project.getSourceFiles();
 const allClasses: { [name: string]: ClassDeclaration } = {};
@@ -46,9 +47,9 @@ function handleExplicitValidation(type: string, schema: any, decorators: Decorat
   return schema;
 }
 
-const getObjectSchema = (type: Type, decorators) => {
-  let schema: Schema = {};
-  schema = handleExplicitValidation("object", schema, decorators);
+const getObjectSchema = (type: Type, decorators, schemaProps = {}) => {
+  const schema: Schema = {};
+  // schema = {} handleExplicitValidation("object", schema, decorators);
   schema.type = "object";
   schema.properties = {};
   schema.required = schema.required || [];
@@ -65,7 +66,7 @@ const getObjectSchema = (type: Type, decorators) => {
       if (["request", "reply"].includes(key) || isGetter) return;
       const valueDeclaration = prop.getValueDeclarationOrThrow();
       const decorators = (valueDeclaration as any).getDecorators ? (valueDeclaration as any).getDecorators() : [];
-      schema.properties[key] = getParamSchema(valueDeclaration.getType(), decorators, prop);
+      schema.properties[key] = { ...(getParamSchema(valueDeclaration.getType(), decorators, prop) || {}), ...(schemaProps[key] || {}) };
       if (!schema.properties[key]) {
         console.warn("missing type for - " + key);
         schema.properties[key] = { type: "object" };
@@ -114,8 +115,11 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
 
   if (nonNullableType.isClass() || nonNullableType.isInterface()) {
     const name = nonNullableType.getText().split(").")[1] || nonNullableType.getText();
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const c = require(typeText.split('").')[0].split('import("')[1])[name];
+    const classSchema = c ? Reflect.getMetadata(symbols.validations, c.prototype) || {} : {};
     schema["$ref"] = "#/definitions/" + name;
-    if (!definitions[name]) definitions[name] = getObjectSchema(type, decorators);
+    if (!definitions[name]) definitions[name] = getObjectSchema(type, decorators, classSchema);
     return schema;
   }
 
