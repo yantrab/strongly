@@ -1,6 +1,6 @@
 {
   "name": "strongly",
-  "version": "1.0.69",
+  "version": "1.0.70",
   "description": "Make your server strongly type without adding any piece of code",
   "main": "index.js",
   "types": "index.d.ts",
