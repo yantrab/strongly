@@ -115,8 +115,9 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
 
   if (nonNullableType.isClass() || nonNullableType.isInterface()) {
     const name = nonNullableType.getText().split(").")[1] || nonNullableType.getText();
+    const importPath = typeText.split('").')[0].split('import("')[1];
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const c = require(typeText.split('").')[0].split('import("')[1])[name];
+    const c = !importPath?.includes("@types") ? require(importPath)[name] : undefined;
     const classSchema = c ? Reflect.getMetadata(symbols.validations, c.prototype) || {} : {};
     schema["$ref"] = "#/definitions/" + name;
     if (!definitions[name]) definitions[name] = getObjectSchema(type, decorators, classSchema);
