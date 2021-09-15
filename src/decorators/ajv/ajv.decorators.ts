@@ -29,24 +29,28 @@ interface IMinMaxKeyword {
   (count: number): any;
 }
 
-class MinMaxKeyword {
+interface IPatternKeyword {
+  (pattern: string): any;
+}
+
+class DecoratorKeyword {
   readonly min: IMinMaxKeyword;
   readonly max: IMinMaxKeyword;
-  readonly date: PropertyDecorator & ParameterDecorator;
-  readonly time: PropertyDecorator & ParameterDecorator;
-  readonly dateTime: PropertyDecorator & ParameterDecorator;
-  readonly duration: PropertyDecorator & ParameterDecorator;
-  readonly uri: PropertyDecorator & ParameterDecorator;
-  readonly uriReference: PropertyDecorator & ParameterDecorator;
-  readonly uriTemplate: PropertyDecorator & ParameterDecorator;
-  readonly email: PropertyDecorator & ParameterDecorator;
-  readonly hostname: PropertyDecorator & ParameterDecorator;
-  readonly ipv4: PropertyDecorator & ParameterDecorator;
-  readonly ipv6: PropertyDecorator & ParameterDecorator;
-  readonly regex: PropertyDecorator & ParameterDecorator;
-  readonly uuid: PropertyDecorator & ParameterDecorator;
-  readonly jsonPointer: PropertyDecorator & ParameterDecorator;
-  readonly relativeJsonPointer: PropertyDecorator & ParameterDecorator;
+  readonly pattern: IPatternKeyword;
+  readonly date;
+  readonly time;
+  readonly dateTime;
+  readonly duration;
+  readonly uri;
+  readonly uriReference;
+  readonly uriTemplate;
+  readonly email;
+  readonly hostname;
+  readonly ipv4;
+  readonly ipv6;
+  readonly uuid;
+  readonly jsonPointer;
+  readonly relativeJsonPointer;
   constructor() {
     ["min", "max"].forEach(keyword => {
       this[keyword] = getMinmaxDecorator(keyword);
@@ -75,9 +79,16 @@ class MinMaxKeyword {
         Reflect.defineMetadata(symbols.route, allRoutes, target);
       };
     });
+    this.pattern =  value => {
+      return function(target: () => any, key: string) {
+        const schema = Reflect.getMetadata(symbols.validations, target) || {};
+        schema[key] = Object.assign(schema[key] || {}, {pattern: value});
+        Reflect.defineMetadata(symbols.validations, schema, target);
+      };
+    };
   }
 }
 
-const Routes = new MinMaxKeyword();
+const Routes = new DecoratorKeyword();
 
 export = Routes;
