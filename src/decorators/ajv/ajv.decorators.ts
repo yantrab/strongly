@@ -79,10 +79,10 @@ class DecoratorKeyword {
         Reflect.defineMetadata(symbols.route, allRoutes, target);
       };
     });
-    this.pattern =  value => {
+    this.pattern = value => {
       return function(target: () => any, key: string) {
         const schema = Reflect.getMetadata(symbols.validations, target) || {};
-        schema[key] = Object.assign(schema[key] || {}, {pattern: value});
+        schema[key] = Object.assign(schema[key] || {}, { pattern: value });
         Reflect.defineMetadata(symbols.validations, schema, target);
       };
     };
