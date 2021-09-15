@@ -37,6 +37,7 @@ class DecoratorKeyword {
   readonly min: IMinMaxKeyword;
   readonly max: IMinMaxKeyword;
   readonly pattern: IPatternKeyword;
+  readonly numberString;
   readonly date;
   readonly time;
   readonly dateTime;
@@ -85,6 +86,11 @@ class DecoratorKeyword {
         schema[key] = Object.assign(schema[key] || {}, { pattern: value });
         Reflect.defineMetadata(symbols.validations, schema, target);
       };
+    };
+    this.numberString = (target: () => any, key: string) => {
+      const schema = Reflect.getMetadata(symbols.validations, target) || {};
+      schema[key] = Object.assign(schema[key] || {}, { pattern: "^[0-9]*$" });
+      Reflect.defineMetadata(symbols.validations, schema, target);
     };
   }
 }

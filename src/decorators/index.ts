@@ -14,7 +14,9 @@ export {
   ipv6,
   uuid,
   jsonPointer,
-  relativeJsonPointer
+  relativeJsonPointer,
+  pattern,
+  numberString
 } from "./ajv/ajv.decorators";
 export * from "./controllers/controller.decorator";
 export { params, body, headers, query, reply, request, app, user } from "./route-params/route-param.decorators";

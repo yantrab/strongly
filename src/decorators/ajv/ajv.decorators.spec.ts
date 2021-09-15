@@ -2,6 +2,7 @@ import { suite, test } from "@testdeck/jest";
 import { min, max, date, pattern } from "./ajv.decorators";
 import "reflect-metadata";
 import { getClass, getDefinitions, getParamSchema } from "../../utils/typescript-service";
+import { numberString } from "..";
 
 export interface SomeInterface {
   filter?: {
@@ -11,7 +12,8 @@ export interface SomeInterface {
 const a = 4;
 export class c123 {
   someInterface?: SomeInterface;
-
+  @numberString
+  numberString: string;
   @pattern("^+[0-9]{9,12}$")
   pattern: string;
 
@@ -67,6 +69,11 @@ class ajvDecoratorsTests {
     expect(schema).toStrictEqual({ optional: false, $ref: "#/definitions/c123" });
     const definitions: any = getDefinitions();
     expect(definitions.c123.properties).toStrictEqual({
+      numberString: {
+        pattern: "^[0-9]*$",
+        allOf: [{ transform: ["trim"] }, { minLength: 1 }],
+        type: "string"
+      },
       pattern: {
         pattern: "^+[0-9]{9,12}$",
         allOf: [{ transform: ["trim"] }, { minLength: 1 }],
