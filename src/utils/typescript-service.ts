@@ -117,7 +117,10 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     const name = nonNullableType.getText().split(").")[1] || nonNullableType.getText();
     const importPath = typeText.split('").')[0].split('import("')[1];
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const c = !importPath?.includes("@types") ? require(importPath)[name] : undefined;
+    const c = importPath && !importPath?.includes("/node_modules/") ? require(importPath)[name] : undefined;
+    if (!c) {
+      console.log(name + "not found type");
+    }
     const classSchema = c ? Reflect.getMetadata(symbols.validations, c.prototype) || {} : {};
     schema["$ref"] = "#/definitions/" + name;
     if (!definitions[name]) definitions[name] = getObjectSchema(type, decorators, classSchema);
