@@ -13,5 +13,6 @@ class LoginTests {
   @test
   async schemaRef() {
     const schema = (await this.app.inject().get("api-doc/json")).json();
+    console.log(schema)
   }
 }

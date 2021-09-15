@@ -1,10 +1,12 @@
+import { pattern } from "../../../..";
+
 export enum Role {
   admin,
   user
 }
 
 export class User {
-  phone: string;
+  @pattern("[1-9]") phone: string;
   email: string;
   fName: string;
   lName: string;
