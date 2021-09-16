@@ -23,7 +23,7 @@ async function getControllers(controllers): Promise<any[]> {
         return Object.values(m)[0] as () => any;
       })
     );
-    return result.filter(c => c.prototype);
+    return result.filter(c => c?.prototype);
   }
   return controllers;
 }
