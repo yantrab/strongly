@@ -87,6 +87,11 @@ export const addSwagger = async (controllers, app, options?: SwaggerOptions) => 
       if (schema.query?.$ref) {
         swaggerSchema.paths[url][method.routeType].parameters.push({ name: "query", in: "query", schema: schema.query });
       }
+      const s = swaggerSchema.paths[url][method.routeType];
+      const t = s.responses?.["201"].schema.type;
+      if (["string", "number", "boolean"].includes(t)) {
+        s.produces[0] = "text/plain";
+      }
     });
   }
   const definitions = getDefinitions() || {};
