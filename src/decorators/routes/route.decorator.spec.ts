@@ -8,10 +8,10 @@ class RouteDecoratorsTests {
   @test
   test() {
     class User {
-      @get
+      @get("users")
       getUsers1() {}
 
-      @put()
+      @put("users")
       getUsers2() {}
 
       @Delete("")
@@ -30,11 +30,11 @@ class RouteDecoratorsTests {
     expect(routes).toStrictEqual({
       getUsers1: {
         routeType: "get",
-        path: undefined
+        path: "users"
       },
       getUsers2: {
         routeType: "put",
-        path: undefined
+        path: "users"
       },
       getUsers3: {
         routeType: "delete",

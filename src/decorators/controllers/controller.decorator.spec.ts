@@ -1,5 +1,5 @@
 import { Controller, ControllerOptions } from "./controller.decorator";
-import { get } from "../routes/route.decorators";
+import { get, post, put } from "../routes/route.decorators";
 import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
 import { ServerFactory } from "../../server/server";
@@ -34,6 +34,37 @@ class ControllerDecoratorTests {
       path: "/base-path/user"
     });
     expect(res.json().hello).toBe("world");
+  }
+
+  @test("same path different method")
+  async samePath() {
+    @Controller("base-path")
+    class UserController {
+      @get("user")
+      getUser() {
+        return { name: "saba" };
+      }
+      @post("user")
+      updateUser() {
+        return [];
+      }
+
+      @put("user")
+      addUser() {
+        return [];
+      }
+    }
+    let res: any = await (await ServerFactory.create({ controllers: [UserController] })).inject({
+      method: "GET",
+      path: "/base-path/user"
+    });
+    expect(res.json().name).toBe("saba");
+
+    res = await (await ServerFactory.create({ controllers: [UserController] })).inject({
+      method: "POST",
+      path: "/base-path/user"
+    });
+    expect(res.json()).toStrictEqual([]);
   }
 
   @test("should add description")

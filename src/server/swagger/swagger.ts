@@ -33,7 +33,7 @@ export const addSwagger = async (controllers, app, options?: SwaggerOptions) => 
         .replace(/}/g, "}/")
         .replace(/\/$/g, "");
       const schema = { ...method.schema?.request, tags: [basePath] };
-      swaggerSchema.paths[url] = {};
+      swaggerSchema.paths[url] = swaggerSchema.paths[url] || {};
       swaggerSchema.paths[url][method.routeType] = {
         parameters: [],
         tags: schema.tags,
