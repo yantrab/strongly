@@ -53,7 +53,7 @@ export class ServerFactory {
       const routes: method = Reflect.getMetadata(symbols.route, controller.prototype);
       Object.keys(routes || {}).forEach(key => {
         const method = routes[key];
-        const path = method.path || toSnack(key);
+        const path = method.path !== undefined ?  method.path : toSnack(key);
         const url = `/${basePath}/${path}`;
         const hooks = {};
         Object.keys(method.hooks || {}).forEach(key => {
