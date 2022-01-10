@@ -54,7 +54,8 @@ export class ServerFactory {
       Object.keys(routes || {}).forEach(key => {
         const method = routes[key];
         const path = method.path !== undefined ? method.path : toSnack(key);
-        const url = `/${basePath}/${path}`;
+        let url = `/${basePath}`;
+        url += path ? `/${path}` : "";
         const hooks = {};
         Object.keys(method.hooks || {}).forEach(key => {
           method.hooks[key].forEach(m => {
