@@ -26,7 +26,7 @@ export const addSwagger = async (controllers, app, options?: SwaggerOptions) => 
     const routes: method = Reflect.getMetadata(symbols.route, controller.prototype);
     Object.keys(routes || {}).forEach(key => {
       const method = routes[key];
-      const path = method.path || toSnack(key);
+      const path = method.path !== undefined ? method.path : toSnack(key);
       const url = `/${basePath}/${path}`
         .replace(/(\/?:[a-z]+)(\/)?/gi, $1 => `{${$1.replace(/[:/]/g, "")}}`)
         .replace(/{/g, "/{")
