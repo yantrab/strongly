@@ -6,7 +6,7 @@ import { body, Controller, get, params, post, reply, request, email, onRequest, 
 import { FastifyRequest, FastifyReply } from "fastify";
 
 enum SomeEnum {
-  a
+  a,
 }
 class someNestedClass {
   @min(4)
@@ -15,7 +15,7 @@ class someNestedClass {
     return 1;
   }
 
-  someEnum: SomeEnum;
+  someEnum?: SomeEnum;
 }
 
 class shokoController {
@@ -23,10 +23,7 @@ class shokoController {
     return Promise.resolve({ someNumber: 1 } as any);
   }
   @post getUsers11(@request request: FastifyRequest, @reply reply: FastifyReply) {
-    reply
-      .code(200)
-      .header("Content-Type", "application/json; charset=utf-8")
-      .send(request.body);
+    reply.code(200).header("Content-Type", "application/json; charset=utf-8").send(request.body);
   }
   @post getUsers5(@body user: { id: number; a: someNestedClass }) {
     return user.id;
@@ -121,13 +118,13 @@ class ServerTests {
   @test("should return bad request  - min value")
   async badRequest4() {
     const res = await this.inject(shokoController, { method: "POST", body: { id: 1, a: { someNumber: 1 } }, url: "/shoko/get-users5" });
-    expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: "body.a.someNumber should be >= 4" });
+    expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: "body must be >= 4" });
   }
 
   @test("should return bad request  - max value")
   async badRequest5() {
     const res = await this.inject(shokoController, { method: "GET", url: "/shoko/getUsers6/11" });
-    expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: "params.value should be <= 10" });
+    expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: "params must be <= 10" });
   }
 
   @test("should reject error when controller are no provided")
@@ -148,7 +145,7 @@ class ServerTests {
   @test
   async invalidEmail() {
     const res = await this.inject(shokoController, { method: "post", url: "/shoko/login", body: { email: "a", password: "123456" } });
-    expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: 'body.email should match format "email"' });
+    expect(res.json()).toStrictEqual({ statusCode: 400, error: "Bad Request", message: 'body must match format "email"' });
   }
 
   @test

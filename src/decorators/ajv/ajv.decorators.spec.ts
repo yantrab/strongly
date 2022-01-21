@@ -72,106 +72,106 @@ class ajvDecoratorsTests {
       numberString: {
         pattern: "^[0-9]*$",
         allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-        type: "string"
+        type: "string",
       },
       pattern: {
         pattern: "^+[0-9]{9,12}$",
         allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-        type: "string"
+        type: "string",
       },
       someInterface: {
-        $ref: "#/definitions/SomeInterface"
+        $ref: "#/definitions/SomeInterface",
       },
       date: {
         format: "date",
         allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-        type: "string"
+        type: "string",
       },
       array1: {
         items: {
           allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-          type: "string"
+          type: "string",
         },
         minItems: 4,
-        type: "array"
+        type: "array",
       },
       array2: {
         items: {
           allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-          type: "string"
+          type: "string",
         },
         maxItems: 8,
         minItems: 4,
-        type: "array"
+        type: "array",
       },
       array3: {
         items: {
           allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-          type: "string"
+          type: "string",
         },
         maxItems: 8,
-        type: "array"
+        type: "array",
       },
       number1: {
         minimum: 4,
-        type: "number"
+        type: "number",
       },
       number2: {
         maximum: 8,
         minimum: 4,
-        type: "number"
+        type: "number",
       },
       number3: {
         maximum: 8,
-        type: "number"
+        type: "number",
       },
       object1: {
         minProperties: 4,
         properties: {
           a: {
-            type: "number"
-          }
+            type: "number",
+          },
         },
         required: ["a"],
-        type: "object"
+        type: "object",
       },
       object2: {
         maxProperties: 8,
         minProperties: 4,
         properties: {
           a: {
-            type: "number"
-          }
+            type: "number",
+          },
         },
         required: ["a"],
-        type: "object"
+        type: "object",
       },
       object3: {
         maxProperties: 8,
         properties: {
           a: {
-            type: "number"
-          }
+            type: "number",
+          },
         },
         required: ["a"],
-        type: "object"
+        type: "object",
       },
       string1: {
         minLength: 4,
         allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-        type: "string"
+        type: "string",
       },
       string2: {
         maxLength: 8,
         minLength: 4,
         allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-        type: "string"
+        type: "string",
       },
       string3: {
         maxLength: 8,
         allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-        type: "string"
-      }
+        type: "string",
+      },
     });
   }
 }

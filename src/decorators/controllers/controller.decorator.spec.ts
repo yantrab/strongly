@@ -29,9 +29,11 @@ class ControllerDecoratorTests {
         return { hello: "world" };
       }
     }
-    const res: any = await (await ServerFactory.create({ controllers: [UserController] })).inject({
+    const res: any = await (
+      await ServerFactory.create({ controllers: [UserController] })
+    ).inject({
       method: "GET",
-      path: "/base-path/user"
+      path: "/base-path/user",
     });
     expect(res.json().hello).toBe("world");
   }
@@ -54,15 +56,19 @@ class ControllerDecoratorTests {
         return [];
       }
     }
-    let res: any = await (await ServerFactory.create({ controllers: [UserController] })).inject({
+    let res: any = await (
+      await ServerFactory.create({ controllers: [UserController] })
+    ).inject({
       method: "GET",
-      path: "/base-path/user"
+      path: "/base-path/user",
     });
     expect(res.json().name).toBe("saba");
 
-    res = await (await ServerFactory.create({ controllers: [UserController] })).inject({
+    res = await (
+      await ServerFactory.create({ controllers: [UserController] })
+    ).inject({
       method: "POST",
-      path: "/base-path/user"
+      path: "/base-path/user",
     });
     expect(res.json()).toStrictEqual([]);
   }

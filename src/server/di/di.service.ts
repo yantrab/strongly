@@ -27,12 +27,7 @@ export class DIService {
 
           const firstProp = type.getProperties()[0];
           if (firstProp) {
-            const d: any = await import(
-              firstProp
-                .getValueDeclarationOrThrow()
-                .getSourceFile()
-                .getFilePath()
-            );
+            const d: any = await import(firstProp.getValueDeclarationOrThrow().getSourceFile().getFilePath());
             classDependencies.push(await this.getDependency(d[cName]));
           }
         }

@@ -11,8 +11,8 @@ function getControllerSchema(target, key: string, paramIndex: number) {
       !param ||
       param
         .getDecorators()
-        .map(d => d.getName())
-        .find(n => ["reply", "request"].includes(n))
+        .map((d) => d.getName())
+        .find((n) => ["reply", "request"].includes(n))
     ) {
       return;
     }
@@ -36,7 +36,7 @@ function addRouteParam(target, key: string, paramIndex: number, routeParamType: 
     routeSchema.type = routeSchema.type || "object";
     if (routeSchema.properties && path) {
       routeSchema.required = routeSchema.required || [];
-      Object.keys(routeSchema.properties).forEach(key => {
+      Object.keys(routeSchema.properties).forEach((key) => {
         if (routeSchema.properties[key].optional !== true && !routeSchema.required.includes(key)) {
           routeSchema.required.push(key);
         }
@@ -104,10 +104,10 @@ class RouteParam {
   readonly app: ParameterDecorator;
   readonly user: ParameterDecorator;
   constructor() {
-    ["body", "query", "params", "headers", "user"].forEach(routeParam => {
+    ["body", "query", "params", "headers", "user"].forEach((routeParam) => {
       this[routeParam] = getDecorator(routeParam);
     });
-    ["request", "reply", "app"].forEach(p => {
+    ["request", "reply", "app"].forEach((p) => {
       this[p] = (target: any, methodName: string, paramIndex: number) => {
         addRouteParam(target, methodName, paramIndex, p);
       };

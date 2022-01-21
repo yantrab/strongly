@@ -43,12 +43,12 @@ class RouteSchemaTests {
       body: {
         properties: {
           id: {
-            type: "number"
-          }
+            type: "number",
+          },
         },
         required: ["id"],
-        type: "object"
-      }
+        type: "object",
+      },
     });
   }
 
@@ -58,11 +58,11 @@ class RouteSchemaTests {
       body: {
         properties: {
           id: {
-            type: "number"
-          }
+            type: "number",
+          },
         },
-        type: "object"
-      }
+        type: "object",
+      },
     });
   }
 
@@ -70,8 +70,8 @@ class RouteSchemaTests {
   primitiveBody() {
     expect(this.routes["getUsers3"].schema.request).toStrictEqual({
       body: {
-        type: "number"
-      }
+        type: "number",
+      },
     });
   }
 
@@ -81,11 +81,11 @@ class RouteSchemaTests {
       body: {
         properties: {
           id: {
-            type: "number"
-          }
+            type: "number",
+          },
         },
-        type: "object"
-      }
+        type: "object",
+      },
     });
   }
 
@@ -94,10 +94,10 @@ class RouteSchemaTests {
     expect(this.routes["getUsers5"].schema.request).toStrictEqual({
       body: {
         items: {
-          type: "number"
+          type: "number",
         },
-        type: "array"
-      }
+        type: "array",
+      },
     });
   }
 
@@ -107,16 +107,16 @@ class RouteSchemaTests {
       body: {
         properties: {
           id: {
-            type: "number"
+            type: "number",
           },
           name: {
             allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-            type: "string"
-          }
+            type: "string",
+          },
         },
         required: ["name"],
-        type: "object"
-      }
+        type: "object",
+      },
     });
   }
 
@@ -125,48 +125,46 @@ class RouteSchemaTests {
     expect(this.routes["getUsers7"].schema.request).toStrictEqual({
       body: {
         $ref: "#/definitions/UserDetails",
-        type: "object"
-      }
+        type: "object",
+      },
     });
 
     const definitions: any = getDefinitions();
     expect(definitions.Contact).toStrictEqual({
-      optional: false,
       properties: {
         address: {
           allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-          type: "string"
+          type: "string",
         },
         id: {
-          type: "number"
-        }
+          type: "number",
+        },
       },
       required: ["id"],
-      type: "object"
+      type: "object",
     });
     expect(definitions.UserDetails).toStrictEqual({
-      optional: false,
       properties: {
         contacts: {
           items: {
-            $ref: "#/definitions/Contact"
+            $ref: "#/definitions/Contact",
           },
-          type: "array"
+          type: "array",
         },
         name: {
           allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-          type: "string"
+          type: "string",
         },
         somePrimitiveArray: {
           items: {
             allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-            type: "string"
+            type: "string",
           },
-          type: "array"
-        }
+          type: "array",
+        },
       },
       required: ["name", "contacts"],
-      type: "object"
+      type: "object",
     });
   }
 
@@ -177,18 +175,18 @@ class RouteSchemaTests {
         items: {
           properties: {
             id: {
-              type: "number"
+              type: "number",
             },
             name: {
               allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-              type: "string"
-            }
+              type: "string",
+            },
           },
           required: ["name"],
-          type: "object"
+          type: "object",
         },
-        type: "array"
-      }
+        type: "array",
+      },
     });
   }
 
@@ -199,11 +197,11 @@ class RouteSchemaTests {
         properties: {
           id: {
             minimum: 5,
-            type: "number"
-          }
+            type: "number",
+          },
         },
-        type: "object"
-      }
+        type: "object",
+      },
     });
   }
 
@@ -215,15 +213,15 @@ class RouteSchemaTests {
           address: {
             maxLength: 10,
             allOf: [{ transform: ["trim"] }, { minLength: 1 }],
-            type: "string"
+            type: "string",
           },
           id: {
-            type: "number"
-          }
+            type: "number",
+          },
         },
         required: ["id"],
-        type: "object"
-      }
+        type: "object",
+      },
     });
   }
 }

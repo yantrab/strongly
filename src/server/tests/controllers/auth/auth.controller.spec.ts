@@ -72,7 +72,7 @@ class LoginTests {
     const res = await this.app.inject({
       method: "POST",
       url: "/auth/set-password",
-      body: { email: "a@b.caaaa", password: "123456", rePassword: "123456" }
+      body: { email: "a@b.caaaa", password: "123456", rePassword: "123456" },
     } as any);
     expect(res.statusCode).toStrictEqual(200);
   }
@@ -82,7 +82,7 @@ class LoginTests {
     const res = await this.app.inject({
       method: "POST",
       url: "/auth/set-password",
-      body: { email: "a@b.caaaa", password: "123456", rePassword: "1234562" }
+      body: { email: "a@b.caaaa", password: "123456", rePassword: "1234562" },
     } as any);
     expect(res.statusCode).toStrictEqual(400);
   }

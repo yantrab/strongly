@@ -2,9 +2,9 @@ import { suite, test } from "@testdeck/jest";
 import "reflect-metadata";
 import { ServerFactory, get, guard } from "../../index";
 
-@guard(user => user.role === "editor")
+@guard((user) => user.role === "editor")
 class a {
-  @guard(user => user.isAdmin)
+  @guard((user) => user.isAdmin)
   @get
   b() {
     return 1;

@@ -1,13 +1,13 @@
 import { last, merge } from "lodash";
 import { ClassDeclaration, Decorator, Project, Type, Symbol as tsSymbol, SymbolFlags } from "ts-morph";
 import { getMinMaxValidation } from "./ajv.service";
-import { Schema, toSnack } from "../utils/util";
+import { Schema, toSnack } from "./util";
 import { symbols } from "./consts";
 const project = new Project({ tsConfigFilePath: process.cwd() + "/tsconfig.json" });
 const sourceFiles = project.getSourceFiles();
 const allClasses: { [name: string]: ClassDeclaration } = {};
-sourceFiles.forEach(s => {
-  s.getClasses().forEach(c => {
+sourceFiles.forEach((s) => {
+  s.getClasses().forEach((c) => {
     allClasses[c.getName() as string] = c;
   });
 });
@@ -15,9 +15,9 @@ const definitions = {};
 export const getDefinitions = () => definitions;
 export const isPrimitive = (type: Type) => type.isBoolean() || type.isNumber() || type.isString();
 
-export const getClass = name => allClasses[name];
+export const getClass = (name) => allClasses[name];
 function handleExplicitValidation(type: string, schema: any, decorators: Decorator[] = []) {
-  decorators.forEach(d => {
+  decorators.forEach((d) => {
     const dName = d.getName();
     switch (dName) {
       case "min":
@@ -60,7 +60,7 @@ const getObjectSchema = (type: Type, decorators, schemaProps = {}) => {
   type
     .getNonNullableType()
     .getProperties()
-    .forEach(prop => {
+    .forEach((prop) => {
       const key = prop.getName();
       const isGetter = prop.hasFlags(SymbolFlags.GetAccessor);
       if (["request", "reply"].includes(key) || isGetter) return;
@@ -80,6 +80,7 @@ const getObjectSchema = (type: Type, decorators, schemaProps = {}) => {
   if (!schema.required.length) {
     delete schema.required;
   }
+  delete schema.optional;
   return schema;
 };
 export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: tsSymbol | undefined = undefined) => {
@@ -94,7 +95,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     schema = handleExplicitValidation("array", schema, decorators);
     schema.type = "array";
     schema.items = getParamSchema(nonNullableType.getArrayElementTypeOrThrow(), []) || {};
-    Object.keys(schema.items).forEach(key => delete schema.items[key].optional);
+    Object.keys(schema.items).forEach((key) => delete schema.items[key].optional);
     delete schema.items.optional;
     return schema;
   }
@@ -120,7 +121,7 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const c = importPath && !importPath?.includes("/node_modules/") ? require(importPath)[name] : undefined;
     if (importPath && !c) {
-      console.log(name + " not found type");
+      // console.log(name + " not found type");
     }
     const classSchema = c ? Reflect.getMetadata(symbols.validations, c.prototype) || {} : {};
     schema["$ref"] = "#/definitions/" + name;
@@ -138,11 +139,11 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
     const enumMembers = (prop as any)
       .getValueDeclarationOrThrow()
       .getSourceFile()
-      .getEnum(e => e.getName() === nonNullableType.getText())
+      .getEnum((e) => e.getName() === nonNullableType.getText())
       .getMembers();
     const enumSchema: any = {};
-    enumSchema.enum = enumMembers.map(m => m.getName());
-    enumSchema["x-enumNames"] = enumMembers.map(m => m.getValue());
+    enumSchema.enum = enumMembers.map((m) => m.getName());
+    enumSchema["x-enumNames"] = enumMembers.map((m) => m.getValue());
     enumSchema.type = typeof enumSchema.enum[0];
     definitions[name] = enumSchema;
     schema["$ref"] = "#/definitions/" + name;
@@ -152,21 +153,21 @@ export const getParamSchema = (type: Type, decorators: Decorator[] = [], prop: t
   if (nonNullableType.isEnum()) {
     const name = last(nonNullableType.getText().split("."))!;
     const enumSchema: any = {};
-    enumSchema.enum = nonNullableType.getUnionTypes().map(t => t.getLiteralValueOrThrow());
-    enumSchema["x-enumNames"] = nonNullableType.getUnionTypes().map(t => last(t.getText().split(".")) as string);
+    enumSchema.enum = nonNullableType.getUnionTypes().map((t) => t.getLiteralValueOrThrow());
+    enumSchema["x-enumNames"] = nonNullableType.getUnionTypes().map((t) => last(t.getText().split(".")) as string);
     enumSchema.type = typeof enumSchema.enum[0];
     definitions[name] = enumSchema;
     schema["$ref"] = "#/definitions/" + name;
     return schema;
   }
 
-  const unionTypes = type.getUnionTypes().filter(t => !t.isUndefined());
+  const unionTypes = type.getUnionTypes().filter((t) => !t.isUndefined());
   if (unionTypes.length > 1) {
-    schema.oneOf = unionTypes.map(t => getParamSchema(t, decorators)) as Schema[];
+    schema.oneOf = unionTypes.map((t) => getParamSchema(t, decorators)) as Schema[];
     if (!schema.oneOf[0]) {
       delete schema.oneOf;
-      schema.enum = unionTypes.map(t => t.getText().slice(1, -1));
-      schema["x-enumNames"] = unionTypes.map(t => t.getText().slice(1, -1));
+      schema.enum = unionTypes.map((t) => t.getText().slice(1, -1));
+      schema["x-enumNames"] = unionTypes.map((t) => t.getText().slice(1, -1));
       schema.type = typeof schema.enum[0];
     }
     return schema;

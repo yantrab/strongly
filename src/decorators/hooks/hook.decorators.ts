@@ -19,8 +19,8 @@ class Hook {
   readonly onResponse: IAction;
 
   constructor() {
-    ["onRequest", "preParsing", "preValidation", "preHandler", "preSerialization", "onSend", "onResponse"].forEach(hook => {
-      this[hook] = action => (target: any, propertyKey?: string) => {
+    ["onRequest", "preParsing", "preValidation", "preHandler", "preSerialization", "onSend", "onResponse"].forEach((hook) => {
+      this[hook] = (action) => (target: any, propertyKey?: string) => {
         if (propertyKey) addMethodHook(target, propertyKey, hook, action);
         else addClassHook(target, hook, action);
       };

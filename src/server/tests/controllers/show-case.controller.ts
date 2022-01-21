@@ -52,20 +52,20 @@ export class ShowCaseController {
     @query({
       example: {
         filter: {
-          categoryIds: [1112]
+          categoryIds: [1112],
         },
         exclude: {
-          categoryIds: [0]
+          categoryIds: [0],
         },
         page: {
           limit: 0,
-          offset: 0
+          offset: 0,
         },
         configurationType: "string",
         timestamp: 0,
         uuid: "string",
-        count: 0
-      }
+        count: 0,
+      },
     })
     query: GetDataArgsI
   ) {

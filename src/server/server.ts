@@ -10,6 +10,8 @@ import { dirname } from "path";
 import { DIService } from "./di/di.service";
 import { addSwagger, SwaggerOptions } from "./swagger/swagger";
 const diService = new DIService();
+import ajvCompiler from "@fastify/ajv-compiler";
+const factory = ajvCompiler();
 
 async function getControllers(controllers): Promise<any[]> {
   if (!controllers || typeof controllers === "string") {
@@ -18,12 +20,12 @@ async function getControllers(controllers): Promise<any[]> {
     if (process.platform === "win32") path = path.replace(/\\/g, "/");
     const paths = glob.sync([path, "!**.spec.ts"]);
     const result = await Promise.all(
-      paths.map(async p => {
+      paths.map(async (p) => {
         const m = await import(p);
         return Object.values(m)[0] as () => any;
       })
     );
-    return result.filter(c => c?.prototype);
+    return result.filter((c) => c?.prototype);
   }
   return controllers;
 }
@@ -43,26 +45,34 @@ export class ServerFactory {
     await diService.setDependencies(opts?.providers);
 
     const app = fastify({
-      ajv: { plugins: [require("ajv-keywords")], customOptions: { $data: true } },
-      ...opts
+      ajv: {
+        plugins: [require("ajv-keywords"), require("ajv-formats")],
+        customOptions: { $data: true, strict: "log", keywords: ["example", "x-enumNames", "optional"] } as any,
+      },
+      schemaController: {
+        compilersFactory: {
+          buildValidator: factory,
+        },
+      } as any,
+      ...opts,
     });
 
     for (const controller of controllers) {
       const instance = await diService.createInstance(controller);
       const basePath = Reflect.getMetadata(symbols.basePath, controller) || toSnack(controller.name.replace("Controller", ""));
       const routes: method = Reflect.getMetadata(symbols.route, controller.prototype);
-      Object.keys(routes || {}).forEach(key => {
+      Object.keys(routes || {}).forEach((key) => {
         const method = routes[key];
         const path = method.path !== undefined ? method.path : toSnack(key);
         let url = `/${basePath}`;
         url += path ? `/${path}` : "";
         const hooks = {};
-        Object.keys(method.hooks || {}).forEach(key => {
-          method.hooks[key].forEach(m => {
+        Object.keys(method.hooks || {}).forEach((key) => {
+          method.hooks[key].forEach((m) => {
             hooks[key] = (hooks[key] || []).concat([(...args) => m(app, ...args)]);
           });
         });
-        const handler = async (request, reply) => instance[key](...(method.params || []).map(p => get({ request, reply, app }, p.path)));
+        const handler = async (request, reply) => instance[key](...(method.params || []).map((p) => get({ request, reply, app }, p.path)));
         const schema = { ...method.schema?.request, tags: [basePath] };
         const options = { schema, ...hooks };
         app[method.routeType](url, options, handler);
@@ -70,7 +80,7 @@ export class ServerFactory {
     }
 
     const definitions = getDefinitions() || {};
-    Object.keys(definitions).forEach(key => {
+    Object.keys(definitions).forEach((key) => {
       app.addSchema({ $id: "#/definitions/" + key, ...definitions[key] });
     });
 
@@ -79,7 +89,7 @@ export class ServerFactory {
     });
 
     await addSwagger(controllers, app, opts?.swagger);
-    app.ready(err => {
+    app.ready((err) => {
       if (err) throw err;
     });
     return app;
@@ -103,22 +113,24 @@ type PromiseReturnType<T> = T extends Promise<infer R> ? R : T;
  * @param key function name
  * @param value object or function
  */
-export const mock = <T, P = new (...args: any[]) => T>(
-  provider: P,
-  key: ClassType<P>,
-  value: P extends { new (): infer R }
-    ? R[keyof R] extends AnyFunc
-      ? PromiseReturnType<ReturnType<R[keyof R]>> | ((...args: any[]) => PromiseReturnType<ReturnType<R[keyof R]>>)
+export const mock =
+  <T, P = new (...args: any[]) => T>(
+    provider: P,
+    key: ClassType<P>,
+    value: P extends { new (): infer R }
+      ? R[keyof R] extends AnyFunc
+        ? PromiseReturnType<ReturnType<R[keyof R]>> | ((...args: any[]) => PromiseReturnType<ReturnType<R[keyof R]>>)
+        : any
       : any
-    : any
-) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-  const originalMethod = descriptor.value;
-  target[propertyKey] = async function() {
-    const temp = await diService.inject(provider);
-    await diService.mock(provider, key, value);
-    const result = await originalMethod.apply(this);
-    diService.override((provider as any).name, temp);
-    return result;
+  ) =>
+  (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+    const originalMethod = descriptor.value;
+    target[propertyKey] = async function () {
+      const temp = await diService.inject(provider);
+      await diService.mock(provider, key, value);
+      const result = await originalMethod.apply(this);
+      diService.override((provider as any).name, temp);
+      return result;
+    };
+    return target;
   };
-  return target;
-};

@@ -19,9 +19,11 @@ class AppTests {
 
   @test("should get controllers from specific path")
   async valueProvider() {
-    const res = await (await ServerFactory.create({ providers: [{ provide: UserService, useValue: { hi: () => "by" } }] })).inject({
+    const res = await (
+      await ServerFactory.create({ providers: [{ provide: UserService, useValue: { hi: () => "by" } }] })
+    ).inject({
       method: "GET",
-      url: "/a/b"
+      url: "/a/b",
     });
     expect(res.body).toBe("by");
   }

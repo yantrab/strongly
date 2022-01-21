@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { Forbidden, Unauthorized } from "http-errors";
 import { addClassHook, addMethodHook } from "../../utils/schema";
 
-export const guard = isUserPermitted => (target: any, propertyKey?: string) => {
+export const guard = (isUserPermitted) => (target: any, propertyKey?: string) => {
   const action = (app: FastifyInstance, request: FastifyRequest, reply: FastifyReply, next: (...args) => any) => {
     const user = (request as any).user;
     if (!user) {

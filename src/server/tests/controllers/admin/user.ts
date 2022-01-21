@@ -2,7 +2,7 @@ import { pattern } from "../../../..";
 
 export enum Role {
   admin,
-  user
+  user,
 }
 
 export class User {

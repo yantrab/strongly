@@ -35,7 +35,7 @@ class Route {
   readonly put: IRoute;
   readonly options: IRoute;
   constructor() {
-    ["delete", "get", "head", "patch", "post", "put", "options"].forEach(route => {
+    ["delete", "get", "head", "patch", "post", "put", "options"].forEach((route) => {
       this[route] = getDecorator(route);
     });
   }

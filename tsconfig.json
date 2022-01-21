@@ -15,7 +15,7 @@
       "jest",
       "node"
     ],
-    "sourceMap": false,
+    "sourceMap": true,
     "target": "es6",
     "plugins": [
     ]

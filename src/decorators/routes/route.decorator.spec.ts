@@ -30,28 +30,28 @@ class RouteDecoratorsTests {
     expect(routes).toStrictEqual({
       getUsers1: {
         routeType: "get",
-        path: "users"
+        path: "users",
       },
       getUsers2: {
         routeType: "put",
-        path: "users"
+        path: "users",
       },
       getUsers3: {
         routeType: "delete",
-        path: ""
+        path: "",
       },
       getUsers4: {
         routeType: "head",
-        path: "users"
+        path: "users",
       },
       getUsers5: {
         routeType: "patch",
-        path: undefined
+        path: undefined,
       },
       getUsers6: {
         routeType: "options",
-        path: undefined
-      }
+        path: undefined,
+      },
     });
   }
 }

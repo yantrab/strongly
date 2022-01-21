@@ -14,8 +14,8 @@ function getParamNames(func) {
   return result;
 }
 function getMinmaxDecorator(keyword) {
-  const decorator = value => {
-    return function(target: () => any, key: string) {
+  const decorator = (value) => {
+    return function (target: () => any, key: string) {
       const schema = Reflect.getMetadata(symbols.validations, target) || {};
       const t = Reflect.getMetadata("design:type", target, key);
       schema[key] = Object.assign(schema[key] || {}, getMinMaxValidation(keyword, t.name, value));
@@ -53,7 +53,7 @@ class DecoratorKeyword {
   readonly jsonPointer;
   readonly relativeJsonPointer;
   constructor() {
-    ["min", "max"].forEach(keyword => {
+    ["min", "max"].forEach((keyword) => {
       this[keyword] = getMinmaxDecorator(keyword);
     });
 
@@ -71,8 +71,8 @@ class DecoratorKeyword {
       "ipv6",
       "uuid",
       "jsonPointer",
-      "relativeJsonPointer"
-    ].forEach(keyword => {
+      "relativeJsonPointer",
+    ].forEach((keyword) => {
       this[keyword] = (target: () => any, methodName: string, paramIndex: number) => {
         const allRoutes = Reflect.getMetadata(symbols.route, target) || {};
         const route = (allRoutes[methodName] = allRoutes[methodName] || { params: [] });
@@ -81,7 +81,7 @@ class DecoratorKeyword {
       };
     });
     this.pattern = (value: any) => {
-      return function(target: () => any, key: string) {
+      return function (target: () => any, key: string) {
         const schema = Reflect.getMetadata(symbols.validations, target) || {};
         schema[key] = Object.assign(schema[key] || {}, { pattern: value.source || value });
         Reflect.defineMetadata(symbols.validations, schema, target);
